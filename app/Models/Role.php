@@ -6,5 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Role extends Model
 {
-    //
+    protected $fillable = [
+        'order',
+        'name',
+        'position_id',
+    ];
 }
