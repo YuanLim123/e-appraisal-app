@@ -1,0 +1,20 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class ControlApprover extends Model
+{
+    protected $fillable = [
+        'sequence',
+        'user_id',
+        'appraisal_control_id',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+}

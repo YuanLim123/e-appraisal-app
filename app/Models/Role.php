@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Role extends Model
 {
@@ -11,4 +12,9 @@ class Role extends Model
         'name',
         'position_id',
     ];
+
+    public function position()
+    {
+        return $this->belongsTo(Position::class);
+    }
 }

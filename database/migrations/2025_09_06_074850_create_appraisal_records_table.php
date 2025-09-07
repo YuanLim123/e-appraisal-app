@@ -13,26 +13,24 @@ return new class extends Migration
     {
         Schema::create('appraisal_records', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('admin_id')->references('id')->on('users');
-            $table->foreignId('appraisee_id')->references('id')->on('users');
-            $table->foreignId('current_approver_id')->references('id')->on('users')->nullable();
-            $table->foreignId('season_id')->constrained()->nullable();
             $table->string('type');
             $table->string('purpose');
             $table->string('grade');
             $table->float('total');
             $table->string('position_period')->nullable();
-            $table->unsignedInteger('role_id');
-            $table->unsignedInteger('position_id');
-            $table->unsignedInteger('step')->nullable();
-            $table->json('department_ids');
-            $table->json('comment')->nullable();
+            $table->enum('status', ['pending', 'in_progress', 'completed', 'rejected'])->default('pending');
+            $table->unsignedInteger('current_step')->nullable();
+            $table->json('answer')->nullable();
             $table->json('feedback')->nullable();
-            $table->json('approver_ids');
             $table->text('description');
-            $table->text('reason')->nullable();
             $table->date('review_form');
             $table->date('review_to');
+            $table->foreignId('role_id')->constrained();
+            $table->foreignId('position_id')->constrained();
+            $table->foreignId('appraiser_id')->references('id')->on('users');
+            $table->foreignId('appraisee_id')->references('id')->on('users');
+            $table->foreignId('current_approver_id')->references('id')->on('users')->nullable();
+            $table->foreignId('season_id')->constrained()->nullable();
             $table->timestamp('completed_at')->nullable();
             $table->timestamp('rejected_at')->nullable();
             $table->timestamps();
