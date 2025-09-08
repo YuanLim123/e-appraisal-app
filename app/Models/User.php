@@ -4,6 +4,11 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Models\AppraisalRecord;
+use App\Models\Department;
+use App\Models\Position;
+use App\Models\RecordApprover;
+use App\Models\Role;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -51,7 +56,7 @@ class User extends Authenticatable
     protected function full_name(): Attribute
     {
         return Attribute::make(
-            get: fn () => "{$this->first_name} {$this->last_name}",
+            get: fn (mixed $value, array $attributes) => "{$attributes['first_name']} {$attributes['last_name']}",
         );
     }
 
@@ -93,5 +98,10 @@ class User extends Authenticatable
     public function appraisalRecordsAsAppraiser(): HasMany
     {
         return $this->hasMany(AppraisalRecord::class, 'appraiser_id');
+    }
+
+    public function appraisalRecordAsRecordApprovers(): HasMany
+    {
+        return $this->hasMany(RecordApprover::class, 'user_id');
     }
 }

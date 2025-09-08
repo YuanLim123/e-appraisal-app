@@ -10,10 +10,19 @@ class RecordApprover extends Model
     protected $fillable = [
         'sequence',
         'comment',
+        'approved_at',
         'rejected_at',
         'user_id',
         'appraisal_record_id',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'approved_at' => 'date:d-m-Y',
+            'rejected_at' => 'date:d-m-Y',
+        ];
+    }
 
     public function user(): BelongsTo
     {

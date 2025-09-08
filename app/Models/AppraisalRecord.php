@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AppraisalRecordStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -36,6 +37,9 @@ class AppraisalRecord extends Model
         return [
             'answer' => 'array',
             'feedback' => 'array',
+            'status' => AppraisalRecordStatus::class,
+            'review_from' => 'date:d-m-Y',
+            'review_to' => 'date:d-m-Y',
             'completed_at' => 'datetime',
             'rejected_at' => 'datetime',
         ];

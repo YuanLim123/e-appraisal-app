@@ -3,6 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Enums\AppraisalRecordStatus;
+
 
 return new class extends Migration
 {
@@ -18,7 +20,7 @@ return new class extends Migration
             $table->string('grade');
             $table->float('total');
             $table->string('position_period')->nullable();
-            $table->enum('status', ['pending', 'in_progress', 'completed', 'rejected'])->default('pending');
+            $table->enum('status', AppraisalRecordStatus::cases())->default(AppraisalRecordStatus::CREATED);
             $table->unsignedInteger('current_step')->nullable();
             $table->json('answer')->nullable();
             $table->json('feedback')->nullable();
