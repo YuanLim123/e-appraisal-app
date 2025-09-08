@@ -21,7 +21,7 @@ class AppraisalRecord extends Model
         'answer',
         'feedback',
         'description',
-        'review_form',
+        'review_from',
         'review_to',
         'appraiser_id',
         'appraisee_id',
@@ -30,6 +30,16 @@ class AppraisalRecord extends Model
         'completed_at',
         'rejected_at',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'answer' => 'array',
+            'feedback' => 'array',
+            'completed_at' => 'datetime',
+            'rejected_at' => 'datetime',
+        ];
+    }
 
     public function appraiser(): BelongsTo
     {

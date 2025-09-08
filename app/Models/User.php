@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -30,7 +32,6 @@ class User extends Authenticatable
         'employee_no',
         'position_id',
         'role_id',
-        'department_ids',
         'is_enabled',
         'is_appraiser',
         'join_at',
@@ -47,6 +48,13 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected function full_name(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => "{$this->first_name} {$this->last_name}",
+        );
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -56,6 +64,8 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'join_at' => 'date',
+            'resign_at' => 'date',
             'password' => 'hashed',
         ];
     }
