@@ -8,6 +8,7 @@ use Database\Seeders\PositionSeeder;
 use Database\Seeders\RoleSeeder;
 use Database\Seeders\DepartmentSeeder;
 use Database\Seeders\UserSeeder;
+use Database\Seeders\AppraisalControlSeeder;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -23,6 +24,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             DepartmentSeeder::class,
             UserSeeder::class,
+            AppraisalControlSeeder::class,
         ]);
     }
 }

@@ -46,7 +46,7 @@ class UsersListTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertJsonCount(1, 'data');
-        $response->assertJsonFragment(['id' => $activeUser->id]);
-        $response->assertJsonMissing(['id' => $resignedUser->id]);
+        $response->assertJsonFragment(['employee_no' => $activeUser->employee_no]);
+        $response->assertJsonMissing(['employee_no' => $resignedUser->employee_no]);
     }
 }

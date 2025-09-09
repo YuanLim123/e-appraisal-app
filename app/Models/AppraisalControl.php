@@ -25,7 +25,8 @@ class AppraisalControl extends Model
 
     public function approvers(): HasMany
     {
-        return $this->hasMany(ControlApprover::class, 'appraisal_control_id');
+        return $this->hasMany(ControlApprover::class, 'appraisal_control_id')
+                ->orderBy('sequence');
     }
 
 }

@@ -13,14 +13,22 @@ class AppraisalControlSeeder extends Seeder
      */
     public function run(): void
     {
-        $control = AppraisalControl::create([
+        AppraisalControl::create([
             'appraiser_id' => 1,
             'appraisee_id' => 2,
-        ]);
-
-        $control->approvers()->createMany([
+        ])->approvers()->createMany([
             ['sequence' => 1, 'user_id' => 3],
             ['sequence' => 2, 'user_id' => 4],
+        ]);
+
+        AppraisalControl::create([
+            'appraiser_id' => 3,
+            'appraisee_id' => 4,
+        ])->approvers()->createMany([
+            ['sequence' => 3, 'user_id' => 5],
+            ['sequence' => 4, 'user_id' => 6],
+            ['sequence' => 1, 'user_id' => 1],
+            ['sequence' => 2, 'user_id' => 2],
         ]);
     }
 }

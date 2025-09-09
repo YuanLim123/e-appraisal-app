@@ -11,10 +11,12 @@ class AppraisalControlController extends Controller
 {
     public function index()
     {
-        $appraisalControl = AppraisalControl::query()->get();
+        $appraisalControl = AppraisalControl::query()->paginate(10);
 
         $appraisalControl->load(['appraiser', 'appraisee', 'approvers', 'approvers.user']);
 
         return AppraisalControlResource::collection($appraisalControl);
     }
+
+
 }
