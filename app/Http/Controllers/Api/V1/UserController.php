@@ -12,7 +12,9 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::query()->paginate(10);
+        $users = User::query()
+            ->whereNull('resign_at')
+            ->paginate(10);
 
         $users->load(['departments', 'role', 'role.position']);
         

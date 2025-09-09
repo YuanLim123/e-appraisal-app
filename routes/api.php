@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\Auth\RegisteredUserController;
 use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\V1\AppraisalControlController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -12,3 +13,5 @@ Route::get('/user', function (Request $request) {
 Route::post('register', RegisteredUserController::class);
 
 Route::get('users', [UserController::class, 'index']);
+
+Route::get('appraisal-controls', [AppraisalControlController::class, 'index']);
