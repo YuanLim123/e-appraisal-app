@@ -38,8 +38,8 @@ class AppraisalRecord extends Model
             'answer' => 'array',
             'feedback' => 'array',
             'status' => AppraisalRecordStatus::class,
-            'review_from' => 'date:d-m-Y',
-            'review_to' => 'date:d-m-Y',
+            'review_from' => 'date',
+            'review_to' => 'date',
             'completed_at' => 'datetime',
             'rejected_at' => 'datetime',
         ];

@@ -19,10 +19,12 @@ class RecordApprover extends Model
     protected function casts(): array
     {
         return [
-            'approved_at' => 'date:d-m-Y',
-            'rejected_at' => 'date:d-m-Y',
+            'approved_at' => 'date',
+            'rejected_at' => 'date',
         ];
     }
+
+    
 
     public function user(): BelongsTo
     {
