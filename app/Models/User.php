@@ -53,13 +53,6 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected function full_name(): Attribute
-    {
-        return Attribute::make(
-            get: fn (mixed $value, array $attributes) => "{$attributes['first_name']} {$attributes['last_name']}",
-        );
-    }
-
     /**
      * Get the attributes that should be cast.
      *
@@ -75,6 +68,11 @@ class User extends Authenticatable
         ];
     }
 
+    public function getFullNameAttribute(): string
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
+
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
@@ -87,7 +85,7 @@ class User extends Authenticatable
 
     public function departments(): BelongsToMany
     {
-        return $this->belongsToMany(Department::class, 'department_user');
+        return $this->BelongsToMany(Department::class, 'department_user');
     }
 
     public function appraisalRecordsAsAppraisee(): HasMany
@@ -100,7 +98,7 @@ class User extends Authenticatable
         return $this->hasMany(AppraisalRecord::class, 'appraiser_id');
     }
 
-    public function appraisalRecordAsRecordApprovers(): HasMany
+    public function recordApprovers(): HasMany
     {
         return $this->hasMany(RecordApprover::class, 'user_id');
     }
