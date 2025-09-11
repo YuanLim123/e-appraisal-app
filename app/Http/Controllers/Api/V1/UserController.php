@@ -21,13 +21,7 @@ class UserController extends Controller
                 $query->where('join_at', '<', $request->joinBefore);
             })
             ->when($request->sortBy, function ($query) use ($request) {
-                if (
-                    !in_array($request->sortBy, ['last_name', 'first_name','join_at', 'email'])
-                    || (!in_array($request->sortOrder, ['asc', 'desc']))
-                ) {
-                    return;
-                }
-                $query->orderBy($request->sortBy, $request->sortOrder);
+                $query->orderBy($request->sortBy, $request->sortOrder ?? 'asc');
             })
             ->orderBy('created_at', 'desc')
             ->whereNull('resign_at')

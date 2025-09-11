@@ -41,6 +41,7 @@ class User extends Authenticatable
         'is_appraiser',
         'join_at',
         'resign_at',
+        'username',
         'password',
     ];
     /**
