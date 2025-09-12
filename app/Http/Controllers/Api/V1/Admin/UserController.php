@@ -6,24 +6,14 @@ use App\Models\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
+use App\Services\V1\Admin\UserService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function store(UserRequest $request)
+    public function store(UserRequest $request, UserService $userService)
     {
-        $attributes = $request->validated();
-        $attributes['password'] = Hash::make($attributes['password']);
-        $attributes['username'] = 'Asj#' . $attributes['employee_no'];
-
-        $user = User::create($attributes);
-        
-        if (!empty($attributes['departments'])) {
-            foreach ($attributes['departments'] as $departmentId) {
-                $user->departments()->attach($departmentId);
-            }
-        }
+        $user = $userService->store($request->validated());
 
         return new UserResource($user);
     }
