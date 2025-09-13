@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ControlApprover extends Model
+class CurrentApprover extends Model
 {
     protected $fillable = [
         'sequence',

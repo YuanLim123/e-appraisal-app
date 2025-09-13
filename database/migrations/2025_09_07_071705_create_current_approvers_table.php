@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('control_approvers', function (Blueprint $table) {
+        Schema::create('current_approvers', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('sequence');
             $table->foreignId('user_id')->constrained();
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('control_approvers');
+        Schema::dropIfExists('current_approvers');
     }
 };
