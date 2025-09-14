@@ -2,15 +2,15 @@
 
 namespace App\Console\Commands;
 
-use App\Models\User;
+use App\Models\Department;
 use App\Models\Position;
 use App\Models\Role;
-use App\Models\Department;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rules\Password;
+use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password;
 
 class CreateUserCommand extends Command
 {
@@ -43,8 +43,7 @@ class CreateUserCommand extends Command
         $user['phone'] = $this->ask('Phone number of the new user');
         $user['employee_no'] = $this->ask('Employee number of the new user');
         $user['join_at'] = $this->ask('Join date of the new user (YYYY-MM-DD)');
-        $user['username'] = 'Asj#' . $user['employee_no'];
-
+        $user['username'] = 'Asj#'.$user['employee_no'];
 
         // validate user input
         $validator = Validator::make($user, [
@@ -61,6 +60,7 @@ class CreateUserCommand extends Command
             foreach ($validator->errors()->all() as $error) {
                 $this->error($error);
             }
+
             return -1;
         }
 
@@ -90,6 +90,7 @@ class CreateUserCommand extends Command
             $department = Department::where('name', $name)->first();
             if (! $department) {
                 $this->error("Department $name not found.");
+
                 return -1;
             }
             $departments[] = $department;
@@ -98,14 +99,15 @@ class CreateUserCommand extends Command
         $position = Position::where('name', $postionName)->first();
         $role = Role::where('name', $roleName)->first();
 
-        if (!$position || !$role) {
+        if (! $position || ! $role) {
             $this->error('Position or role not found.');
+
             return -1;
         }
 
         DB::transaction(function () use ($user, $position, $role, $departments) {
             $user['password'] = Hash::make($user['password']);
-            $user['username'] = 'Asj#' . $user['employee_no'];
+            $user['username'] = 'Asj#'.$user['employee_no'];
 
             $newUser = User::create($user);
             $newUser->position()->associate($position);

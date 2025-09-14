@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\User;
-use App\Models\CurrentApprover;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -28,7 +26,6 @@ class Appraisal extends Model
     public function approvers(): HasMany
     {
         return $this->hasMany(CurrentApprover::class, 'appraisal_id')
-                ->orderBy('sequence');
+            ->orderBy('sequence');
     }
-
 }

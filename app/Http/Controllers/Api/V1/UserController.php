@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Models\User;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\UserResource;
 use App\Http\Requests\UsersListRequest;
-use Illuminate\Http\Request;
-
+use App\Http\Resources\UserResource;
+use App\Models\User;
 
 class UserController extends Controller
 {

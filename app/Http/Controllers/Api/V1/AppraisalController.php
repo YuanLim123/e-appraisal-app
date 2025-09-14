@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Models\Appraisal;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AppraisalResource;
-use Illuminate\Http\Request;
+use App\Models\Appraisal;
 
 class AppraisalController extends Controller
 {
@@ -24,5 +23,4 @@ class AppraisalController extends Controller
 
         return new AppraisalResource($appraisal);
     }
-
 }

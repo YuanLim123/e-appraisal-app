@@ -28,7 +28,7 @@ class DepartmentMiddleware
             }
         }
 
-        if (!$isAuthorizedUser) {
+        if (! $isAuthorizedUser) {
             abort(403, 'You do not have the required department access.');
         }
 

@@ -3,11 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use Database\Seeders\RoleSeeder;
-use Database\Seeders\PositionSeeder;
 use Database\Seeders\DepartmentSeeder;
+use Database\Seeders\PositionSeeder;
+use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class LoginTest extends TestCase
@@ -51,8 +50,7 @@ class LoginTest extends TestCase
         $response->assertStatus(422);
         $response->assertJsonStructure(['message']);
         $response->assertJson([
-            'message' => 'The provided credentials are incorrect.'
+            'message' => 'The provided credentials are incorrect.',
         ]);
     }
-
 }

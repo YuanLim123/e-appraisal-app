@@ -79,5 +79,4 @@ class AppraisalRecord extends Model
     {
         return $this->hasMany(RecordApprover::class, 'appraisal_record_id');
     }
-
 }

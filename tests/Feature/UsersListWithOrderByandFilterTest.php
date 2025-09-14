@@ -3,11 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use Database\Seeders\RoleSeeder;
-use Database\Seeders\PositionSeeder;
 use Database\Seeders\DepartmentSeeder;
+use Database\Seeders\PositionSeeder;
+use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class UsersListWithOrderByandFilterTest extends TestCase
@@ -53,7 +52,6 @@ class UsersListWithOrderByandFilterTest extends TestCase
         $response->assertJsonPath('data.2.employee_no', $alphaUser->employee_no);
     }
 
-
     public function test_users_list_filter_by_join_date_range_correctly(): void
     {
         $user = User::factory()->create(['join_at' => '2023-01-15']);
@@ -62,15 +60,15 @@ class UsersListWithOrderByandFilterTest extends TestCase
 
         $endpoint = '/api/v1/users';
 
-        $response = $this->getJson($endpoint . '?joinAfter=2016-01-01');
+        $response = $this->getJson($endpoint.'?joinAfter=2016-01-01');
         $response->assertJsonCount(2, 'data');
         $response->assertJsonFragment(['employee_no' => $user->employee_no]);
         $response->assertJsonMissing(['employee_no' => $earlierJoinedUser->employee_no]);
 
-        $response = $this->getJson($endpoint . '?joinAfter=2026-01-01');
+        $response = $this->getJson($endpoint.'?joinAfter=2026-01-01');
         $response->assertJsonCount(0, 'data');
 
-        $response = $this->getJson($endpoint . '?joinBefore=2016-12-31');
+        $response = $this->getJson($endpoint.'?joinBefore=2016-12-31');
         $response->assertJsonCount(1, 'data');
         $response->assertJsonFragment(['employee_no' => $earlierJoinedUser->employee_no]);
         $response->assertJsonMissing([
@@ -78,10 +76,10 @@ class UsersListWithOrderByandFilterTest extends TestCase
             'employee_no' => $laterJoinedUser->employee_no,
         ]);
 
-        $response = $this->getJson($endpoint . '?joinBefore=2013-12-31');
+        $response = $this->getJson($endpoint.'?joinBefore=2013-12-31');
         $response->assertJsonCount(0, 'data');
 
-        $response = $this->getJson($endpoint . '?joinAfter=2016-01-01&joinBefore=2024-12-31');
+        $response = $this->getJson($endpoint.'?joinAfter=2016-01-01&joinBefore=2024-12-31');
         $response->assertJsonCount(1, 'data');
         $response->assertJsonFragment(['employee_no' => $user->employee_no]);
     }

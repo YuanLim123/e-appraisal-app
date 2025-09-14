@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Http\Requests\UpdateAppraisalRequest;
-use App\Http\Requests\StoreAppraisalRequest;
-use App\Models\User;
-use App\Models\Appraisal;
-use App\Http\Resources\AppraisalResource;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreAppraisalRequest;
+use App\Http\Requests\UpdateAppraisalRequest;
+use App\Http\Resources\AppraisalResource;
+use App\Models\Appraisal;
+use App\Models\User;
 use App\Services\V1\Admin\AppraisalService;
-use Illuminate\Http\Request;
 
 class AppraisalController extends Controller
 {

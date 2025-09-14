@@ -4,17 +4,17 @@ namespace Tests\Feature;
 
 use App\Models\Appraisal;
 use App\Models\User;
-use Database\Seeders\RoleSeeder;
-use Database\Seeders\PositionSeeder;
 use Database\Seeders\DepartmentSeeder;
+use Database\Seeders\PositionSeeder;
+use Database\Seeders\RoleSeeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class AppraisalTest extends TestCase
 {
     use RefreshDatabase;
+
     private int $payrollDeparmentId;
 
     protected function setUp(): void

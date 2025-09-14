@@ -4,8 +4,6 @@ namespace App\Services\V1\Admin;
 
 use App\Models\Appraisal;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-
 
 class AppraisalService
 {
@@ -25,13 +23,13 @@ class AppraisalService
 
     public function update(Appraisal $appraisal, array $attributes): Appraisal
     {
-        if (!empty($attributes['appraiser_id'])) {
+        if (! empty($attributes['appraiser_id'])) {
             $appraisal->update([
                 'appraiser_id' => $attributes['appraiser_id'],
             ]);
         }
 
-        if (!empty($attributes['approvers'])) {
+        if (! empty($attributes['approvers'])) {
             $appraisal->approvers()->delete();
             $appraisal->approvers()->createMany($attributes['approvers']);
         }

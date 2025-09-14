@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
 use App\Models\Department;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -46,7 +46,7 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
     }
@@ -57,7 +57,7 @@ class UserFactory extends Factory
     public function configure(): static
     {
         return $this->afterMaking(function (User $user) {
-            $user->username = 'Asj#' . $user->employee_no;
+            $user->username = 'Asj#'.$user->employee_no;
             $user->position_id = fake()->numberBetween(1, 12);
             $user->role_id = fake()->numberBetween(1, 42);
         })->afterCreating(function (User $user) {

@@ -4,13 +4,11 @@ namespace Tests\Feature;
 
 use App\Models\Appraisal;
 use App\Models\User;
-use Database\Seeders\AppraisalSeeder;
-use Database\Seeders\RoleSeeder;
-use Database\Seeders\PositionSeeder;
 use Database\Seeders\DepartmentSeeder;
+use Database\Seeders\PositionSeeder;
+use Database\Seeders\RoleSeeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class AppraisalsListTest extends TestCase
@@ -52,7 +50,6 @@ class AppraisalsListTest extends TestCase
         $response->assertJsonCount(1, 'data');
         $response->assertJsonFragment(['id' => $appraisal->id]);
     }
-
 
     public function test_appraiser_and_appraisee_and_approvers_are_displayed_correctly(): void
     {

@@ -2,13 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-
-use Database\Seeders\PositionSeeder;
-use Database\Seeders\RoleSeeder;
-use Database\Seeders\DepartmentSeeder;
-use Database\Seeders\UserSeeder;
-use Database\Seeders\AppraisalSeeder;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 

@@ -4,12 +4,6 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-use App\Models\AppraisalRecord;
-use App\Models\Department;
-use App\Models\Position;
-use App\Models\RecordApprover;
-use App\Models\Role;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -22,7 +16,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -45,6 +39,7 @@ class User extends Authenticatable
         'username',
         'password',
     ];
+
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -72,7 +67,7 @@ class User extends Authenticatable
 
     public function getFullNameAttribute(): string
     {
-        return ucfirst($this->first_name . ' ' . $this->last_name);
+        return ucfirst($this->first_name.' '.$this->last_name);
     }
 
     public function role(): BelongsTo

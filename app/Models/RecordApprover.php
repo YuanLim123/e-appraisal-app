@@ -24,8 +24,6 @@ class RecordApprover extends Model
         ];
     }
 
-    
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -35,5 +33,4 @@ class RecordApprover extends Model
     {
         return $this->belongsTo(AppraisalRecord::class);
     }
-
 }

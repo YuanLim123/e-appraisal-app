@@ -1,10 +1,10 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Admin;
+use App\Http\Controllers\Api\V1\AppraisalController;
+use App\Http\Controllers\Api\V1\Auth\LoginController;
 use App\Http\Controllers\Api\V1\Auth\RegisteredUserController;
 use App\Http\Controllers\Api\V1\UserController;
-use App\Http\Controllers\Api\V1\AppraisalController;
-use App\Http\Controllers\Api\V1\Admin;
-use App\Http\Controllers\Api\V1\Auth\LoginController;
 use App\Http\Middleware\DepartmentMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,11 +24,9 @@ Route::get('appraisals', [AppraisalController::class, 'index']);
 Route::get('appraisals/{appraisal}', [AppraisalController::class, 'show']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::prefix('admin')->middleware([DepartmentMiddleware::class . ':HRA,PAYROLL'])->group(function () {
+    Route::prefix('admin')->middleware([DepartmentMiddleware::class.':HRA,PAYROLL'])->group(function () {
         Route::post('users', [Admin\UserController::class, 'store']);
         Route::post('users/{user}/appraisals', [Admin\AppraisalController::class, 'store']);
         Route::put('appraisals/{appraisal}', [Admin\AppraisalController::class, 'update']);
     });
 });
-
-

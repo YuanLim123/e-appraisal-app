@@ -2,9 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Http\Resources\RoleResource;
-use App\Http\Resources\DepartmentResource;
-use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
