@@ -19,16 +19,16 @@ class DepartmentMiddleware
             abort(401);
         }
 
-        $authorizedUser = false;
+        $isAuthorizedUser = false;
 
         foreach ($departments as $department) {
             if (auth()->user()->departments()->where('name', $department)->exists()) {
-                $authorizedUser = true;
+                $isAuthorizedUser = true;
                 break;
             }
         }
 
-        if (!$authorizedUser) {
+        if (!$isAuthorizedUser) {
             abort(403, 'You do not have the required department access.');
         }
 

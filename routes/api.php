@@ -21,7 +21,7 @@ Route::get('appraisals', [AppraisalController::class, 'index']);
 
 Route::prefix('admin')->middleware(['auth:sanctum', DepartmentMiddleware::class.':HRA,PAYROLL'])->group(function () {
     Route::post('users', [Admin\UserController::class, 'store']);
-    Route::post('appraisals', [Admin\AppraisalController::class, 'store']);
+    Route::post('users/{user}/appraisals', [Admin\AppraisalController::class, 'store']);
 });
 
 Route::post('login', LoginController::class);
