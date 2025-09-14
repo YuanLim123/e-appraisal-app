@@ -187,7 +187,7 @@ class AppraisalTest extends TestCase
         ];
 
         // Update appraisal
-        $updateResponse = $this->actingAs($payrollUser)->putJson("/api/v1/admin/appraisals/{$appraisal->id}", $updatedAppraisalInput);
+        $updateResponse = $this->actingAs($payrollUser)->putJson("/api/v1/admin/users/{$appraisee->id}/appraisals/{$appraisal->id}", $updatedAppraisalInput);
         $updateResponse->assertStatus(200);
         $updateResponse->assertJsonCount(2, 'data.approvers');
         $updateResponse->assertJsonPath('data.appraisee.id', $appraisee->id);
@@ -231,7 +231,7 @@ class AppraisalTest extends TestCase
         ];
 
         // Update appraisal with invalid data
-        $updateResponse = $this->actingAs($payrollUser)->putJson("/api/v1/admin/appraisals/{$appraisal->id}", $invalidAppraisalInput);
+        $updateResponse = $this->actingAs($payrollUser)->putJson("/api/v1/admin/users/{$appraisee->id}/appraisals/{$appraisal->id}", $invalidAppraisalInput);
         $updateResponse->assertStatus(422);
         $updateResponse->assertJsonValidationErrors(['appraiser_id', 'approvers.0.user_id', 'approvers.1.sequence']);
     }

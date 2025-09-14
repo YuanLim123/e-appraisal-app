@@ -16,17 +16,14 @@ Route::get('/user', function (Request $request) {
 Route::post('login', LoginController::class);
 
 Route::post('register', RegisteredUserController::class);
-
-Route::get('users', [UserController::class, 'index']);
-
 Route::get('appraisals', [AppraisalController::class, 'index']);
-
 Route::get('appraisals/{appraisal}', [AppraisalController::class, 'show']);
+Route::get('users', [UserController::class, 'index']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::prefix('admin')->middleware([DepartmentMiddleware::class.':HRA,PAYROLL'])->group(function () {
         Route::post('users', [Admin\UserController::class, 'store']);
         Route::post('users/{user}/appraisals', [Admin\AppraisalController::class, 'store']);
-        Route::put('appraisals/{appraisal}', [Admin\AppraisalController::class, 'update']);
+        Route::put('users/{user}/appraisals/{appraisal}', [Admin\AppraisalController::class, 'update']);
     });
 });

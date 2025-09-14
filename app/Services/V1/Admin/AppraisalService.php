@@ -21,7 +21,7 @@ class AppraisalService
         return $appraisal;
     }
 
-    public function update(Appraisal $appraisal, array $attributes): Appraisal
+    public function update(User $user, Appraisal $appraisal, array $attributes): Appraisal
     {
         if (! empty($attributes['appraiser_id'])) {
             $appraisal->update([
