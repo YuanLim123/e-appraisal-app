@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
-    public function store($attributes)
+    public function store(array $attributes): User
     {
         $attributes['password'] = Hash::make($attributes['password']);
         $attributes['username'] = 'Asj#' . $attributes['employee_no'];

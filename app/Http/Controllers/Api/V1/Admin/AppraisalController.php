@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\Http\Requests\UpdateAppraisalRequest;
 use App\Http\Requests\StoreAppraisalRequest;
 use App\Models\User;
 use App\Models\Appraisal;
 use App\Http\Resources\AppraisalResource;
 use App\Http\Controllers\Controller;
+use App\Services\V1\Admin\AppraisalService;
 use Illuminate\Http\Request;
 
 class AppraisalController extends Controller
 {
-    public function store(User $user, StoreAppraisalRequest $request)
+    public function store(User $user, StoreAppraisalRequest $request, AppraisalService $appraisalService)
     {
         if (Appraisal::where('appraisee_id', $user->id)->exists()) {
             return response()->json([
@@ -19,28 +21,15 @@ class AppraisalController extends Controller
             ], 422);
         }
 
-        $attributes = $request->validated();
+        $appraisal = $appraisalService->store($user, $request->validated());
 
-        $appraisal = $user->appraisalAsAppraisee()
-            ->create([
-                'appraiser_id' => $attributes['appraiser_id'],
-            ]);
+        return new AppraisalResource($appraisal);
+    }
 
-        $appraisal->approvers()->createMany($attributes['approvers']);
+    public function update(Appraisal $appraisal, UpdateAppraisalRequest $request, AppraisalService $appraisalService)
+    {
 
-
-        // validate input
-        // create appraisal
-        // $appraisal = Appraisal::create([
-        //     'appraisee_id' => $user->id,
-        //     'appraiser_id' => $attributes['appraiser_id'],
-        // ]);
-
-        // create approver roles
-        //$appraisal->approvers()->createMany($attributes['approvers']);
-
-        // return resource
-        $appraisal->load(['appraiser', 'appraisee', 'approvers', 'approvers.user']);
+        $appraisal = $appraisalService->update($appraisal, $request->validated());
 
         return new AppraisalResource($appraisal);
     }

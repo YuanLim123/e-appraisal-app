@@ -13,15 +13,22 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+Route::post('login', LoginController::class);
+
 Route::post('register', RegisteredUserController::class);
 
 Route::get('users', [UserController::class, 'index']);
 
 Route::get('appraisals', [AppraisalController::class, 'index']);
 
-Route::prefix('admin')->middleware(['auth:sanctum', DepartmentMiddleware::class.':HRA,PAYROLL'])->group(function () {
-    Route::post('users', [Admin\UserController::class, 'store']);
-    Route::post('users/{user}/appraisals', [Admin\AppraisalController::class, 'store']);
+Route::get('appraisals/{appraisal}', [AppraisalController::class, 'show']);
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::prefix('admin')->middleware([DepartmentMiddleware::class . ':HRA,PAYROLL'])->group(function () {
+        Route::post('users', [Admin\UserController::class, 'store']);
+        Route::post('users/{user}/appraisals', [Admin\AppraisalController::class, 'store']);
+        Route::put('appraisals/{appraisal}', [Admin\AppraisalController::class, 'update']);
+    });
 });
 
-Route::post('login', LoginController::class);
+

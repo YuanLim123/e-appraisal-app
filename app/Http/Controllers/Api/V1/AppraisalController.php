@@ -18,5 +18,11 @@ class AppraisalController extends Controller
         return AppraisalResource::collection($appraisals);
     }
 
+    public function show(Appraisal $appraisal)
+    {
+        $appraisal->load(['appraiser', 'appraisee', 'approvers', 'approvers.user']);
+
+        return new AppraisalResource($appraisal);
+    }
 
 }
