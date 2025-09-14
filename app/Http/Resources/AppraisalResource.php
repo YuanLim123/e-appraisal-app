@@ -7,7 +7,7 @@ use App\Http\Resources\CurrentApproverResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AppraisalControlResource extends JsonResource
+class AppraisalResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

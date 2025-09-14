@@ -2,18 +2,18 @@
 
 namespace Database\Seeders;
 
-use App\Models\AppraisalControl;
+use App\Models\Appraisal;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class AppraisalControlSeeder extends Seeder
+class AppraisalSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        AppraisalControl::create([
+        Appraisal::create([
             'appraiser_id' => 1,
             'appraisee_id' => 2,
         ])->approvers()->createMany([
@@ -21,7 +21,7 @@ class AppraisalControlSeeder extends Seeder
             ['sequence' => 2, 'user_id' => 4],
         ]);
 
-        AppraisalControl::create([
+        Appraisal::create([
             'appraiser_id' => 3,
             'appraisee_id' => 4,
         ])->approvers()->createMany([

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedInteger('sequence');
             $table->foreignId('user_id')->constrained();
-            $table->foreignId('appraisal_control_id')->constrained();
+            $table->foreignId('appraisal_id')->constrained();
             $table->timestamps();
         });
     }

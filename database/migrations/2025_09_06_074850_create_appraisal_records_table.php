@@ -25,7 +25,7 @@ return new class extends Migration
             $table->json('answer')->nullable();
             $table->json('feedback')->nullable();
             $table->text('description');
-            $table->date('review_form');
+            $table->date('review_from');
             $table->date('review_to');
             $table->foreignId('role_id')->constrained();
             $table->foreignId('position_id')->constrained();

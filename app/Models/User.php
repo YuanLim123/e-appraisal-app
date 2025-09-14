@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -87,6 +88,16 @@ class User extends Authenticatable
     public function departments(): BelongsToMany
     {
         return $this->BelongsToMany(Department::class, 'department_user');
+    }
+
+    public function appraisalAsAppraisee(): HasOne
+    {
+        return $this->hasOne(Appraisal::class, 'appraisee_id');
+    }
+
+    public function appraisalAsAppraiser(): HasMany
+    {
+        return $this->hasMany(Appraisal::class, 'appraiser_id');
     }
 
     public function appraisalRecordsAsAppraisee(): HasMany

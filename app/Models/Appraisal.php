@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class AppraisalControl extends Model
+class Appraisal extends Model
 {
     protected $fillable = [
         'appraisee_id',
@@ -27,7 +27,7 @@ class AppraisalControl extends Model
 
     public function approvers(): HasMany
     {
-        return $this->hasMany(CurrentApprover::class, 'appraisal_control_id')
+        return $this->hasMany(CurrentApprover::class, 'appraisal_id')
                 ->orderBy('sequence');
     }
 

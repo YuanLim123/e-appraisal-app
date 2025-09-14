@@ -10,7 +10,7 @@ class CurrentApprover extends Model
     protected $fillable = [
         'sequence',
         'user_id',
-        'appraisal_control_id',
+        'appraisal_id',
     ];
 
     public function user(): BelongsTo
