@@ -53,7 +53,7 @@ class User extends Authenticatable
     /**
      * Get the attributes that should be cast.
      *
-     * @return array<string, string>
+     * @return array{'email_verified_at': 'datetime', 'join_at': 'date', 'resign_at': 'date', 'password': 'hashed'}
      */
     protected function casts(): array
     {

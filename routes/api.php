@@ -17,7 +17,6 @@ Route::post('login', LoginController::class);
 
 Route::post('register', RegisteredUserController::class);
 Route::get('appraisals', [AppraisalController::class, 'index']);
-Route::get('appraisals/{appraisal}', [AppraisalController::class, 'show']);
 Route::get('users', [UserController::class, 'index']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -26,4 +25,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('users/{user}/appraisals', [Admin\AppraisalController::class, 'store']);
         Route::put('users/{user}/appraisals/{appraisal}', [Admin\AppraisalController::class, 'update']);
     });
+
+    Route::get('appraisals/{appraisal}', [AppraisalController::class, 'show'])
+        ->middleware('can:view,appraisal');
 });
