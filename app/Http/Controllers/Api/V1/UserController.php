@@ -12,6 +12,7 @@ class UserController extends Controller
     public function index(UsersListRequest $request)
     {
         $users = User::query()
+            ->with(['departments', 'role', 'role.position'])
             ->when($request->joinAfter, function ($query) use ($request) {
                 $query->where('join_at', '>', $request->joinAfter);
             })
@@ -24,8 +25,6 @@ class UserController extends Controller
             ->orderBy('created_at', 'desc')
             ->whereNull('resign_at')
             ->paginate(10);
-
-        $users->load(['departments', 'role', 'role.position']);
 
         return UserResource::collection($users);
     }
