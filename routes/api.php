@@ -28,4 +28,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('appraisals/{appraisal}', [AppraisalController::class, 'show'])
         ->middleware('can:view,appraisal');
+
+    
 });

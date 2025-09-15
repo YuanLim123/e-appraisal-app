@@ -4,14 +4,13 @@ namespace App\Policies;
 
 use App\Models\Appraisal;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class AppraisalPolicy
 {
     /**
      * Perform pre-authorization checks.
      */
-    public function before(User $user, string $ability): bool|null
+    public function before(User $user, string $ability): ?bool
     {
         if ($user->departments()->whereIn('name', ['HR', 'PAYROLL'])->exists()) {
             return true;

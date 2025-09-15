@@ -13,7 +13,7 @@ class AppraisalService
             ->create([
                 'appraiser_id' => $attributes['appraiser_id'],
             ]);
-        
+
         $appraisal->approvers()->createMany($attributes['approvers']);
 
         $appraisal->load(['appraiser', 'appraisee', 'approvers', 'approvers.user']);
