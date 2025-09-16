@@ -1,6 +1,8 @@
 <?php
 
 use App\Enums\AppraisalRecordStatus;
+use App\Enums\AppraisalRecordType;
+use App\Enums\AppraisalRecordGrade;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,20 +16,20 @@ return new class extends Migration
     {
         Schema::create('appraisal_records', function (Blueprint $table) {
             $table->id();
-            $table->string('type');
-            $table->string('purpose');
-            $table->string('grade');
-            $table->float('total');
+            $table->enum('type', AppraisalRecordType::cases())->nullable();
+            $table->string('purpose')->nullable();
+            $table->enum('grade', AppraisalRecordGrade::cases())->nullable();
+            $table->text('grade_description')->nullable();
+            $table->float('total')->nullable();
             $table->string('position_period')->nullable();
             $table->enum('status', AppraisalRecordStatus::cases())->default(AppraisalRecordStatus::CREATED);
             $table->unsignedInteger('current_step')->nullable();
             $table->json('answer')->nullable();
             $table->json('feedback')->nullable();
-            $table->text('description');
-            $table->date('review_from');
-            $table->date('review_to');
-            $table->foreignId('role_id')->constrained();
-            $table->foreignId('position_id')->constrained();
+            $table->date('review_from')->nullable();
+            $table->date('review_to')->nullable();
+            $table->foreignId('role_id')->constrained()->nullable();
+            $table->foreignId('position_id')->constrained()->nullable();
             $table->foreignId('appraiser_id')->references('id')->on('users');
             $table->foreignId('appraisee_id')->references('id')->on('users');
             $table->foreignId('current_approver_id')->references('id')->on('users')->nullable();

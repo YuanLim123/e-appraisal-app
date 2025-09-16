@@ -10,8 +10,8 @@ class Season extends Model
     protected $fillable = [
         'name',
         'description',
-        'start_date',
-        'end_date',
+        'start_at',
+        'end_at',
     ];
 
     public function appraisalRecords(): HasMany
