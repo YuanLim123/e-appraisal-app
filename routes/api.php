@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Api\V1\AppraisalController;
+use App\Http\Controllers\Api\V1\AppraisalRecordController;
 use App\Http\Controllers\Api\V1\Auth\LoginController;
 use App\Http\Controllers\Api\V1\Auth\RegisteredUserController;
 use App\Http\Controllers\Api\V1\UserController;
@@ -29,5 +30,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('appraisals/{appraisal}', [AppraisalController::class, 'show'])
         ->middleware('can:view,appraisal');
 
-    
+    Route::post('users/{user}/appraisal-records', [AppraisalRecordController::class, 'store']);
+    Route::get('appraisal-records', [AppraisalRecordController::class, 'index']);
+
 });

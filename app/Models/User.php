@@ -15,6 +15,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
+    
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -68,6 +69,12 @@ class User extends Authenticatable
     public function getFullNameAttribute(): string
     {
         return ucfirst($this->first_name.' '.$this->last_name);
+    }
+
+    public function isHigherRole(): bool
+    {
+        $minimumPositionForHigherRole = 5;
+        return $this->position_id >= $minimumPositionForHigherRole;
     }
 
     public function role(): BelongsTo

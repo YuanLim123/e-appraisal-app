@@ -28,12 +28,12 @@ return new class extends Migration
             $table->json('feedback')->nullable();
             $table->date('review_from')->nullable();
             $table->date('review_to')->nullable();
-            $table->foreignId('role_id')->constrained()->nullable();
-            $table->foreignId('position_id')->constrained()->nullable();
+            $table->foreignId('role_id')->nullable()->constrained();
+            $table->foreignId('position_id')->nullable()->constrained();
             $table->foreignId('appraiser_id')->references('id')->on('users');
             $table->foreignId('appraisee_id')->references('id')->on('users');
-            $table->foreignId('current_approver_id')->references('id')->on('users')->nullable();
-            $table->foreignId('season_id')->constrained()->nullable();
+            $table->foreignId('current_approver_id')->nullable()->references('id')->on('users');
+            $table->foreignId('season_id')->nullable()->constrained();
             $table->timestamp('completed_at')->nullable();
             $table->timestamp('rejected_at')->nullable();
             $table->timestamps();
