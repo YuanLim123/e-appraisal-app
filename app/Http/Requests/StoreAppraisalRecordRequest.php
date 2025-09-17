@@ -2,12 +2,11 @@
 
 namespace App\Http\Requests;
 
-use App\Models\User;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreAppraisalRecordRequest extends FormRequest
 {
-    private $minimumPositionForHigherRole = 5;
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -26,8 +25,8 @@ class StoreAppraisalRecordRequest extends FormRequest
         $user = $this->route('user');
 
         $rules = [
-            'review_from' => ['required', 'date'],
-            'review_to' => ['required', 'date'],
+            'review_from' => ['required', 'date', Rule::date()->format('Y-m-d')],
+            'review_to' => ['required', 'date', Rule::date()->format('Y-m-d')],
             'purpose' => ['required', 'string', 'max:255'],
         ];
 

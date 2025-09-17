@@ -2,6 +2,7 @@
 
 namespace App\Services\V1;
 
+use App\Enums\AppraisalRecordGrade;
 use App\Enums\AppraisalRecordPurposeType;
 use App\Enums\AppraisalRecordStatus;
 use App\Enums\AppraisalRecordType;
@@ -57,12 +58,14 @@ class AppraisalRecordService
         } else {
             $weighted_score = $this->calculateWeightedScore($attributes['section_percentage']);
         }
+
+        $grade = $this->calculateGrade($weighted_score);
         
         $appraisalRecord = AppraisalRecord::create([
             'type' => $isHigherRole ? AppraisalRecordType::SUPERVISION->value : AppraisalRecordType::NORMAL->value,
             'purpose' => $attributes['purpose'],
-            //'grade' => $attributes['grade'] ?? null,
-            //'grade_description' => $attributes['description'] ?? null,
+            'grade' => $grade->value,
+            'grade_description' => $grade->label(),
             'total' => $weighted_score,
             'status' => AppraisalRecordStatus::CREATED->value,
             'role_id' => $user->role_id,
@@ -92,6 +95,22 @@ class AppraisalRecordService
         }
 
         return $total;
+    }
+
+    private function calculateGrade(float $total): AppraisalRecordGrade
+    {
+        switch ($total) {
+            case $total >= 90:
+                return AppraisalRecordGrade::EXCELLENT;
+            case ($total >= 80 && $total < 90):
+                return AppraisalRecordGrade::GOOD;
+            case ($total >= 70 && $total < 80):
+                return AppraisalRecordGrade::SATISFACTORY;
+            case ($total >= 60 && $total < 70):
+                return AppraisalRecordGrade::BELOW_AVERAGE;
+            default:
+                return AppraisalRecordGrade::POOR;
+        }
     }
 
     private function validateRatingSum(array $performance): bool

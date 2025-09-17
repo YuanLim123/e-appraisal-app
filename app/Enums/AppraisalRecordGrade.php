@@ -35,10 +35,10 @@ enum AppraisalRecordGrade: string
     public function score_range(): array
     {
         return match ($this) {
-            self::POOR => [0, 59],
-            self::BELOW_AVERAGE => [60, 69],
-            self::SATISFACTORY => [70, 79],
-            self::GOOD => [80, 89],
+            self::POOR => [0, 59.99],
+            self::BELOW_AVERAGE => [60, 69.99],
+            self::SATISFACTORY => [70, 79.99],
+            self::GOOD => [80, 89.99],
             self::EXCELLENT => [90, 100]
         };
     }

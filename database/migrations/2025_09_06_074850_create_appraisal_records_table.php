@@ -1,8 +1,6 @@
 <?php
 
 use App\Enums\AppraisalRecordStatus;
-use App\Enums\AppraisalRecordType;
-use App\Enums\AppraisalRecordGrade;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,13 +14,13 @@ return new class extends Migration
     {
         Schema::create('appraisal_records', function (Blueprint $table) {
             $table->id();
-            $table->enum('type', AppraisalRecordType::cases())->nullable();
+            $table->string('type')->nullable();
             $table->string('purpose')->nullable();
-            $table->enum('grade', AppraisalRecordGrade::cases())->nullable();
+            $table->string('grade')->nullable();
             $table->text('grade_description')->nullable();
             $table->float('total')->nullable();
             $table->string('position_period')->nullable();
-            $table->enum('status', AppraisalRecordStatus::cases())->default(AppraisalRecordStatus::CREATED);
+            $table->string('status')->default(AppraisalRecordStatus::CREATED);
             $table->unsignedInteger('current_step')->nullable();
             $table->json('answer')->nullable();
             $table->json('feedback')->nullable();
