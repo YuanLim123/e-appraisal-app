@@ -5,14 +5,15 @@ namespace App\Http\Controllers\Api\V1;
 use App\Enums\AppraisalRecordPurposeType;
 use App\Enums\AppraisalRecordStatus;
 use App\Enums\AppraisalRecordType;
+use App\Models\AppraisalRecord;
 use App\Models\User;
 use App\Models\Season;
 use App\Http\Requests\StoreAppraisalRecordRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AppraisalRecordResource;
-use App\Models\AppraisalRecord;
 use App\Services\V1\AppraisalRecordService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class AppraisalRecordController extends Controller
 {
@@ -27,6 +28,8 @@ class AppraisalRecordController extends Controller
 
     public function store(User $user, StoreAppraisalRecordRequest $request, AppraisalRecordService $service)
     {
+        Gate::authorize('create', [AppraisalRecord::class, $user->appraisalAsAppraisee]);
+
         try {
             $appraisalRecord = $service->store($user, $request->validated());
         } catch (\Exception $e) {
