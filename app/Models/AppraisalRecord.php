@@ -5,12 +5,15 @@ namespace App\Models;
 use App\Enums\AppraisalRecordGrade;
 use App\Enums\AppraisalRecordStatus;
 use App\Enums\AppraisalRecordType;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AppraisalRecord extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'type',
         'purpose',
@@ -41,8 +44,8 @@ class AppraisalRecord extends Model
             'answer' => 'array',
             'feedback' => 'array',
             'status' => AppraisalRecordStatus::class,
-            'review_from' => 'date',
-            'review_to' => 'date',
+            'review_from' => 'date:Y-m-d',
+            'review_to' => 'date:Y-m-d',
             'completed_at' => 'datetime',
             'rejected_at' => 'datetime',
         ];

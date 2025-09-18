@@ -66,7 +66,6 @@ class AppraisalsListTest extends TestCase
         $appraisal->approvers()->createMany([
             ['sequence' => 1, 'user_id' => $approver1->id],
             ['sequence' => 2, 'user_id' => $approver2->id],
-
         ]);
 
         $response = $this->getJson('/api/v1/appraisals');

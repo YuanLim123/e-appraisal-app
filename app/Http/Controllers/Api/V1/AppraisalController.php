@@ -11,7 +11,7 @@ class AppraisalController extends Controller
     public function index()
     {
         $appraisals = Appraisal::query()
-            ->with(['appraiser', 'appraisee'])
+            ->with(['appraiser', 'appraisee', 'approvers', 'approvers.user'])
             ->paginate(10);
 
         return AppraisalResource::collection($appraisals);

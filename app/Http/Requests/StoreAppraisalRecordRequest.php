@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\AppraisalRecordPurposeType;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -27,7 +28,7 @@ class StoreAppraisalRecordRequest extends FormRequest
         $rules = [
             'review_from' => ['required', 'date', Rule::date()->format('Y-m-d')],
             'review_to' => ['required', 'date', Rule::date()->format('Y-m-d')],
-            'purpose' => ['required', 'string', 'max:255'],
+            'purpose' => ['required', Rule::enum(AppraisalRecordPurposeType::class)],
         ];
 
         if ($user->isHigherRole()) {

@@ -15,11 +15,13 @@ class AppraisalRecordService
     public function store(User $user, array $attributes): AppraisalRecord
     {
         $isHigherRole = $user->isHigherRole();
+
         $appraisal = $user->appraisalAsAppraisee;
 
-        if (!$appraisal) {
-            throw new \Exception('The user does not have an appraisal. Please try again later.');
-        }
+        // already handled in the appraisal record create policy
+        // if (!$appraisal) {
+        //     throw new \Exception('The user does not have an appraisal. Please try again later.');
+        // }
 
         // check if the selected appraisal season exist
         $season = Season::query()
@@ -77,6 +79,8 @@ class AppraisalRecordService
             'appraisee_id' => $user->id,
             'season_id' => $season ? $season->id : null,
         ]);
+
+        $appraisalRecord->load(['appraisee', 'appraiser']);
 
         return $appraisalRecord;
     }

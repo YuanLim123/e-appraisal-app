@@ -24,5 +24,11 @@ class SeasonSeeder extends Seeder
             'purpose' => 'annual_review',
             'start_at' => '2024-12-01',
         ]);
+
+        Season::create([
+            'name' => '2025 Special Review',
+            'purpose' => 'special_review',
+            'start_at' => '2024-12-01',
+        ]);
     }
 }

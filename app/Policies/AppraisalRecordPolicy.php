@@ -39,13 +39,18 @@ class AppraisalRecordPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user, Appraisal $appraisal): bool
+    public function create(User $user, ?Appraisal $appraisal): Response
     {
-        if (!$appraisal) {
-            return false;
+        if (empty($appraisal)) {
+            return Response::deny('The user does not have an appraisal. Please try again later.');
         }
+
         // only appraiser can create appraisal record for the appraisee
-        return auth()->id() === $appraisal->appraiser_id;
+        if (auth()->id() === $appraisal->appraiser_id) {
+            return Response::allow();
+        }
+
+        return Response::deny();
     }
 
     /**
