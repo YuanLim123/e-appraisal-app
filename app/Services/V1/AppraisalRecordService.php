@@ -6,6 +6,7 @@ use App\Enums\AppraisalRecordGrade;
 use App\Enums\AppraisalRecordPurposeType;
 use App\Enums\AppraisalRecordStatus;
 use App\Enums\AppraisalRecordType;
+use App\Exceptions\InvalidAppraisalSeason;
 use App\Models\AppraisalRecord;
 use App\Models\User;
 use App\Models\Season;
@@ -35,7 +36,7 @@ class AppraisalRecordService
             $attributes['purpose'] != AppraisalRecordPurposeType::CONFIRMATION_OR_PROMOTION->value
             && !$season
         ) {
-            throw new \Exception('No season have been started. Please try again later.');
+            throw new InvalidAppraisalSeason();
         }
 
         // check if the user already has an appraisal record in the selected season

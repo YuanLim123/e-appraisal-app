@@ -4,8 +4,9 @@ namespace Tests\Feature\AppraisalRecord;
 
 use App\Enums\AppraisalRecordPurposeType;
 use App\Enums\AppraisalRecordStatus;
-use App\Models\Appraisal;
+use App\Exceptions\InvalidAppraisalSeason;
 use App\Models\AppraisalRecord;
+use App\Models\Season;
 use App\Models\User;
 use Database\Seeders\DepartmentSeeder;
 use Database\Seeders\PositionSeeder;
@@ -15,8 +16,6 @@ use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-
-use function PHPUnit\Framework\assertJson;
 
 class AppraisalRecordStoreTest extends TestCase
 {
@@ -184,10 +183,10 @@ class AppraisalRecordStoreTest extends TestCase
 
         $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
 
-        $response->assertStatus(403);
+        $response->assertStatus(422);
 
         $response->assertJson([
-            'message' => 'The user does not have an appraisal. Please try again later.'
+            'message' => 'The user does not have an appraisal. Please create an appraisal first before creating an appraisal record.'
         ]);
     }
 
@@ -273,5 +272,45 @@ class AppraisalRecordStoreTest extends TestCase
             'appraiser_id' => $appraiser->id,
             'appraisee_id' => $appraisee->id,
         ]);
+    }
+
+    public function test_appraiser_cannot_create_appraisal_record_with_invalid_season_data(): void
+    {
+        $payrollUser = User::factory()->create();
+        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
+
+        $appraisee = User::factory()->create();
+        $appraisee->position_id = 2;
+        $appraisee->save();
+        $appraiser = User::factory()->create();
+        $approver1 = User::factory()->create();
+        $approver2 = User::factory()->create();
+
+        $appraisalInput = [
+            'appraiser_id' => $appraiser->id,
+            'approvers' => [
+                ['user_id' => $approver1->id, 'sequence' => 1],
+                ['user_id' => $approver2->id, 'sequence' => 2],
+            ],
+        ];
+
+        // end the annual review season so we can validate the invalid season error
+        $annualReviewSeason = Season::where('purpose', 'annual_review')->first();
+        $annualReviewSeason->end_at = now();
+        $annualReviewSeason->save();
+
+        $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+
+        $appraisalRecordInput = AppraisalRecord::factory()->make([
+            'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW
+        ])->toArray();
+
+        $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
+        // assert 422
+        $response->assertStatus(422);
+        $response->assertJson([
+            'message' => 'The appraisal season has not been started yet. Please try again later.'
+        ]);
+
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Enums\AppraisalRecordPurposeType;
 use App\Enums\AppraisalRecordStatus;
 use App\Enums\AppraisalRecordType;
+use App\Exceptions\InvalidAppraisalSeason;
 use App\Models\AppraisalRecord;
 use App\Models\User;
 use App\Models\Season;
@@ -32,6 +33,10 @@ class AppraisalRecordController extends Controller
 
         try {
             $appraisalRecord = $service->store($user, $request->validated());
+        } catch (InvalidAppraisalSeason $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => $e->getMessage(),
@@ -58,6 +63,5 @@ class AppraisalRecordController extends Controller
             ], 422);
         }
         return new AppraisalRecordResource($appraisalRecord);
-
     }
 }
