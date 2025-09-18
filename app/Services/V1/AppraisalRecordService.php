@@ -62,7 +62,7 @@ class AppraisalRecordService
         }
 
         $grade = $this->calculateGrade($weighted_score);
-        
+
         $appraisalRecord = AppraisalRecord::create([
             'type' => $isHigherRole ? AppraisalRecordType::SUPERVISION->value : AppraisalRecordType::NORMAL->value,
             'purpose' => $attributes['purpose'],
@@ -77,6 +77,58 @@ class AppraisalRecordService
             'review_to' => $attributes['review_to'],
             'appraiser_id' => $appraisal->appraiser_id,
             'appraisee_id' => $user->id,
+            'season_id' => $season ? $season->id : null,
+        ]);
+
+        $appraisalRecord->load(['appraisee', 'appraiser']);
+
+        return $appraisalRecord;
+    }
+
+    public function update(User $user, AppraisalRecord $appraisalRecord, array $attributes): AppraisalRecord
+    {
+        $isHigherRole = $user->isHigherRole();
+
+        $season = Season::query()
+            ->where('purpose', $attributes['purpose'])
+            ->whereNotNull('start_at')
+            ->whereNull('end_at')
+            ->orderBy('id', 'desc')
+            ->first();
+
+        if (
+            $attributes['purpose'] != AppraisalRecordPurposeType::CONFIRMATION_OR_PROMOTION->value
+            && !$season
+        ) {
+            throw new \Exception('No season have been started. Please try again later.');
+        }
+
+        // validate that the sum of ratings in performance
+        if ($isHigherRole && !$this->validateRatingSum($attributes['performance'])) {
+            throw new \Exception('Section 1 value is invalid. The sum of ratings must not exceed 100%.');
+        }
+
+        $weighted_score = 0;
+
+        // calculate weighted total score
+        if (! $isHigherRole) {
+            $weighted_score = $attributes['total'] ?? 0;
+        } else {
+            $weighted_score = $this->calculateWeightedScore($attributes['section_percentage']);
+        }
+
+        $grade = $this->calculateGrade($weighted_score);
+
+        $appraisalRecord->update([
+            'purpose' => $attributes['purpose'],
+            'grade' => $grade->value,
+            'grade_description' => $grade->label(),
+            'total' => $weighted_score,
+            'role_id' => $user->role_id,
+            'position_id' => $user->position_id,
+            'answer' => $attributes['performance'] ?? null,
+            'review_from' => $attributes['review_from'],
+            'review_to' => $attributes['review_to'],
             'season_id' => $season ? $season->id : null,
         ]);
 

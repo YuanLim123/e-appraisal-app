@@ -58,7 +58,7 @@ class AppraisalRecordPolicy
      */
     public function update(User $user, AppraisalRecord $appraisalRecord): bool
     {
-        return false;
+        return $user->id === $appraisalRecord->appraiser_id;
     }
 
     /**

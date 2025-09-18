@@ -39,4 +39,25 @@ class AppraisalRecordController extends Controller
         }
         return new AppraisalRecordResource($appraisalRecord);
     }
+
+    public function update(User $user, AppraisalRecord $appraisalRecord, StoreAppraisalRecordRequest $request, AppraisalRecordService $service)
+    {
+        Gate::authorize('update', [AppraisalRecord::class, $appraisalRecord]);
+
+        // check if season is valid
+
+        // check rating sum
+
+        // calculateGrade
+
+        try {
+            $appraisalRecord = $service->update($user, $appraisalRecord, $request->validated());
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 422);
+        }
+        return new AppraisalRecordResource($appraisalRecord);
+
+    }
 }
