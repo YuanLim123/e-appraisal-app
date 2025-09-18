@@ -37,7 +37,6 @@ class AppraisalRecordController extends Controller
                 'message' => $e->getMessage(),
             ], 422);
         }
-
         return new AppraisalRecordResource($appraisalRecord);
     }
 }

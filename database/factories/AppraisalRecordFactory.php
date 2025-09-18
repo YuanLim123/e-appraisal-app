@@ -20,7 +20,7 @@ class AppraisalRecordFactory extends Factory
     {
         $start = fake()->dateTimeBetween('-1 years', 'now');
         $end = fake()->dateTimeBetween($start, '+1 month');
-        
+
         return [
             'review_from' => $start->format('Y-m-d'),
             'review_to' => $end->format('Y-m-d'),
@@ -40,9 +40,11 @@ class AppraisalRecordFactory extends Factory
         return $this->state(function (array $attributes) {
             return [
                 'performance' => [
-                    'goal' => fake()->sentence(10),
-                    'result' => fake()->sentence(15),
-                    'rating' => fake()->numberBetween(10, 90),
+                    [
+                        'goal' => fake()->sentence(10),
+                        'result' => fake()->sentence(15),
+                        'rating' => fake()->numberBetween(10, 90),
+                    ]
                 ],
                 'section_percentage' => [
                     fake()->numberBetween(10, 70),

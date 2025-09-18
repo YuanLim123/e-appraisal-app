@@ -122,6 +122,7 @@ class AppraisalRecordStoreTest extends TestCase
         // assert json
         $response->assertJsonFragment([
             'status' => AppraisalRecordStatus::CREATED->value,
+            'total' => $appraisalRecordInput['total'],
         ]);
         $response->assertJsonPath('data.appraiser.id', $appraiser->id);
         $response->assertJsonPath('data.appraisee.id', $appraisee->id);
@@ -223,5 +224,54 @@ class AppraisalRecordStoreTest extends TestCase
         // assert 422
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['review_from', 'purpose', 'review_to']);
+    }
+
+    public function test_appraiser_can_create_supervision_type_appraisal_record(): void
+    {
+        // create appraisee, approser, approver
+        // create appraisal for that appraisee
+        // login as hr to create appraisal
+        $payrollUser = User::factory()->create();
+        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
+
+        $appraisee = User::factory()->create();
+        $appraisee->position_id = 6;
+        $appraisee->save();
+        $appraiser = User::factory()->create();
+        $approver1 = User::factory()->create();
+        $approver2 = User::factory()->create();
+
+        $appraisalInput = [
+            'appraiser_id' => $appraiser->id,
+            'approvers' => [
+                ['user_id' => $approver1->id, 'sequence' => 1],
+                ['user_id' => $approver2->id, 'sequence' => 2],
+            ],
+        ];
+
+        $createResponse = $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+        $createResponse->assertStatus(201);
+        // login as appraiser
+        // call create appraisal record api for that appraisee
+        $appraisalRecordInput = AppraisalRecord::factory()->supervision()->make([
+            'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW
+        ])->toArray();
+
+        $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
+        // assert 201
+        $response->assertStatus(201);
+        // assert json
+        $response->assertJsonFragment([
+            'status' => AppraisalRecordStatus::CREATED->value,
+            'answer' => $appraisalRecordInput['performance'],
+        ]);
+        $response->assertJsonPath('data.appraiser.id', $appraiser->id);
+        $response->assertJsonPath('data.appraisee.id', $appraisee->id);
+        // assert database has that record
+
+        $this->assertDatabaseHas('appraisal_records', [
+            'appraiser_id' => $appraiser->id,
+            'appraisee_id' => $appraisee->id,
+        ]);
     }
 }
