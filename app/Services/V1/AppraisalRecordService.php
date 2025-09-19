@@ -6,7 +6,10 @@ use App\Enums\AppraisalRecordGrade;
 use App\Enums\AppraisalRecordPurposeType;
 use App\Enums\AppraisalRecordStatus;
 use App\Enums\AppraisalRecordType;
-use App\Exceptions\InvalidAppraisalSeason;
+use App\Exceptions\InvalidAppraisalSeasonException;
+use App\Exceptions\InvalidRatingSumException;
+use App\Exceptions\RecordAlreadyExistsInSeasonException;
+use App\Exceptions\UserHasNoAppraisalCreatedException;
 use App\Models\AppraisalRecord;
 use App\Models\User;
 use App\Models\Season;
@@ -36,7 +39,7 @@ class AppraisalRecordService
             $attributes['purpose'] != AppraisalRecordPurposeType::CONFIRMATION_OR_PROMOTION->value
             && !$season
         ) {
-            throw new InvalidAppraisalSeason();
+            throw new InvalidAppraisalSeasonException();
         }
 
         // check if the user already has an appraisal record in the selected season
@@ -45,12 +48,12 @@ class AppraisalRecordService
             ->first();
 
         if ($existingRecord) {
-            throw new \Exception('The user already has an appraisal record in the selected season.');
+            throw new RecordAlreadyExistsInSeasonException();
         }
 
         // validate that the sum of ratings in performance
         if ($isHigherRole && !$this->validateRatingSum($attributes['performance'])) {
-            throw new \Exception('Section 1 value is invalid. The sum of ratings must not exceed 100%.');
+            throw new InvalidRatingSumException();
         }
 
         $weighted_score = 0;

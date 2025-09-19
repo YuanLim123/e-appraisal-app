@@ -4,7 +4,8 @@ namespace Tests\Feature\AppraisalRecord;
 
 use App\Enums\AppraisalRecordPurposeType;
 use App\Enums\AppraisalRecordStatus;
-use App\Exceptions\InvalidAppraisalSeason;
+use App\Exceptions\InvalidAppraisalSeasonException;
+use App\Exceptions\UserHasNoAppraisalCreatedException;
 use App\Models\AppraisalRecord;
 use App\Models\Season;
 use App\Models\User;
@@ -186,7 +187,7 @@ class AppraisalRecordStoreTest extends TestCase
         $response->assertStatus(422);
 
         $response->assertJson([
-            'message' => 'The user does not have an appraisal. Please create an appraisal first before creating an appraisal record.'
+            'message' => (new UserHasNoAppraisalCreatedException())->getMessage(),
         ]);
     }
 
@@ -309,7 +310,7 @@ class AppraisalRecordStoreTest extends TestCase
         // assert 422
         $response->assertStatus(422);
         $response->assertJson([
-            'message' => 'The appraisal season has not been started yet. Please try again later.'
+            'message' => (new InvalidAppraisalSeasonException())->getMessage(),
         ]);
 
     }

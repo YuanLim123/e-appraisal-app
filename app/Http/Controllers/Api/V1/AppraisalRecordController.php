@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Enums\AppraisalRecordPurposeType;
 use App\Enums\AppraisalRecordStatus;
 use App\Enums\AppraisalRecordType;
-use App\Exceptions\InvalidAppraisalSeason;
+use App\Exceptions\InvalidAppraisalSeasonException;
 use App\Models\AppraisalRecord;
 use App\Models\User;
 use App\Models\Season;
@@ -30,18 +30,9 @@ class AppraisalRecordController extends Controller
     public function store(User $user, StoreAppraisalRecordRequest $request, AppraisalRecordService $service)
     {
         Gate::authorize('create', [AppraisalRecord::class, $user->appraisalAsAppraisee]);
+        
+        $appraisalRecord = $service->store($user, $request->validated());
 
-        try {
-            $appraisalRecord = $service->store($user, $request->validated());
-        } catch (InvalidAppraisalSeason $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-            ], 422);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-            ], 422);
-        }
         return new AppraisalRecordResource($appraisalRecord);
     }
 
