@@ -10,8 +10,8 @@ use App\Exceptions\InvalidAppraisalSeasonException;
 use App\Exceptions\InvalidRatingSumException;
 use App\Exceptions\RecordAlreadyExistsInSeasonException;
 use App\Models\AppraisalRecord;
-use App\Models\User;
 use App\Models\Season;
+use App\Models\User;
 
 class AppraisalRecordService
 {
@@ -36,9 +36,9 @@ class AppraisalRecordService
 
         if (
             $attributes['purpose'] != AppraisalRecordPurposeType::CONFIRMATION_OR_PROMOTION->value
-            && !$season
+            && ! $season
         ) {
-            throw new InvalidAppraisalSeasonException();
+            throw new InvalidAppraisalSeasonException;
         }
 
         // check if the user already has an appraisal record in the selected season
@@ -47,12 +47,12 @@ class AppraisalRecordService
             ->first();
 
         if ($existingRecord) {
-            throw new RecordAlreadyExistsInSeasonException();
+            throw new RecordAlreadyExistsInSeasonException;
         }
 
         // validate that the sum of ratings in performance
-        if ($isHigherRole && !$this->validateRatingSum($attributes['performance'])) {
-            throw new InvalidRatingSumException();
+        if ($isHigherRole && ! $this->validateRatingSum($attributes['performance'])) {
+            throw new InvalidRatingSumException;
         }
 
         $weightedScore = 0;
@@ -101,14 +101,14 @@ class AppraisalRecordService
 
         if (
             $attributes['purpose'] != AppraisalRecordPurposeType::CONFIRMATION_OR_PROMOTION->value
-            && !$season
+            && ! $season
         ) {
-            throw new InvalidAppraisalSeasonException();
+            throw new InvalidAppraisalSeasonException;
         }
 
         // validate that the sum of ratings in performance
-        if ($isHigherRole && !$this->validateRatingSum($attributes['performance'])) {
-            throw new InvalidRatingSumException();
+        if ($isHigherRole && ! $this->validateRatingSum($attributes['performance'])) {
+            throw new InvalidRatingSumException;
         }
 
         $weighted_score = 0;
@@ -149,7 +149,7 @@ class AppraisalRecordService
         $sectionWeighages = [$sectionOneWeightage, $sectionTwoWeightage];
 
         foreach ($sectionPercentage as $index => $value) {
-            $sectionTotal = (float)($value) * ($sectionWeighages[$index] / 100);
+            $sectionTotal = (float) ($value) * ($sectionWeighages[$index] / 100);
             $total += $sectionTotal;
         }
 
@@ -161,11 +161,11 @@ class AppraisalRecordService
         switch ($total) {
             case $total >= 90:
                 return AppraisalRecordGrade::EXCELLENT;
-            case ($total >= 80 && $total < 90):
+            case $total >= 80 && $total < 90:
                 return AppraisalRecordGrade::GOOD;
-            case ($total >= 70 && $total < 80):
+            case $total >= 70 && $total < 80:
                 return AppraisalRecordGrade::SATISFACTORY;
-            case ($total >= 60 && $total < 70):
+            case $total >= 60 && $total < 70:
                 return AppraisalRecordGrade::BELOW_AVERAGE;
             default:
                 return AppraisalRecordGrade::POOR;
@@ -177,7 +177,7 @@ class AppraisalRecordService
         $total = 0;
 
         foreach ($performance as $item) {
-            $total += (int)$item['rating'];
+            $total += (int) $item['rating'];
         }
 
         return $total <= 100;

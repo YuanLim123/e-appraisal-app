@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Enums\AppraisalRecordPurposeType;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Carbon\Carbon;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\AppraisalRecord>
@@ -33,7 +32,6 @@ class AppraisalRecordFactory extends Factory
 
     /**
      * Indicate that the record is supervision type
-     * 
      */
     public function supervision(): Factory
     {
@@ -44,12 +42,12 @@ class AppraisalRecordFactory extends Factory
                         'goal' => fake()->sentence(10),
                         'result' => fake()->sentence(15),
                         'rating' => fake()->numberBetween(10, 90),
-                    ]
+                    ],
                 ],
                 'section_percentage' => [
                     fake()->numberBetween(10, 70),
                     fake()->numberBetween(10, 70),
-                ]
+                ],
             ];
         });
     }

@@ -6,5 +6,5 @@ use Exception;
 
 class RecordAlreadyExistsInSeasonException extends Exception
 {
-  protected $message = 'The user already has an appraisal record in the selected season.';
+    protected $message = 'The user already has an appraisal record in the selected season.';
 }

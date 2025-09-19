@@ -2,18 +2,12 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Enums\AppraisalRecordPurposeType;
-use App\Enums\AppraisalRecordStatus;
-use App\Enums\AppraisalRecordType;
-use App\Exceptions\InvalidAppraisalSeasonException;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreAppraisalRecordRequest;
+use App\Http\Resources\AppraisalRecordResource;
 use App\Models\AppraisalRecord;
 use App\Models\User;
-use App\Models\Season;
-use App\Http\Requests\StoreAppraisalRecordRequest;
-use App\Http\Controllers\Controller;
-use App\Http\Resources\AppraisalRecordResource;
 use App\Services\V1\AppraisalRecordService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 class AppraisalRecordController extends Controller

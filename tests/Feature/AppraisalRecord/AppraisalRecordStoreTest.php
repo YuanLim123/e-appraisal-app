@@ -16,12 +16,12 @@ use Database\Seeders\RoleSeeder;
 use Database\Seeders\SeasonSeeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class AppraisalRecordStoreTest extends TestCase
 {
     use RefreshDatabase;
+
     private int $payrollDeparmentId;
 
     protected function setUp(): void
@@ -115,7 +115,7 @@ class AppraisalRecordStoreTest extends TestCase
         // login as appraiser
         // call create appraisal record api for that appraisee
         $appraisalRecordInput = AppraisalRecord::factory()->make([
-            'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW
+            'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW,
         ])->toArray();
         $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
         // assert 201
@@ -159,7 +159,7 @@ class AppraisalRecordStoreTest extends TestCase
 
         // login as appraiser and submit
         $appraisalRecordInput = AppraisalRecord::factory()->make([
-            'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW
+            'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW,
         ])->toArray();
         $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
 
@@ -168,7 +168,7 @@ class AppraisalRecordStoreTest extends TestCase
 
         $response->assertStatus(422);
         $response->assertJson([
-            'message' => 'The user already has an appraisal record in the selected season.'
+            'message' => 'The user already has an appraisal record in the selected season.',
         ]);
     }
 
@@ -180,7 +180,7 @@ class AppraisalRecordStoreTest extends TestCase
         $appraisee->save();
 
         $appraisalRecordInput = AppraisalRecord::factory()->make([
-            'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW
+            'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW,
         ])->toArray();
 
         $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
@@ -188,7 +188,7 @@ class AppraisalRecordStoreTest extends TestCase
         $response->assertStatus(422);
 
         $response->assertJson([
-            'message' => (new UserHasNoAppraisalCreatedException())->getMessage(),
+            'message' => (new UserHasNoAppraisalCreatedException)->getMessage(),
         ]);
     }
 
@@ -255,7 +255,7 @@ class AppraisalRecordStoreTest extends TestCase
         // login as appraiser
         // call create appraisal record api for that appraisee
         $appraisalRecordInput = AppraisalRecord::factory()->supervision()->make([
-            'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW
+            'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW,
         ])->toArray();
 
         $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
@@ -304,14 +304,14 @@ class AppraisalRecordStoreTest extends TestCase
         $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
 
         $appraisalRecordInput = AppraisalRecord::factory()->make([
-            'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW
+            'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW,
         ])->toArray();
 
         $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
         // assert 422
         $response->assertStatus(422);
         $response->assertJson([
-            'message' => (new InvalidAppraisalSeasonException())->getMessage(),
+            'message' => (new InvalidAppraisalSeasonException)->getMessage(),
         ]);
     }
 
@@ -352,14 +352,14 @@ class AppraisalRecordStoreTest extends TestCase
                     'result' => 'result 2',
                     'rating' => 20,
                 ],
-            ]
+            ],
         ])->toArray();
 
         $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
 
         $response->assertStatus(422);
         $response->assertJson([
-            'message' => (new InvalidRatingSumException())->getMessage(),
+            'message' => (new InvalidRatingSumException)->getMessage(),
         ]);
     }
 }

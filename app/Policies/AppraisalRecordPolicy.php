@@ -2,10 +2,10 @@
 
 namespace App\Policies;
 
+use App\Exceptions\UserHasNoAppraisalCreatedException;
 use App\Models\Appraisal;
 use App\Models\AppraisalRecord;
 use App\Models\User;
-use App\Exceptions\UserHasNoAppraisalCreatedException;
 use Illuminate\Auth\Access\Response;
 
 class AppraisalRecordPolicy
@@ -21,6 +21,7 @@ class AppraisalRecordPolicy
 
         return null;
     }
+
     /**
      * Determine whether the user can view any models.
      */
@@ -44,7 +45,7 @@ class AppraisalRecordPolicy
     {
         if (empty($appraisal)) {
             // return Response::denyWithStatus(422, 'The user does not have an appraisal. Please create an appraisal first before creating an appraisal record.');
-            throw new UserHasNoAppraisalCreatedException(); // handle in global exception handler
+            throw new UserHasNoAppraisalCreatedException; // handle in global exception handler
         }
 
         // only appraiser can create appraisal record for the appraisee

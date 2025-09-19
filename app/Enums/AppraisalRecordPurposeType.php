@@ -8,7 +8,6 @@ enum AppraisalRecordPurposeType: string
     case ANNUAL_REVIEW = 'annual_review';
     case SPECIAL_REVIEW = 'special_review';
 
-
     public function label(): string
     {
         return match ($this) {

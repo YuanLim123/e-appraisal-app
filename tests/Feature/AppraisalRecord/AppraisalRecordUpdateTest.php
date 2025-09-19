@@ -2,23 +2,23 @@
 
 namespace Tests\Feature\AppraisalRecord;
 
-use App\Exceptions\InvalidAppraisalSeasonException;
 use App\Enums\AppraisalRecordPurposeType;
+use App\Exceptions\InvalidAppraisalSeasonException;
 use App\Models\AppraisalRecord;
-use App\Models\User;
 use App\Models\Season;
+use App\Models\User;
 use Database\Seeders\DepartmentSeeder;
 use Database\Seeders\PositionSeeder;
 use Database\Seeders\RoleSeeder;
 use Database\Seeders\SeasonSeeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class AppraisalRecordUpdateTest extends TestCase
 {
     use RefreshDatabase;
+
     private int $payrollDeparmentId;
 
     protected function setUp(): void
@@ -203,7 +203,7 @@ class AppraisalRecordUpdateTest extends TestCase
 
         $response->assertStatus(422);
         $response->assertJson([
-            'message' => (new InvalidAppraisalSeasonException())->getMessage(),
+            'message' => (new InvalidAppraisalSeasonException)->getMessage(),
         ]);
     }
 }

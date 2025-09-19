@@ -3,8 +3,8 @@
 namespace App\Http\Requests;
 
 use App\Enums\AppraisalRecordPurposeType;
-use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreAppraisalRecordRequest extends FormRequest
 {
