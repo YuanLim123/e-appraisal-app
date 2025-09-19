@@ -68,7 +68,7 @@ class AppraisalRecordService
             'type' => $isHigherRole ? AppraisalRecordType::SUPERVISION->value : AppraisalRecordType::NORMAL->value,
             'purpose' => $attributes['purpose'],
             'grade' => $grade->value,
-            'grade_description' => $grade->label(),
+            'grade_description' => $grade->description(),
             'total' => $weighted_score,
             'status' => AppraisalRecordStatus::CREATED->value,
             'role_id' => $user->role_id,

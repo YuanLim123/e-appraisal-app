@@ -20,7 +20,7 @@ return new class extends Migration
             $table->text('grade_description')->nullable();
             $table->float('total')->nullable();
             $table->string('position_period')->nullable();
-            $table->string('status')->default(AppraisalRecordStatus::CREATED);
+            $table->string('status')->nullable();
             $table->unsignedInteger('current_step')->nullable();
             $table->json('answer')->nullable();
             $table->json('feedback')->nullable();
