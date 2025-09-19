@@ -30,7 +30,7 @@ class AppraisalRecordController extends Controller
     public function store(User $user, StoreAppraisalRecordRequest $request, AppraisalRecordService $service)
     {
         Gate::authorize('create', [AppraisalRecord::class, $user->appraisalAsAppraisee]);
-        
+
         $appraisalRecord = $service->store($user, $request->validated());
 
         return new AppraisalRecordResource($appraisalRecord);
@@ -40,19 +40,8 @@ class AppraisalRecordController extends Controller
     {
         Gate::authorize('update', [AppraisalRecord::class, $appraisalRecord]);
 
-        // check if season is valid
+        $appraisalRecord = $service->update($user, $appraisalRecord, $request->validated());
 
-        // check rating sum
-
-        // calculateGrade
-
-        try {
-            $appraisalRecord = $service->update($user, $appraisalRecord, $request->validated());
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-            ], 422);
-        }
         return new AppraisalRecordResource($appraisalRecord);
     }
 }

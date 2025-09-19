@@ -9,7 +9,6 @@ use App\Enums\AppraisalRecordType;
 use App\Exceptions\InvalidAppraisalSeasonException;
 use App\Exceptions\InvalidRatingSumException;
 use App\Exceptions\RecordAlreadyExistsInSeasonException;
-use App\Exceptions\UserHasNoAppraisalCreatedException;
 use App\Models\AppraisalRecord;
 use App\Models\User;
 use App\Models\Season;
@@ -56,23 +55,23 @@ class AppraisalRecordService
             throw new InvalidRatingSumException();
         }
 
-        $weighted_score = 0;
+        $weightedScore = 0;
 
         // calculate weighted total score
         if (! $isHigherRole) {
-            $weighted_score = $attributes['total'] ?? 0;
+            $weightedScore = $attributes['total'] ?? 0;
         } else {
-            $weighted_score = $this->calculateWeightedScore($attributes['section_percentage']);
+            $weightedScore = $this->calculateWeightedScore($attributes['section_percentage']);
         }
 
-        $grade = $this->calculateGrade($weighted_score);
+        $grade = $this->calculateGrade($weightedScore);
 
         $appraisalRecord = AppraisalRecord::create([
             'type' => $isHigherRole ? AppraisalRecordType::SUPERVISION->value : AppraisalRecordType::NORMAL->value,
             'purpose' => $attributes['purpose'],
             'grade' => $grade->value,
             'grade_description' => $grade->description(),
-            'total' => $weighted_score,
+            'total' => $weightedScore,
             'status' => AppraisalRecordStatus::CREATED->value,
             'role_id' => $user->role_id,
             'position_id' => $user->position_id,
@@ -104,12 +103,12 @@ class AppraisalRecordService
             $attributes['purpose'] != AppraisalRecordPurposeType::CONFIRMATION_OR_PROMOTION->value
             && !$season
         ) {
-            throw new \Exception('No season have been started. Please try again later.');
+            throw new InvalidAppraisalSeasonException();
         }
 
         // validate that the sum of ratings in performance
         if ($isHigherRole && !$this->validateRatingSum($attributes['performance'])) {
-            throw new \Exception('Section 1 value is invalid. The sum of ratings must not exceed 100%.');
+            throw new InvalidRatingSumException();
         }
 
         $weighted_score = 0;
@@ -141,17 +140,17 @@ class AppraisalRecordService
         return $appraisalRecord;
     }
 
-    private function calculateWeightedScore(array $section_percentage): float
+    private function calculateWeightedScore(array $sectionPercentage): float
     {
         $total = 0;
 
-        $section_one_weightage = 30;
-        $section_two_weightage = 70;
-        $section_weighages = [$section_one_weightage, $section_two_weightage];
+        $sectionOneWeightage = 30;
+        $sectionTwoWeightage = 70;
+        $sectionWeighages = [$sectionOneWeightage, $sectionTwoWeightage];
 
-        foreach ($section_percentage as $index => $value) {
-            $section_total = (float)($value) * ($section_weighages[$index] / 100);
-            $total += $section_total;
+        foreach ($sectionPercentage as $index => $value) {
+            $sectionTotal = (float)($value) * ($sectionWeighages[$index] / 100);
+            $total += $sectionTotal;
         }
 
         return $total;
