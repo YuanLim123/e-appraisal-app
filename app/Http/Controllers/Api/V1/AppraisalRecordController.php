@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\FeedbackRequest;
 use App\Http\Requests\StoreAppraisalRecordRequest;
 use App\Http\Resources\AppraisalRecordResource;
 use App\Models\AppraisalRecord;
@@ -37,5 +38,10 @@ class AppraisalRecordController extends Controller
         $appraisalRecord = $service->update($user, $appraisalRecord, $request->validated());
 
         return new AppraisalRecordResource($appraisalRecord);
+    }
+
+    public function storeFeedback(User $user, AppraisalRecord $appraisalRecord, FeedbackRequest $request, AppraisalRecordService $service)
+    {
+        dd($request->validated());
     }
 }

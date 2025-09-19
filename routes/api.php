@@ -35,4 +35,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('appraisal-records', [AppraisalRecordController::class, 'index']);
 
+    Route::post('users/{user}/appraisal-records/{appraisalRecord}/feedbacks', [AppraisalRecordController::class, 'storeFeedback']);
+
 });
