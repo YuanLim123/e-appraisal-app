@@ -5,6 +5,7 @@ namespace Tests\Feature\AppraisalRecord;
 use App\Enums\AppraisalRecordPurposeType;
 use App\Enums\AppraisalRecordStatus;
 use App\Exceptions\InvalidAppraisalSeasonException;
+use App\Exceptions\InvalidRatingSumException;
 use App\Exceptions\UserHasNoAppraisalCreatedException;
 use App\Models\AppraisalRecord;
 use App\Models\Season;
@@ -312,6 +313,53 @@ class AppraisalRecordStoreTest extends TestCase
         $response->assertJson([
             'message' => (new InvalidAppraisalSeasonException())->getMessage(),
         ]);
+    }
 
+    public function test_appraiser_cannot_create_appraisal_record_with_invalid_rating_sum(): void
+    {
+        $payrollUser = User::factory()->create();
+        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
+
+        $appraisee = User::factory()->create();
+
+        // we need to set the position to higher level to allow supervision type appraisal record
+        $appraisee->position_id = 6;
+        $appraisee->save();
+        $appraiser = User::factory()->create();
+        $approver1 = User::factory()->create();
+        $approver2 = User::factory()->create();
+
+        $appraisalInput = [
+            'appraiser_id' => $appraiser->id,
+            'approvers' => [
+                ['user_id' => $approver1->id, 'sequence' => 1],
+                ['user_id' => $approver2->id, 'sequence' => 2],
+            ],
+        ];
+
+        $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+
+        // create appraisal record with invalid performance rating sum which exceeds 100
+        $appraisalRecordInput = AppraisalRecord::factory()->make([
+            'performance' => [
+                [
+                    'goal' => 'goal 1',
+                    'result' => 'result 1',
+                    'rating' => 100,
+                ],
+                [
+                    'goal' => 'goal 2',
+                    'result' => 'result 2',
+                    'rating' => 20,
+                ],
+            ]
+        ])->toArray();
+
+        $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
+
+        $response->assertStatus(422);
+        $response->assertJson([
+            'message' => (new InvalidRatingSumException())->getMessage(),
+        ]);
     }
 }
