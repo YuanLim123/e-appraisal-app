@@ -15,16 +15,14 @@ use App\Models\User;
 
 class AppraisalRecordService
 {
+    /**
+     * @param  array{purpose: string, review_from: string, review_to: string, total?: float, performance?: array, section_percentage?: array}  $attributes
+     */
     public function store(User $user, array $attributes): AppraisalRecord
     {
         $isHigherRole = $user->isHigherRole();
 
         $appraisal = $user->appraisalAsAppraisee;
-
-        // already handled in the appraisal record create policy
-        // if (!$appraisal) {
-        //     throw new \Exception('The user does not have an appraisal. Please try again later.');
-        // }
 
         // check if the selected appraisal season exist
         $season = Season::query()
@@ -78,7 +76,7 @@ class AppraisalRecordService
             'answer' => $attributes['performance'] ?? null,
             'review_from' => $attributes['review_from'],
             'review_to' => $attributes['review_to'],
-            'appraiser_id' => $appraisal->appraiser_id,
+            'appraiser_id' => $appraisal?->appraiser_id,
             'appraisee_id' => $user->id,
             'season_id' => $season ? $season->id : null,
         ]);
@@ -88,6 +86,9 @@ class AppraisalRecordService
         return $appraisalRecord;
     }
 
+    /**
+     * @param  array{purpose: string, review_from: string, review_to: string, total?: float, performance?: array, section_percentage?: array}  $attributes
+     */
     public function update(User $user, AppraisalRecord $appraisalRecord, array $attributes): AppraisalRecord
     {
         $isHigherRole = $user->isHigherRole();

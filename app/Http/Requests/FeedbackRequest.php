@@ -47,11 +47,11 @@ class FeedbackRequest extends FormRequest
         ];
 
         if ($user->isHigherRole()) {
-            $rules['goals_next'] = ['array'];
-            $rules['goals_next.*.objectives'] = ['nullable', 'string', 'required_with:goals_next.*.specificAction,goals_next.*.weightage'];
-            $rules['goals_next.*.specificAction'] = ['nullable', 'string', 'required_with:goals_next.*.objectives,goals_next.*.weightage'];
-            $rules['goals_next.*.weightage'] = ['nullable', 'numeric', 'required_with:goals_next.*.objectives,goals_next.*.specificAction'];
-            $rules['goals_next.*.total'] = ['nullable', 'numeric'];
+            $rules['goal_next'] = ['array'];
+            $rules['goal_next.*.objective'] = ['nullable', 'string', 'required_with:goal_next.*.specificAction,goal_next.*.weightage,goal_next.*.total'];
+            $rules['goal_next.*.specificAction'] = ['nullable', 'string', 'required_with:goal_next.*.objectives,goal_next.*.weightage,goal_next.*.total'];
+            $rules['goal_next.*.weightage'] = ['nullable', 'numeric', 'required_with:goal_next.*.objectives,goal_next.*.specificAction,goal_next.*.total'];
+            $rules['goal_next.*.total'] = ['nullable', 'numeric'];
         }
 
         return $rules;
@@ -65,9 +65,9 @@ class FeedbackRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'goals_next.*.objectives.required_with' => 'Objectives is required when Specific Action or Weightage is filled.',
-            'goals_next.*.specificAction.required_with' => 'Specific Action is required when Objectives or Weightage is filled.',
-            'goals_next.*.weightage.required_with' => 'Weightage is required when Objectives or Specific Action is filled.',
+            'goal_next.*.objective.required_with' => 'Objectives is required when Specific Action, Weightage or Total is filled.',
+            'goal_next.*.specificAction.required_with' => 'Specific Action is required when Objectives, Weightage Total is filled.',
+            'goal_next.*.weightage.required_with' => 'Weightage is required when Objectives, Specific Action or Total is filled.',
         ];
     }
 }

@@ -9,6 +9,7 @@ use App\Http\Resources\AppraisalRecordResource;
 use App\Models\AppraisalRecord;
 use App\Models\User;
 use App\Services\V1\AppraisalRecordService;
+use App\Services\V1\AppraisalFeedbackService;
 use Illuminate\Support\Facades\Gate;
 
 class AppraisalRecordController extends Controller
@@ -40,8 +41,20 @@ class AppraisalRecordController extends Controller
         return new AppraisalRecordResource($appraisalRecord);
     }
 
-    public function storeFeedback(User $user, AppraisalRecord $appraisalRecord, FeedbackRequest $request, AppraisalRecordService $service)
+    public function storeFeedback(User $user, AppraisalRecord $appraisalRecord, FeedbackRequest $request, AppraisalFeedbackService $service)
     {
-        dd($request->validated());
+        Gate::authorize('update', [AppraisalRecord::class, $appraisalRecord]);
+
+        $isSubmit= $request->query('isSubmit', false);
+
+        $appraisalRecord = $service->store($user, $appraisalRecord, $request->validated(), $isSubmit);
+
+        return new AppraisalRecordResource($appraisalRecord);
+    }
+
+    public function submit()
+    {
+        // call submit service
+        // return response
     }
 }
