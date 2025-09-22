@@ -83,6 +83,7 @@ class AppraisalRecord extends Model
 
     public function approvers(): HasMany
     {
-        return $this->hasMany(RecordApprover::class, 'appraisal_record_id');
+        return $this->hasMany(RecordApprover::class, 'appraisal_record_id')
+            ->orderBy('sequence');
     }
 }

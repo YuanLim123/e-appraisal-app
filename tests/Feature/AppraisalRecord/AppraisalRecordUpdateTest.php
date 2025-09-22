@@ -83,7 +83,7 @@ class AppraisalRecordUpdateTest extends TestCase
         $response->assertStatus(403);
     }
 
-    public function test_appraiser_can__update_type_appraisal_record_with_valid_data(): void
+    public function test_appraiser_can_update_normal_type_appraisal_record_with_valid_data(): void
     {
         $payrollUser = User::factory()->create();
         $payrollUser->departments()->sync([$this->payrollDeparmentId]);
@@ -120,7 +120,7 @@ class AppraisalRecordUpdateTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_appraiser_cannot_update_type_appraisal_record_with_invalid_data(): void
+    public function test_appraiser_cannot_update_normal_type_appraisal_record_with_invalid_data(): void
     {
         $payrollUser = User::factory()->create();
         $payrollUser->departments()->sync([$this->payrollDeparmentId]);
@@ -160,7 +160,7 @@ class AppraisalRecordUpdateTest extends TestCase
         $response->assertJsonValidationErrors(['review_from', 'review_to', 'purpose']);
     }
 
-    public function test_appraiser_cannot_update_appraisal_record_with_invalid_season_data(): void
+    public function test_appraiser_cannot_update_normal_type_appraisal_record_with_invalid_season_data(): void
     {
         $payrollUser = User::factory()->create();
         $payrollUser->departments()->sync([$this->payrollDeparmentId]);

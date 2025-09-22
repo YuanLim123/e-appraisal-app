@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\FeedbackRequest;
+use App\Http\Requests\AppraisalFeedbackRequest;
 use App\Http\Requests\StoreAppraisalRecordRequest;
 use App\Http\Resources\AppraisalRecordResource;
 use App\Models\AppraisalRecord;
 use App\Models\User;
 use App\Services\V1\AppraisalRecordService;
 use App\Services\V1\AppraisalFeedbackService;
+use App\Services\V1\AppraisalSubmitService;
 use Illuminate\Support\Facades\Gate;
 
 class AppraisalRecordController extends Controller
@@ -41,20 +42,23 @@ class AppraisalRecordController extends Controller
         return new AppraisalRecordResource($appraisalRecord);
     }
 
-    public function storeFeedback(User $user, AppraisalRecord $appraisalRecord, FeedbackRequest $request, AppraisalFeedbackService $service)
+    public function storeFeedback(User $user, AppraisalRecord $appraisalRecord, AppraisalFeedbackRequest $request, AppraisalFeedbackService $service)
     {
         Gate::authorize('update', [AppraisalRecord::class, $appraisalRecord]);
 
         $isSubmit= $request->query('isSubmit', false);
-
+        
         $appraisalRecord = $service->store($user, $appraisalRecord, $request->validated(), $isSubmit);
 
         return new AppraisalRecordResource($appraisalRecord);
     }
 
-    public function submit()
+    public function submit(User $user, AppraisalRecord $appraisalRecord, AppraisalSubmitService $service)
     {
-        // call submit service
-        // return response
+        Gate::authorize('update', [AppraisalRecord::class, $appraisalRecord]);
+
+        $appraisalRecord = $service->submit($user, $appraisalRecord);
+
+        return new AppraisalRecordResource($appraisalRecord);
     }
 }

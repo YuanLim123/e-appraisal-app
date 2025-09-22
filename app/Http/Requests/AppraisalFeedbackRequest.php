@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class FeedbackRequest extends FormRequest
+class AppraisalFeedbackRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -49,8 +49,8 @@ class FeedbackRequest extends FormRequest
         if ($user->isHigherRole()) {
             $rules['goal_next'] = ['array'];
             $rules['goal_next.*.objective'] = ['nullable', 'string', 'required_with:goal_next.*.specificAction,goal_next.*.weightage,goal_next.*.total'];
-            $rules['goal_next.*.specificAction'] = ['nullable', 'string', 'required_with:goal_next.*.objectives,goal_next.*.weightage,goal_next.*.total'];
-            $rules['goal_next.*.weightage'] = ['nullable', 'numeric', 'required_with:goal_next.*.objectives,goal_next.*.specificAction,goal_next.*.total'];
+            $rules['goal_next.*.specificAction'] = ['nullable', 'string', 'required_with:goal_next.*.objective,goal_next.*.weightage,goal_next.*.total'];
+            $rules['goal_next.*.weightage'] = ['nullable', 'numeric', 'required_with:goal_next.*.objective,goal_next.*.specificAction,goal_next.*.total'];
             $rules['goal_next.*.total'] = ['nullable', 'numeric'];
         }
 

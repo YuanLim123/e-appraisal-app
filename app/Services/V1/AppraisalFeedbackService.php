@@ -33,7 +33,7 @@ class AppraisalFeedbackService
         ]);
 
         if ($isSubmit) {
-            $this->service->submit($appraisalRecord);
+            $this->service->submit($user, $appraisalRecord);
         }
 
         $appraisalRecord->load(['appraisee', 'appraiser']);
