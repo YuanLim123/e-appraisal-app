@@ -2,11 +2,13 @@
 
 namespace App\Listeners;
 
+use App\Mail\AppraisalPendingReviewMail;
 use App\Events\AppraisalRecordSubmitted;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class SendAppraisalPendingApproveNotification
+class SendAppraisalRecordPendingReviewNotification
 {
     /**
      * Create the event listener.
@@ -23,7 +25,10 @@ class SendAppraisalPendingApproveNotification
     {
         $approver = $event->appraisalRecord->approvers()->with('user')->first()?->user;
 
-        dd($approver);
+        if (empty($approver) || empty($approver->email)) {
+            return;
+        }
 
+        Mail::to($approver)->send(new AppraisalPendingReviewMail($event->appraisalRecord));
     }
 }
