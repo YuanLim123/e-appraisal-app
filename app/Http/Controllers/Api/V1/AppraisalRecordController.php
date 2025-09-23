@@ -35,7 +35,7 @@ class AppraisalRecordController extends Controller
 
     public function update(User $user, AppraisalRecord $appraisalRecord, StoreAppraisalRecordRequest $request, AppraisalRecordService $service)
     {
-        Gate::authorize('update', [AppraisalRecord::class, $appraisalRecord]);
+        Gate::authorize('update', [AppraisalRecord::class, $appraisalRecord, $user]);
 
         $appraisalRecord = $service->update($user, $appraisalRecord, $request->validated());
 
@@ -44,7 +44,7 @@ class AppraisalRecordController extends Controller
 
     public function storeFeedback(User $user, AppraisalRecord $appraisalRecord, AppraisalFeedbackRequest $request, AppraisalFeedbackService $service)
     {
-        Gate::authorize('update', [AppraisalRecord::class, $appraisalRecord]);
+        Gate::authorize('update', [AppraisalRecord::class, $appraisalRecord, $user]);
 
         $isSubmit= $request->query('isSubmit', false);
         

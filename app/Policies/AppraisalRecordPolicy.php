@@ -59,9 +59,17 @@ class AppraisalRecordPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, AppraisalRecord $appraisalRecord): bool
+    public function update(User $user, AppraisalRecord $appraisalRecord, User $appraisee): bool
     {
-        return $user->id === $appraisalRecord->appraiser_id;
+        if ($appraisee->id !== $appraisalRecord->appraisee_id) {
+            return false;
+        }
+
+        if (auth()->id() !== $appraisalRecord->appraiser_id) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
