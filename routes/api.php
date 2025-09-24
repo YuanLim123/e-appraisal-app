@@ -38,4 +38,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::post('users/{user}/appraisal-records/{appraisalRecord}/feedbacks', [AppraisalRecordController::class, 'storeFeedback'])
         ->middleware('can:update,appraisalRecord,user');
+        
+    Route::post('users/{user}/appraisal-records/{appraisalRecord}/submit', [AppraisalRecordController::class, 'submit'])
+        ->middleware('can:update,appraisalRecord,user');
 });
