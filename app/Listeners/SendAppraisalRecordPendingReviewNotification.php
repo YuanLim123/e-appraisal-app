@@ -2,11 +2,9 @@
 
 namespace App\Listeners;
 
-use App\Mail\AppraisalPendingReviewMail;
 use App\Events\AppraisalRecordSubmitted;
+use App\Mail\AppraisalPendingReviewMail;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class SendAppraisalRecordPendingReviewNotification
 {

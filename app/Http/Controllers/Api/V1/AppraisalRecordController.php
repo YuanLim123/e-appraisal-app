@@ -8,8 +8,8 @@ use App\Http\Requests\StoreAppraisalRecordRequest;
 use App\Http\Resources\AppraisalRecordResource;
 use App\Models\AppraisalRecord;
 use App\Models\User;
-use App\Services\V1\AppraisalRecordService;
 use App\Services\V1\AppraisalFeedbackService;
+use App\Services\V1\AppraisalRecordService;
 use App\Services\V1\AppraisalSubmitService;
 use Illuminate\Support\Facades\Gate;
 
@@ -46,8 +46,8 @@ class AppraisalRecordController extends Controller
     {
         Gate::authorize('update', [AppraisalRecord::class, $appraisalRecord, $user]);
 
-        $isSubmit= $request->query('isSubmit', false);
-        
+        $isSubmit = $request->query('isSubmit', false);
+
         $appraisalRecord = $service->store($user, $appraisalRecord, $request->validated(), $isSubmit);
 
         return new AppraisalRecordResource($appraisalRecord);

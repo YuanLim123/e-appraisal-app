@@ -6,7 +6,6 @@ use App\Exceptions\UserHasNoAppraisalCreatedException;
 use App\Models\Appraisal;
 use App\Models\AppraisalRecord;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class AppraisalRecordPolicy
 {

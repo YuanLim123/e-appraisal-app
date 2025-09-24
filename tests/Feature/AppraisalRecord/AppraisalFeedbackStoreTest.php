@@ -2,13 +2,9 @@
 
 namespace Tests\Feature\AppraisalRecord;
 
-use App\Enums\AppraisalRecordPurposeType;
-use App\Exceptions\InvalidAppraisalSeasonException;
 use App\Exceptions\InvalidWeightAgeException;
-use App\Listeners\SendAppraisalRecordPendingReviewNotification;
 use App\Mail\AppraisalPendingReviewMail;
 use App\Models\AppraisalRecord;
-use App\Models\Season;
 use App\Models\User;
 use Database\Seeders\DepartmentSeeder;
 use Database\Seeders\PositionSeeder;
@@ -182,8 +178,8 @@ class AppraisalFeedbackStoreTest extends TestCase
                     'objective' => 'objective 1',
                     'specificAction' => 'specific action 1',
                     'weightage' => 100,
-                ]
-            ]
+                ],
+            ],
         ];
 
         // attempt to store feedback for the appraisal record as non appraiser user
@@ -236,8 +232,8 @@ class AppraisalFeedbackStoreTest extends TestCase
             'goal_next' => [
                 [
                     'objective' => 'objective 1',
-                ]
-            ]
+                ],
+            ],
         ];
 
         // attempt to store feedback for the appraisal record as non appraiser user
@@ -247,7 +243,7 @@ class AppraisalFeedbackStoreTest extends TestCase
         $response->assertJsonValidationErrors(['goal_next.0.specificAction', 'goal_next.0.weightage']);
     }
 
-    public function test_appraiser_can_store_feedback_for_supervision_type_appraisal_record_with_invalid_weightAge_data(): void
+    public function test_appraiser_can_store_feedback_for_supervision_type_appraisal_record_with_invalid_weight_age_data(): void
     {
         $payrollUser = User::factory()->create();
         $payrollUser->departments()->sync([$this->payrollDeparmentId]);
@@ -292,8 +288,8 @@ class AppraisalFeedbackStoreTest extends TestCase
                     'objective' => 'objective 2',
                     'specificAction' => 'specific action 2',
                     'weightage' => 100,
-                ]
-            ]
+                ],
+            ],
         ];
 
         // attempt to store feedback for the appraisal record as non appraiser user
@@ -301,7 +297,7 @@ class AppraisalFeedbackStoreTest extends TestCase
 
         $response->assertStatus(422);
         $response->assertJson([
-            'message' => (new InvalidWeightAgeException())->getMessage(),
+            'message' => (new InvalidWeightAgeException)->getMessage(),
         ]);
     }
 
@@ -344,7 +340,7 @@ class AppraisalFeedbackStoreTest extends TestCase
                     'specificAction' => 'specific action 1',
                     'weightage' => 100,
                 ],
-            ]
+            ],
         ];
         Mail::fake();
 
@@ -354,7 +350,6 @@ class AppraisalFeedbackStoreTest extends TestCase
         // assert that AppraisalPendingReviewMail mailable was sent
         Mail::assertSent(AppraisalPendingReviewMail::class);
     }
-
 
     public function test_appraisal_review_pending_email_bot_sent_to_first_approver_if_feedback_is_only_saved(): void
     {
@@ -395,7 +390,7 @@ class AppraisalFeedbackStoreTest extends TestCase
                     'specificAction' => 'specific action 1',
                     'weightage' => 100,
                 ],
-            ]
+            ],
         ];
         Mail::fake();
 

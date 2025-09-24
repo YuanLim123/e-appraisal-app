@@ -8,5 +8,6 @@ Route::get('/', function () {
 
 Route::get('/mailable', function () {
     $appraisalRecord = \App\Models\AppraisalRecord::find(3);
+
     return new \App\Mail\AppraisalPendingReviewMail($appraisalRecord);
 });

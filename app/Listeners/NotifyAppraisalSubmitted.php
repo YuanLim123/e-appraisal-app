@@ -3,8 +3,6 @@
 namespace App\Listeners;
 
 use App\Events\AppraisalRecordSubmitted;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class NotifyAppraisalSubmitted
 {
@@ -23,7 +21,7 @@ class NotifyAppraisalSubmitted
     {
         $appraisee = $event->appraisalRecord?->appraisee;
 
-        if(! $appraisee){
+        if (! $appraisee) {
             return;
         }
 

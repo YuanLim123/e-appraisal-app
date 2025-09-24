@@ -2,38 +2,29 @@
 
 namespace App\Services\V1;
 
-use App\Enums\AppraisalRecordGrade;
-use App\Enums\AppraisalRecordPurposeType;
 use App\Enums\AppraisalRecordStatus;
-use App\Enums\AppraisalRecordType;
 use App\Events\AppraisalRecordSubmitted;
 use App\Exceptions\AppraisalHasNoApproverException;
-use App\Exceptions\InvalidAppraisalSeasonException;
-use App\Exceptions\InvalidRatingSumException;
-use App\Exceptions\InvalidWeightAgeException;
-use App\Exceptions\RecordAlreadyExistsInSeasonException;
 use App\Exceptions\UserHasNoAppraisalCreatedException;
 use App\Models\AppraisalRecord;
-use App\Models\Season;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class AppraisalSubmitService
 {
-
     public function submit(User $user, AppraisalRecord $appraisalRecord): AppraisalRecord
     {
         $appraisal = $user->appraisalAsAppraisee;
 
         if (! $appraisal) {
-            throw new UserHasNoAppraisalCreatedException();
+            throw new UserHasNoAppraisalCreatedException;
         }
 
         $currentApprovers = $appraisal->approvers;
 
         if (! $currentApprovers) {
-            throw new AppraisalHasNoApproverException();
-        } 
+            throw new AppraisalHasNoApproverException;
+        }
 
         DB::transaction(function () use ($appraisalRecord, $currentApprovers) {
             $appraisalRecord->approvers()->delete();
@@ -57,5 +48,4 @@ class AppraisalSubmitService
 
         return $appraisalRecord;
     }
-
 }

@@ -362,5 +362,4 @@ class AppraisalRecordStoreTest extends TestCase
             'message' => (new InvalidRatingSumException)->getMessage(),
         ]);
     }
-
 }
