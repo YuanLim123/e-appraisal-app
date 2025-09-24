@@ -83,6 +83,46 @@ class AppraisalRecordUpdateTest extends TestCase
         $response->assertStatus(403);
     }
 
+    public function test_appraisee_id_not_match_with_appraisal_record_appraisee_id_in_the_request_return_error(): void
+    {
+        $payrollUser = User::factory()->create();
+        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
+
+        $appraisee = User::factory()->create();
+        $appraisee->position_id = 2;
+        $appraisee->save();
+        $appraiser = User::factory()->create();
+        $approver1 = User::factory()->create();
+        $approver2 = User::factory()->create();
+
+        $appraisalInput = [
+            'appraiser_id' => $appraiser->id,
+            'approvers' => [
+                ['user_id' => $approver1->id, 'sequence' => 1],
+                ['user_id' => $approver2->id, 'sequence' => 2],
+            ],
+        ];
+
+        // Create appraisal
+        $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+
+        // Create appraisal record
+        $appraisalRecordInput = AppraisalRecord::factory()->make()->toArray();
+        $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
+
+        // create one more appraisee
+        $anotherAppraisee = User::factory()->create();
+        $anotherAppraisee->position_id = 2;
+        $anotherAppraisee->save();
+
+        $createdAppraisalRecordId = AppraisalRecord::latest()->first()->id;
+
+        $appraisalRecordInput['review_from'] = '2023-01-01';
+        $response = $this->actingAs($anotherAppraisee)->putJson("/api/v1/users/{$anotherAppraisee->id}/appraisal-records/{$createdAppraisalRecordId}", $appraisalRecordInput);
+
+        $response->assertStatus(403);
+    }
+
     public function test_appraiser_can_update_normal_type_appraisal_record_with_valid_data(): void
     {
         $payrollUser = User::factory()->create();

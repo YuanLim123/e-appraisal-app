@@ -49,6 +49,7 @@ class AppraisalSubmitService
             $appraisalRecord->update([
                 'status' => AppraisalRecordStatus::SUBMITTED->value,
                 'current_step' => 1,
+                'current_approver_id' => $currentApprovers->first()->user_id,
             ]);
         });
 

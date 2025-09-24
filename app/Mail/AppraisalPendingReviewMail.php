@@ -21,8 +21,7 @@ class AppraisalPendingReviewMail extends Mailable
      */
     public function __construct(
         public AppraisalRecord $appraisalRecord,
-    )
-    {}
+    ) {}
 
     /**
      * Get the message envelope.
@@ -39,10 +38,17 @@ class AppraisalPendingReviewMail extends Mailable
      */
     public function content(): Content
     {
+        $deparments = $this->appraisalRecord?->appraisee?->departments->pluck('name');
+        $url = 'URL'; // need to wait for creating endpoint for review
+        $currentApproverName = $this->appraisalRecord?->currentApprover?->full_name;
+
         return new Content(
-            view: 'mail.appraisal.review-pending',
+            markdown: 'mail.appraisal.review-pending',
             with: [
                 'appraisee' => $this->appraisalRecord->appraisee,
+                'departments' => $deparments,
+                'currentApprover' => $currentApproverName,
+                'season' => $this->appraisalRecord->season->name,
             ]
         );
     }

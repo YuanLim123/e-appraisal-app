@@ -31,10 +31,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
         ->middleware('can:view,appraisal');
 
     Route::post('users/{user}/appraisal-records', [AppraisalRecordController::class, 'store']);
-    Route::put('users/{user}/appraisal-records/{appraisalRecord}', [AppraisalRecordController::class, 'update']);
+    Route::put('users/{user}/appraisal-records/{appraisalRecord}', [AppraisalRecordController::class, 'update'])
+        ->middleware('can:update,appraisalRecord,user');
 
     Route::get('appraisal-records', [AppraisalRecordController::class, 'index']);
 
-    Route::post('users/{user}/appraisal-records/{appraisalRecord}/feedbacks', [AppraisalRecordController::class, 'storeFeedback']);
-
+    Route::post('users/{user}/appraisal-records/{appraisalRecord}/feedbacks', [AppraisalRecordController::class, 'storeFeedback'])
+        ->middleware('can:update,appraisalRecord,user');
 });

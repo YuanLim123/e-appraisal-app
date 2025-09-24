@@ -5,6 +5,8 @@ namespace Tests\Feature\AppraisalRecord;
 use App\Enums\AppraisalRecordPurposeType;
 use App\Exceptions\InvalidAppraisalSeasonException;
 use App\Exceptions\InvalidWeightAgeException;
+use App\Listeners\SendAppraisalRecordPendingReviewNotification;
+use App\Mail\AppraisalPendingReviewMail;
 use App\Models\AppraisalRecord;
 use App\Models\Season;
 use App\Models\User;
@@ -14,6 +16,7 @@ use Database\Seeders\RoleSeeder;
 use Database\Seeders\SeasonSeeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class AppraisalFeedbackStoreTest extends TestCase
@@ -300,5 +303,106 @@ class AppraisalFeedbackStoreTest extends TestCase
         $response->assertJson([
             'message' => (new InvalidWeightAgeException())->getMessage(),
         ]);
+    }
+
+    public function test_appraisal_review_pending_email_sent_to_first_approver_after_appraisal_record_submitted(): void
+    {
+        $payrollUser = User::factory()->create();
+        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
+
+        $appraisee = User::factory()->create();
+        $appraisee->position_id = 7;
+        $appraisee->save();
+        $appraiser = User::factory()->create();
+        $approver1 = User::factory()->create();
+        $approver2 = User::factory()->create();
+
+        $appraisalInput = [
+            'appraiser_id' => $appraiser->id,
+            'approvers' => [
+                ['user_id' => $approver1->id, 'sequence' => 1],
+                ['user_id' => $approver2->id, 'sequence' => 2],
+            ],
+        ];
+
+        // Create appraisal
+        $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+
+        // Create appraisal record
+        $appraisalRecordInput = AppraisalRecord::factory()->supervision()->make()->toArray();
+        $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
+
+        // Get the created appraisal record
+        $appraisalRecordId = AppraisalRecord::latest()->first()->id;
+
+        $feedbackInput = [
+            'current_salary' => 5000,
+            'new_salary' => 6000,
+            'goal_next' => [
+                [
+                    'objective' => 'objective 1',
+                    'specificAction' => 'specific action 1',
+                    'weightage' => 100,
+                ],
+            ]
+        ];
+        Mail::fake();
+
+        // attempt to store feedback and submit the appraisal record
+        $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}/feedbacks?isSubmit=true", $feedbackInput);
+
+        // assert that AppraisalPendingReviewMail mailable was sent
+        Mail::assertSent(AppraisalPendingReviewMail::class);
+    }
+
+
+    public function test_appraisal_review_pending_email_bot_sent_to_first_approver_if_feedback_is_only_saved(): void
+    {
+        $payrollUser = User::factory()->create();
+        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
+
+        $appraisee = User::factory()->create();
+        $appraisee->position_id = 7;
+        $appraisee->save();
+        $appraiser = User::factory()->create();
+        $approver1 = User::factory()->create();
+        $approver2 = User::factory()->create();
+
+        $appraisalInput = [
+            'appraiser_id' => $appraiser->id,
+            'approvers' => [
+                ['user_id' => $approver1->id, 'sequence' => 1],
+                ['user_id' => $approver2->id, 'sequence' => 2],
+            ],
+        ];
+
+        // Create appraisal
+        $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+
+        // Create appraisal record
+        $appraisalRecordInput = AppraisalRecord::factory()->supervision()->make()->toArray();
+        $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
+
+        // Get the created appraisal record
+        $appraisalRecordId = AppraisalRecord::latest()->first()->id;
+
+        $feedbackInput = [
+            'current_salary' => 5000,
+            'new_salary' => 6000,
+            'goal_next' => [
+                [
+                    'objective' => 'objective 1',
+                    'specificAction' => 'specific action 1',
+                    'weightage' => 100,
+                ],
+            ]
+        ];
+        Mail::fake();
+
+        // attempt to store feedback and submit the appraisal record
+        $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}/feedbacks", $feedbackInput);
+
+        // assert that AppraisalPendingReviewMail mailable was sent
+        Mail::assertNothingSent();
     }
 }
