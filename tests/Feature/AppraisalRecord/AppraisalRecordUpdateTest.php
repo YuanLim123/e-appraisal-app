@@ -83,7 +83,7 @@ class AppraisalRecordUpdateTest extends TestCase
         $response->assertStatus(403);
     }
 
-    public function test_appraisee_id_not_match_with_appraisal_record_appraisee_id_in_the_request_return_error(): void
+    public function test_appraisee_id_not_match_with_appraisal_record_appraisee_id_in_the_request_url_return_error(): void
     {
         $payrollUser = User::factory()->create();
         $payrollUser->departments()->sync([$this->payrollDeparmentId]);
@@ -110,10 +110,8 @@ class AppraisalRecordUpdateTest extends TestCase
         $appraisalRecordInput = AppraisalRecord::factory()->make()->toArray();
         $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
 
-        // create one more appraisee
+        // create another appraisee
         $anotherAppraisee = User::factory()->create();
-        $anotherAppraisee->position_id = 2;
-        $anotherAppraisee->save();
 
         $createdAppraisalRecordId = AppraisalRecord::latest()->first()->id;
 

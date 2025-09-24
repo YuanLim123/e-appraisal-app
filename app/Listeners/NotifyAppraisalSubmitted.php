@@ -23,7 +23,7 @@ class NotifyAppraisalSubmitted
     {
         $appraisee = $event->appraisalRecord?->appraisee;
 
-        if(empty($appraisee)){
+        if(! $appraisee){
             return;
         }
 

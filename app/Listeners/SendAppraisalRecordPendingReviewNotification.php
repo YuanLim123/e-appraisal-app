@@ -25,7 +25,7 @@ class SendAppraisalRecordPendingReviewNotification
     {
         $approver = $event->appraisalRecord->approvers()->with('user')->first()?->user;
 
-        if (empty($approver) || empty($approver->email)) {
+        if (! $approver || ! $approver->email) {
             return;
         }
 

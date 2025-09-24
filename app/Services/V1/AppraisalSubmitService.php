@@ -25,13 +25,13 @@ class AppraisalSubmitService
     {
         $appraisal = $user->appraisalAsAppraisee;
 
-        if (empty($appraisal)) {
+        if (! $appraisal) {
             throw new UserHasNoAppraisalCreatedException();
         }
 
         $currentApprovers = $appraisal->approvers;
 
-        if (empty($currentApprovers)) {
+        if (! $currentApprovers) {
             throw new AppraisalHasNoApproverException();
         } 
 

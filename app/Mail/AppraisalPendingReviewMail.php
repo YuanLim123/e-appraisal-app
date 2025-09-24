@@ -43,7 +43,7 @@ class AppraisalPendingReviewMail extends Mailable
         $currentApproverName = $this->appraisalRecord?->currentApprover?->full_name;
 
         return new Content(
-            markdown: 'mail.appraisal.review-pending',
+            markdown: 'mail.appraisal.review_pending',
             with: [
                 'appraisee' => $this->appraisalRecord->appraisee,
                 'departments' => $deparments,
