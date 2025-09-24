@@ -110,8 +110,10 @@ class AppraisalRecordUpdateTest extends TestCase
         $appraisalRecordInput = AppraisalRecord::factory()->make()->toArray();
         $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
 
-        // create another appraisee
+        // create another appraisee with same position
         $anotherAppraisee = User::factory()->create();
+        $anotherAppraisee->position_id = 2;
+        $anotherAppraisee->save();
 
         $createdAppraisalRecordId = AppraisalRecord::latest()->first()->id;
 

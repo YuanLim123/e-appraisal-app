@@ -11,10 +11,13 @@ use App\Models\User;
 use App\Services\V1\AppraisalFeedbackService;
 use App\Services\V1\AppraisalRecordService;
 use App\Services\V1\AppraisalSubmitService;
+use App\Traits\APIResponsesTrait;
 use Illuminate\Support\Facades\Gate;
 
 class AppraisalRecordController extends Controller
 {
+    use APIResponsesTrait;
+
     public function index()
     {
         $appraisalRecords = AppraisalRecord::query()
@@ -35,7 +38,7 @@ class AppraisalRecordController extends Controller
 
     public function update(User $user, AppraisalRecord $appraisalRecord, StoreAppraisalRecordRequest $request, AppraisalRecordService $service)
     {
-        //Gate::authorize('update', [AppraisalRecord::class, $appraisalRecord, $user]);
+        Gate::authorize('update', [AppraisalRecord::class, $appraisalRecord, $user]);
 
         $appraisalRecord = $service->update($user, $appraisalRecord, $request->validated());
 
@@ -44,7 +47,7 @@ class AppraisalRecordController extends Controller
 
     public function storeFeedback(User $user, AppraisalRecord $appraisalRecord, AppraisalFeedbackRequest $request, AppraisalFeedbackService $service)
     {
-        //Gate::authorize('update', [AppraisalRecord::class, $appraisalRecord, $user]);
+        Gate::authorize('update', [AppraisalRecord::class, $appraisalRecord, $user]);
 
         $isSubmit = $request->query('isSubmit', false);
 
@@ -55,12 +58,11 @@ class AppraisalRecordController extends Controller
 
     public function submit(User $user, AppraisalRecord $appraisalRecord, AppraisalSubmitService $service)
     {
-        //Gate::authorize('update', [AppraisalRecord::class, $appraisalRecord]);
+        Gate::authorize('update', [AppraisalRecord::class, $appraisalRecord, $user]);
 
         $appraisalRecord = $service->submit($user, $appraisalRecord);
 
-        return response()->json([
-            'success' => true
-        ], 200);
+        return $this->successResponse(message: 'Appraisal record submitted successfully');
+
     }
 }
