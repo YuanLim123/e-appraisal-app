@@ -122,7 +122,7 @@ class AppraisalRecordStoreTest extends TestCase
         $response->assertStatus(201);
         // assert json
         $response->assertJsonFragment([
-            'status' => AppraisalRecordStatus::CREATED->value,
+            'status' => AppraisalRecordStatus::CREATED->label(),
             'total' => $appraisalRecordInput['total'],
         ]);
         $response->assertJsonPath('data.appraiser.id', $appraiser->id);
@@ -263,7 +263,7 @@ class AppraisalRecordStoreTest extends TestCase
         $response->assertStatus(201);
         // assert json
         $response->assertJsonFragment([
-            'status' => AppraisalRecordStatus::CREATED->value,
+            'status' => AppraisalRecordStatus::CREATED->label(),
             'answer' => $appraisalRecordInput['performance'],
         ]);
         $response->assertJsonPath('data.appraiser.id', $appraiser->id);

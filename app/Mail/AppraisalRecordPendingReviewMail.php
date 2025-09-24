@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class AppraisalPendingReviewMail extends Mailable
+class AppraisalRecordPendingReviewMail extends Mailable
 {
     use Queueable, SerializesModels;
 

@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\AppraisalRecordSubmitted;
-use App\Mail\AppraisalPendingReviewMail;
+use App\Mail\AppraisalRecordPendingReviewMail;
 use Illuminate\Support\Facades\Mail;
 
 class SendAppraisalRecordPendingReviewNotification
@@ -27,6 +27,6 @@ class SendAppraisalRecordPendingReviewNotification
             return;
         }
 
-        Mail::to($approver)->send(new AppraisalPendingReviewMail($event->appraisalRecord));
+        Mail::to($approver)->send(new AppraisalRecordPendingReviewMail($event->appraisalRecord));
     }
 }

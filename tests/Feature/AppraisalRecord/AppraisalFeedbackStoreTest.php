@@ -5,6 +5,7 @@ namespace Tests\Feature\AppraisalRecord;
 use App\Enums\AppraisalRecordStatus;
 use App\Exceptions\InvalidWeightAgeException;
 use App\Mail\AppraisalPendingReviewMail;
+use App\Mail\AppraisalRecordPendingReviewMail;
 use App\Models\AppraisalRecord;
 use App\Models\User;
 use Database\Seeders\DepartmentSeeder;
@@ -406,7 +407,7 @@ class AppraisalFeedbackStoreTest extends TestCase
         $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}/feedbacks?isSubmit=true", $feedbackInput);
 
         // assert that AppraisalPendingReviewMail mailable was sent
-        Mail::assertSent(AppraisalPendingReviewMail::class);
+        Mail::assertSent(AppraisalRecordPendingReviewMail::class);
     }
 
     public function test_appraisal_review_pending_email_bot_sent_to_first_approver_if_feedback_is_only_saved(): void

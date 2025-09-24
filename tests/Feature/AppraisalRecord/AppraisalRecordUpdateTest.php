@@ -116,7 +116,7 @@ class AppraisalRecordUpdateTest extends TestCase
         $createdAppraisalRecordId = AppraisalRecord::latest()->first()->id;
 
         $appraisalRecordInput['review_from'] = '2023-01-01';
-        $response = $this->actingAs($anotherAppraisee)->putJson("/api/v1/users/{$anotherAppraisee->id}/appraisal-records/{$createdAppraisalRecordId}", $appraisalRecordInput);
+        $response = $this->actingAs($appraiser)->putJson("/api/v1/users/{$anotherAppraisee->id}/appraisal-records/{$createdAppraisalRecordId}", $appraisalRecordInput);
 
         $response->assertStatus(403);
     }
