@@ -19,7 +19,7 @@ class AppraisalRecordResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'status' => $this->status,
+            'status' => $this->status->label(),
             'total' => $this->total,
             'grade' => $this->grade,
             'grade_description' => $this->grade_description,

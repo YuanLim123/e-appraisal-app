@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\AppraisalRecord;
 
+use App\Enums\AppraisalRecordStatus;
 use App\Exceptions\InvalidWeightAgeException;
 use App\Mail\AppraisalPendingReviewMail;
 use App\Models\AppraisalRecord;
@@ -298,6 +299,63 @@ class AppraisalFeedbackStoreTest extends TestCase
         $response->assertStatus(422);
         $response->assertJson([
             'message' => (new InvalidWeightAgeException)->getMessage(),
+        ]);
+    }
+
+    public function test_appraisal_record_contain_correct_data_after_appraisal_record_submitted(): void
+    {
+        $payrollUser = User::factory()->create();
+        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
+
+        $appraisee = User::factory()->create();
+        $appraisee->position_id = 7;
+        $appraisee->save();
+        $appraiser = User::factory()->create();
+        $approver1 = User::factory()->create();
+        $approver2 = User::factory()->create();
+
+        $appraisalInput = [
+            'appraiser_id' => $appraiser->id,
+            'approvers' => [
+                ['user_id' => $approver1->id, 'sequence' => 1],
+                ['user_id' => $approver2->id, 'sequence' => 2],
+            ],
+        ];
+
+        // Create appraisal
+        $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+
+        // Create appraisal record
+        $appraisalRecordInput = AppraisalRecord::factory()->supervision()->make()->toArray();
+        $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
+
+        // Get the created appraisal record
+        $appraisalRecordId = AppraisalRecord::latest()->first()->id;
+
+        $feedbackInput = [
+            'current_salary' => 5000,
+        ];
+
+        // attempt to store feedback and submit the appraisal record
+        $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}/feedbacks?isSubmit=true", $feedbackInput);
+
+        $response->assertStatus(200);
+
+        $response->assertJsonFragment([
+            'current_salary' => $feedbackInput['current_salary'],
+            'status' => AppraisalRecordStatus::SUBMITTED->label(),
+            'current_step' => 1,
+        ]);
+
+        $response->assertJsonPath('data.current_approver.id', $approver1->id);
+
+        $this->assertDatabaseHas('appraisal_records', [
+            'id' => $appraisalRecordId,
+            'status' => AppraisalRecordStatus::SUBMITTED->value,
+            'current_step' => 1,
+            'appraisee_id' => $appraisee->id,
+            'appraiser_id' => $appraiser->id,
+            'current_approver_id' => $approver1->id,
         ]);
     }
 
