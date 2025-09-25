@@ -7,9 +7,9 @@ use App\Models\AppraisalRecord;
 use App\Models\User;
 use Illuminate\Support\Arr;
 
-class AppraisalFeedbackService
+class AppraisalRecordFeedbackService
 {
-    public function __construct(private AppraisalSubmitService $service) {}
+    public function __construct(private AppraisalRecordSubmitService $service) {}
 
     public function store(User $user, AppraisalRecord $appraisalRecord, array $attributes, bool $isSubmit = false): AppraisalRecord
     {

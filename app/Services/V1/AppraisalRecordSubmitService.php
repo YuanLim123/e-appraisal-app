@@ -11,7 +11,7 @@ use App\Models\AppraisalRecord;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
-class AppraisalSubmitService
+class AppraisalRecordSubmitService
 {
     public function submit(User $user, AppraisalRecord $appraisalRecord): void
     {

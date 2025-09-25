@@ -17,7 +17,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
-class AppraisalFeedbackStoreTest extends TestCase
+class AppraisalRecordFeedbackStoreTest extends TestCase
 {
     use RefreshDatabase;
 
