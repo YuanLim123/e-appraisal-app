@@ -23,8 +23,8 @@ class AppraisalRecordResource extends JsonResource
             'total' => $this->total,
             'grade' => $this->grade,
             'grade_description' => $this->grade_description,
-            'review_from' => $this->review_from->format('d-m-Y'),
-            'review_to' => $this->review_to->format('d-m-Y'),
+            'review_from' => $this->review_from?->format('d-m-Y'),
+            'review_to' => $this->review_to?->format('d-m-Y'),
             'answer' => $this->answer ?? [],
             'feedback' => $this->feedback ?? [],
             'appraiser' => new UserResource($this->whenLoaded('appraiser')),
@@ -33,6 +33,8 @@ class AppraisalRecordResource extends JsonResource
             'current_step' => $this->current_step ?? null,
             'completed_at' => $this->completed_at ?? null,
             'rejected_at' => $this->rejected_at ?? null,
+            'employee_agreed_at' => $this->employee_agreed_at?->format('d-m-Y') ?? null,
+            'supervisor_agreed_at' => $this->supervisor_agreed_at?->format('d-m-Y') ?? null
         ];
     }
 }

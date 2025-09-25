@@ -49,6 +49,7 @@ class AppraisalRecordController extends Controller
     {
         Gate::authorize('update', [AppraisalRecord::class, $appraisalRecord, $user]);
 
+        // get isSubmit query param, default to false
         $isSubmit = $request->query('isSubmit', false);
 
         $appraisalRecord = $service->store($user, $appraisalRecord, $request->validated(), $isSubmit);
@@ -60,7 +61,7 @@ class AppraisalRecordController extends Controller
     {
         Gate::authorize('update', [AppraisalRecord::class, $appraisalRecord, $user]);
 
-        $appraisalRecord = $service->submit($user, $appraisalRecord);
+        $service->submit($user, $appraisalRecord);
 
         return $this->successResponse(message: 'Appraisal record submitted successfully');
 

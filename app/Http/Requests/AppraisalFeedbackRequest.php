@@ -22,6 +22,7 @@ class AppraisalFeedbackRequest extends FormRequest
     public function rules(): array
     {
         $user = $this->route('user');
+        $isSubmit = $this->query('isSubmit', false);
 
         $rules = [
             'current_salary' => ['nullable', 'numeric'],
@@ -52,6 +53,14 @@ class AppraisalFeedbackRequest extends FormRequest
             $rules['goal_next.*.specificAction'] = ['nullable', 'string', 'required_with:goal_next.*.objective,goal_next.*.weightage,goal_next.*.total'];
             $rules['goal_next.*.weightage'] = ['nullable', 'numeric', 'required_with:goal_next.*.objective,goal_next.*.specificAction,goal_next.*.total'];
             $rules['goal_next.*.total'] = ['nullable', 'numeric'];
+        }
+
+        if ($isSubmit) {
+            $rules['isEmployeeAgreed'] = ['required', 'boolean', 'accepted'];
+            $rules['isSupervisorAgreed'] = ['required', 'boolean', 'accepted'];
+        } else {
+            $rules['isEmployeeAgreed'] = ['nullable', 'boolean'];
+            $rules['isSupervisorAgreed'] = ['nullable', 'boolean'];
         }
 
         return $rules;

@@ -303,7 +303,7 @@ class AppraisalFeedbackStoreTest extends TestCase
         ]);
     }
 
-    public function test_appraisal_record_contain_correct_data_after_appraisal_record_submitted(): void
+    public function test_appraisal_record_contain_correct_data_after_appraisal_record_feedback_is_saved_and_submitted(): void
     {
         $payrollUser = User::factory()->create();
         $payrollUser->departments()->sync([$this->payrollDeparmentId]);
@@ -335,6 +335,8 @@ class AppraisalFeedbackStoreTest extends TestCase
 
         $feedbackInput = [
             'current_salary' => 5000,
+            'isEmployeeAgreed' => true,
+            'isSupervisorAgreed' => true,
         ];
 
         // attempt to store feedback and submit the appraisal record
@@ -360,7 +362,7 @@ class AppraisalFeedbackStoreTest extends TestCase
         ]);
     }
 
-    public function test_appraisal_review_pending_email_sent_to_first_approver_after_appraisal_record_submitted(): void
+    public function test_appraisal_review_pending_email_sent_to_first_approver_after_appraisal_record_feedback_is_saved_and_submitted(): void
     {
         $payrollUser = User::factory()->create();
         $payrollUser->departments()->sync([$this->payrollDeparmentId]);
@@ -400,6 +402,8 @@ class AppraisalFeedbackStoreTest extends TestCase
                     'weightage' => 100,
                 ],
             ],
+            'isEmployeeAgreed' => true,
+            'isSupervisorAgreed' => true,
         ];
         Mail::fake();
 
@@ -410,7 +414,7 @@ class AppraisalFeedbackStoreTest extends TestCase
         Mail::assertSent(AppraisalRecordPendingReviewMail::class);
     }
 
-    public function test_appraisal_review_pending_email_bot_sent_to_first_approver_if_feedback_is_only_saved(): void
+    public function test_appraisal_review_pending_email_not_sent_to_first_approver_if_feedback_is_only_saved(): void
     {
         $payrollUser = User::factory()->create();
         $payrollUser->departments()->sync([$this->payrollDeparmentId]);
@@ -459,4 +463,56 @@ class AppraisalFeedbackStoreTest extends TestCase
         // assert that AppraisalPendingReviewMail mailable was sent
         Mail::assertNothingSent();
     }
+
+    public function test_appraisal_record_feedback_store_and_submit_return_error_if_employee_or_supervisor_did_not_agree(): void
+    {
+        $payrollUser = User::factory()->create();
+        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
+
+        $appraisee = User::factory()->create();
+        $appraisee->position_id = 7;
+        $appraisee->save();
+        $appraiser = User::factory()->create();
+        $approver1 = User::factory()->create();
+        $approver2 = User::factory()->create();
+
+        $appraisalInput = [
+            'appraiser_id' => $appraiser->id,
+            'approvers' => [
+                ['user_id' => $approver1->id, 'sequence' => 1],
+                ['user_id' => $approver2->id, 'sequence' => 2],
+            ],
+        ];
+
+        // Create appraisal
+        $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+
+        // Create appraisal record
+        $appraisalRecordInput = AppraisalRecord::factory()->supervision()->make()->toArray();
+        $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
+
+        // Get the created appraisal record
+        $appraisalRecordId = AppraisalRecord::latest()->first()->id;
+
+        $feedbackInput = [
+            'current_salary' => 5000,
+            'new_salary' => 6000,
+            'goal_next' => [
+                [
+                    'objective' => 'objective 1',
+                    'specificAction' => 'specific action 1',
+                    'weightage' => 100,
+                ],
+            ],
+            // assume only supervisor agreed but employee not agreed
+            'isSupervisorAgreed' => true,
+            'isEmployeeAgreed' => false,
+        ];
+
+        // attempt to store feedback and submit the appraisal record
+        $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}/feedbacks?isSubmit=true", $feedbackInput);
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['isEmployeeAgreed']);
+    }
+
 }

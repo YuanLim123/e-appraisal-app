@@ -34,6 +34,8 @@ class AppraisalRecord extends Model
         'season_id',
         'completed_at',
         'rejected_at',
+        'employee_agreed_at',
+        'supervisor_agreed_at',
     ];
 
     protected function casts(): array
@@ -48,6 +50,8 @@ class AppraisalRecord extends Model
             'review_to' => 'date:Y-m-d',
             'completed_at' => 'datetime',
             'rejected_at' => 'datetime',
+            'employee_agreed_at' => 'date:Y-m-d',
+            'supervisor_agreed_at' => 'date:Y-m-d',
         ];
     }
 
