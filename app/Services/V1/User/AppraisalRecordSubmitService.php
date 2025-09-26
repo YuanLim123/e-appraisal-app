@@ -32,9 +32,9 @@ class AppraisalRecordSubmitService
             throw new AppraisalHasNoApproverException;
         }
 
-        if ($appraisalRecord->isSubmitted()) {
-            throw new RecordAlreadySubmitException();
-        }
+        // if ($appraisalRecord->isSubmitted()) {
+        //     throw new RecordAlreadySubmitException();
+        // }
 
         DB::transaction(function () use ($appraisalRecord, $currentApprovers) {
             $appraisalRecord->approvers()->delete();

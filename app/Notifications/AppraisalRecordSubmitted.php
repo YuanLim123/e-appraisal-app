@@ -2,19 +2,20 @@
 
 namespace App\Notifications;
 
+use App\Models\AppraisalRecord;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class AppraisalRecordSubmitted extends Notification
+class AppraisalRecordSubmitted extends Notification implements ShouldQueue
 {
     use Queueable;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct(public AppraisalRecord $appraisalRecord)
     {
         //
     }
@@ -26,7 +27,7 @@ class AppraisalRecordSubmitted extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['database'];
     }
 
     /**
@@ -48,7 +49,10 @@ class AppraisalRecordSubmitted extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            //
+            'appraisal_record_id' => $this->appraisalRecord->id,
+            'appraiser_id' => $this->appraisalRecord->appraiser_id,
+            'appraisee_id' => $this->appraisalRecord->appraisee_id,
+            'season_id' => $this->appraisalRecord->season_id,
         ];
     }
 }

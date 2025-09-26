@@ -2,7 +2,9 @@
 
 namespace App\Listeners;
 
+use App\Notifications\AppraisalRecordSubmitted as AppraisalRecordSubmittedNotification;
 use App\Events\AppraisalRecordSubmitted;
+use Illuminate\Support\Facades\Notification;
 
 class NotifyAppraisalRecordSubmitted
 {
@@ -26,5 +28,6 @@ class NotifyAppraisalRecordSubmitted
         }
 
         // send notification to appraisee
+        Notification::send($appraisee, new AppraisalRecordSubmittedNotification($event->appraisalRecord));
     }
 }
