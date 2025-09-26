@@ -93,4 +93,9 @@ class AppraisalRecordPolicy
     {
         return false;
     }
+
+    public function approveAppraisalRecord(User $user, AppraisalRecord $appraisalRecord): bool
+    {
+        return auth()->id() == $appraisalRecord->current_approver_id;
+    }
 }

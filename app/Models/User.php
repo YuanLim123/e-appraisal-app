@@ -112,8 +112,4 @@ class User extends Authenticatable
         return $this->hasMany(AppraisalRecord::class, 'appraiser_id');
     }
 
-    public function recordApprovers(): HasMany
-    {
-        return $this->hasMany(RecordApprover::class, 'user_id');
-    }
 }

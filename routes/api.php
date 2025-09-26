@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\User\AppraisalController;
 use App\Http\Controllers\Api\V1\User\AppraisalRecordController;
 use App\Http\Controllers\Api\V1\Auth\LoginController;
 use App\Http\Controllers\Api\V1\Auth\RegisteredUserController;
+use App\Http\Controllers\api\V1\User\ApprovalController;
 use App\Http\Controllers\Api\V1\User\UserController;
 use App\Http\Middleware\DepartmentMiddleware;
 use Illuminate\Http\Request;
@@ -37,5 +38,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::post('users/{user}/appraisal-records/{appraisalRecord}/feedbacks', [AppraisalRecordController::class, 'storeFeedback']);
         
-    Route::post('users/{user}/appraisal-records/{appraisalRecord}/submit', [AppraisalRecordController::class, 'submit']);
+    Route::post('users/{user}/appraisal-records/{appraisalRecord}/submissions', [AppraisalRecordController::class, 'submit']);
+
+    Route::get('approvals', [ApprovalController::class, 'index']);
+
+    Route::get('approvals/{appraisalRecord}', [ApprovalController::class, 'show']);
 });
