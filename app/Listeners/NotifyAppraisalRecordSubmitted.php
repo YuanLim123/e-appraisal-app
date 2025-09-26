@@ -4,7 +4,7 @@ namespace App\Listeners;
 
 use App\Events\AppraisalRecordSubmitted;
 
-class NotifyAppraisalSubmitted
+class NotifyAppraisalRecordSubmitted
 {
     /**
      * Create the event listener.

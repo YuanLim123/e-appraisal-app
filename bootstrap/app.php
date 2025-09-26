@@ -6,6 +6,7 @@ use App\Exceptions\InvalidRatingSumException;
 use App\Exceptions\InvalidWeightAgeException;
 use App\Exceptions\RecordAlreadyExistsInSeasonException;
 use App\Exceptions\UserHasNoAppraisalCreatedException;
+use App\Exceptions\RecordAlreadySubmitException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -59,6 +60,13 @@ return Application::configure(basePath: dirname(__DIR__))
             }
         });
         $exceptions->render(function (AgreementRequiredException $e, Request $request) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => $e->getMessage(),
+                ], 422);
+            }
+        });
+        $exceptions->render(function (RecordAlreadySubmitException $e, Request $request) {
             if ($request->wantsJson()) {
                 return response()->json([
                     'message' => $e->getMessage(),

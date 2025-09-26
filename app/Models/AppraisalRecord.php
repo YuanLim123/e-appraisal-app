@@ -55,6 +55,11 @@ class AppraisalRecord extends Model
         ];
     }
 
+    public function isSubmitted(): bool
+    {
+        return $this->status == AppraisalRecordStatus::SUBMITTED;
+    }
+
     public function appraiser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'appraiser_id');

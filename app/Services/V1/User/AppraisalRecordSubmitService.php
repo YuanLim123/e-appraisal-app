@@ -7,6 +7,7 @@ use App\Events\AppraisalRecordSubmitted;
 use App\Exceptions\AgreementRequiredException;
 use App\Exceptions\AppraisalHasNoApproverException;
 use App\Exceptions\UserHasNoAppraisalCreatedException;
+use App\Exceptions\RecordAlreadySubmitException;
 use App\Models\AppraisalRecord;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -29,6 +30,10 @@ class AppraisalRecordSubmitService
 
         if (! $currentApprovers) {
             throw new AppraisalHasNoApproverException;
+        }
+
+        if ($appraisalRecord->isSubmitted()) {
+            throw new RecordAlreadySubmitException();
         }
 
         DB::transaction(function () use ($appraisalRecord, $currentApprovers) {
