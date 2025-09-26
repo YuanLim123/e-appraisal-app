@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Admin;
+namespace App\Http\Controllers\Api\V1\HR;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAppraisalRequest;
@@ -8,7 +8,7 @@ use App\Http\Requests\UpdateAppraisalRequest;
 use App\Http\Resources\AppraisalResource;
 use App\Models\Appraisal;
 use App\Models\User;
-use App\Services\V1\Admin\AppraisalService;
+use App\Services\V1\HR\AppraisalService;
 
 class AppraisalController extends Controller
 {

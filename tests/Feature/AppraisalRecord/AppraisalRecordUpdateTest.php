@@ -64,7 +64,7 @@ class AppraisalRecordUpdateTest extends TestCase
         ];
 
         // Create appraisal
-        $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
 
         // Create appraisal record
         $appraisalRecordInput = AppraisalRecord::factory()->make()->toArray();
@@ -104,7 +104,7 @@ class AppraisalRecordUpdateTest extends TestCase
         ];
 
         // Create appraisal
-        $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
 
         // Create appraisal record
         $appraisalRecordInput = AppraisalRecord::factory()->make()->toArray();
@@ -144,7 +144,7 @@ class AppraisalRecordUpdateTest extends TestCase
         ];
 
         // Create appraisal
-        $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
 
         // Create appraisal record
         $appraisalRecordInput = AppraisalRecord::factory()->make()->toArray();
@@ -181,7 +181,7 @@ class AppraisalRecordUpdateTest extends TestCase
         ];
 
         // Create appraisal
-        $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
 
         // Create appraisal record
         $appraisalRecordInput = AppraisalRecord::factory()->make()->toArray();
@@ -221,7 +221,7 @@ class AppraisalRecordUpdateTest extends TestCase
         ];
 
         // Create appraisal
-        $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
 
         // Create appraisal record
         $appraisalRecordInput = AppraisalRecord::factory()->make()->toArray();

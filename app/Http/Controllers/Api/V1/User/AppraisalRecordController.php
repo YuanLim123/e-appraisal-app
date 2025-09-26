@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api\V1\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AppraisalFeedbackRequest;
@@ -9,11 +9,9 @@ use App\Http\Requests\StoreAppraisalRecordRequest;
 use App\Http\Resources\AppraisalRecordResource;
 use App\Models\AppraisalRecord;
 use App\Models\User;
-use App\Services\V1\AppraisalFeedbackService;
-use App\Services\V1\AppraisalRecordFeedbackService;
-use App\Services\V1\AppraisalRecordService;
-use App\Services\V1\AppraisalRecordSubmitService;
-use App\Services\V1\AppraisalSubmitService;
+use App\Services\V1\User\AppraisalRecordFeedbackService;
+use App\Services\V1\User\AppraisalRecordService;
+use App\Services\V1\User\AppraisalRecordSubmitService;
 use App\Traits\APIResponsesTrait;
 use Illuminate\Support\Facades\Gate;
 

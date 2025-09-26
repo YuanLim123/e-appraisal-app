@@ -33,7 +33,7 @@ class AppraisalTest extends TestCase
 
     public function test_public_user_cannot_access_adding_appraisal(): void
     {
-        $response = $this->postJson('/api/v1/admin/users/1/appraisals', []);
+        $response = $this->postJson('/api/v1/hr/users/1/appraisals', []);
 
         $response->assertStatus(401);
     }
@@ -51,7 +51,7 @@ class AppraisalTest extends TestCase
             ],
         ];
 
-        $response = $this->actingAs($nonHrUser)->postJson('/api/v1/admin/users/3/appraisals', $appraisalInput);
+        $response = $this->actingAs($nonHrUser)->postJson('/api/v1/hr/users/3/appraisals', $appraisalInput);
 
         $response->assertStatus(403);
     }
@@ -69,7 +69,7 @@ class AppraisalTest extends TestCase
             ],
         ];
 
-        $response = $this->actingAs($payrollUser)->postJson('/api/v1/admin/users/3/appraisals', $appraisalInput);
+        $response = $this->actingAs($payrollUser)->postJson('/api/v1/hr/users/3/appraisals', $appraisalInput);
         $response->assertStatus(201);
     }
 
@@ -91,7 +91,7 @@ class AppraisalTest extends TestCase
             ],
         ];
 
-        $response = $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+        $response = $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
         $response->assertStatus(201);
         $response->assertJsonCount(2, 'data.approvers');
         $response->assertJsonPath('data.appraisee.id', $appraisee->id);
@@ -113,7 +113,7 @@ class AppraisalTest extends TestCase
             ],
         ];
 
-        $response = $this->actingAs($payrollUser)->postJson('/api/v1/admin/users/3/appraisals', $appraisalInput);
+        $response = $this->actingAs($payrollUser)->postJson('/api/v1/hr/users/3/appraisals', $appraisalInput);
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['appraiser_id', 'approvers.0.user_id', 'approvers.1.user_id']);
     }
@@ -137,11 +137,11 @@ class AppraisalTest extends TestCase
         ];
 
         // first request should be successful
-        $response1 = $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+        $response1 = $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
         $response1->assertStatus(201);
 
         // second request with same appraisee should fail
-        $response2 = $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+        $response2 = $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
         $response2->assertStatus(422);
         $response2->assertJson([
             'message' => 'The selected user has already been registered as an appraisee.',
@@ -167,7 +167,7 @@ class AppraisalTest extends TestCase
         ];
 
         // Create appraisal first
-        $createResponse = $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+        $createResponse = $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
         $createResponse->assertStatus(201);
 
         // Get the appraisal we just created
@@ -187,7 +187,7 @@ class AppraisalTest extends TestCase
         ];
 
         // Update appraisal
-        $updateResponse = $this->actingAs($payrollUser)->putJson("/api/v1/admin/users/{$appraisee->id}/appraisals/{$appraisal->id}", $updatedAppraisalInput);
+        $updateResponse = $this->actingAs($payrollUser)->putJson("/api/v1/hr/users/{$appraisee->id}/appraisals/{$appraisal->id}", $updatedAppraisalInput);
         $updateResponse->assertStatus(200);
         $updateResponse->assertJsonCount(2, 'data.approvers');
         $updateResponse->assertJsonPath('data.appraisee.id', $appraisee->id);
@@ -215,7 +215,7 @@ class AppraisalTest extends TestCase
         ];
 
         // Create appraisal first
-        $createResponse = $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+        $createResponse = $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
         $createResponse->assertStatus(201);
 
         // Get the appraisal we just created
@@ -231,7 +231,7 @@ class AppraisalTest extends TestCase
         ];
 
         // Update appraisal with invalid data
-        $updateResponse = $this->actingAs($payrollUser)->putJson("/api/v1/admin/users/{$appraisee->id}/appraisals/{$appraisal->id}", $invalidAppraisalInput);
+        $updateResponse = $this->actingAs($payrollUser)->putJson("/api/v1/hr/users/{$appraisee->id}/appraisals/{$appraisal->id}", $invalidAppraisalInput);
         $updateResponse->assertStatus(422);
         $updateResponse->assertJsonValidationErrors(['appraiser_id', 'approvers.0.user_id', 'approvers.1.sequence']);
     }

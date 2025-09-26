@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\V1;
+namespace App\Services\V1\User;
 
 use App\Enums\AppraisalRecordGrade;
 use App\Enums\AppraisalRecordPurposeType;

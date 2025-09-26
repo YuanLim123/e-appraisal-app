@@ -28,7 +28,7 @@ class AdminUserTest extends TestCase
     {
         $userData = User::factory()->make()->toArray();
 
-        $response = $this->postJson('/api/v1/admin/users', $userData);
+        $response = $this->postJson('/api/v1/hr/users', $userData);
 
         $response->assertStatus(401);
     }
@@ -40,7 +40,7 @@ class AdminUserTest extends TestCase
         $nonHrUser->departments()->sync([1, 2]);
         $userData = User::factory()->make()->toArray();
 
-        $response = $this->actingAs($nonHrUser)->postJson('/api/v1/admin/users', $userData);
+        $response = $this->actingAs($nonHrUser)->postJson('/api/v1/hr/users', $userData);
 
         $response->assertStatus(403);
     }
@@ -53,7 +53,7 @@ class AdminUserTest extends TestCase
         $userData = User::factory()->make()->toArray();
         $userData['password'] = 'Password123'; // since passsword is hidden in model, we need to add it manually
 
-        $response = $this->actingAs($payrollUser)->postJson('/api/v1/admin/users', $userData);
+        $response = $this->actingAs($payrollUser)->postJson('/api/v1/hr/users', $userData);
 
         $response->assertStatus(201);
         $response->assertJsonFragment([
@@ -83,7 +83,7 @@ class AdminUserTest extends TestCase
         ])->toArray();
         $userData['password'] = 'Password123';
 
-        $response = $this->actingAs($payrollUser)->postJson('/api/v1/admin/users', $userData);
+        $response = $this->actingAs($payrollUser)->postJson('/api/v1/hr/users', $userData);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['email', 'employee_no']);

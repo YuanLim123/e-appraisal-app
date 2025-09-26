@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\V1\Admin;
+namespace App\Services\V1\HR;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;

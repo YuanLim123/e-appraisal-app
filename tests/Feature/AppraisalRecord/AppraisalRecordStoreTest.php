@@ -70,7 +70,7 @@ class AppraisalRecordStoreTest extends TestCase
         ];
 
         // Create appraisal first
-        $createResponse = $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+        $createResponse = $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
         $createResponse->assertStatus(201);
 
         // create one more user
@@ -110,7 +110,7 @@ class AppraisalRecordStoreTest extends TestCase
             ],
         ];
 
-        $createResponse = $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+        $createResponse = $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
         $createResponse->assertStatus(201);
         // login as appraiser
         // call create appraisal record api for that appraisee
@@ -155,7 +155,7 @@ class AppraisalRecordStoreTest extends TestCase
             ],
         ];
 
-        $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
 
         // login as appraiser and submit
         $appraisalRecordInput = AppraisalRecord::factory()->make([
@@ -212,7 +212,7 @@ class AppraisalRecordStoreTest extends TestCase
             ],
         ];
 
-        $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
 
         // login as appraiser
         // call create appraisal record api for that appraisee with invalid data
@@ -250,7 +250,7 @@ class AppraisalRecordStoreTest extends TestCase
             ],
         ];
 
-        $createResponse = $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+        $createResponse = $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
         $createResponse->assertStatus(201);
         // login as appraiser
         // call create appraisal record api for that appraisee
@@ -301,7 +301,7 @@ class AppraisalRecordStoreTest extends TestCase
         $annualReviewSeason->end_at = now();
         $annualReviewSeason->save();
 
-        $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
 
         $appraisalRecordInput = AppraisalRecord::factory()->make([
             'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW,
@@ -337,7 +337,7 @@ class AppraisalRecordStoreTest extends TestCase
             ],
         ];
 
-        $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
 
         // create appraisal record with invalid performance rating sum which exceeds 100
         $appraisalRecordInput = AppraisalRecord::factory()->make([

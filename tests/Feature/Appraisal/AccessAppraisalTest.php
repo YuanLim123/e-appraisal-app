@@ -74,7 +74,7 @@ class AccessAppraisalTest extends TestCase
         ];
 
         // Create appraisal first
-        $createResponse = $this->actingAs($payrollUser)->postJson("/api/v1/admin/users/{$appraisee->id}/appraisals", $appraisalInput);
+        $createResponse = $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
         $createResponse->assertStatus(201);
 
         // Access appraisal as appraiser
