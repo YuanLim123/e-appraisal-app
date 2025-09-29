@@ -22,10 +22,12 @@ Route::get('appraisals', [AppraisalController::class, 'index']);
 Route::get('users', [UserController::class, 'index']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::prefix('hr')->middleware([DepartmentMiddleware::class.':HRA,PAYROLL'])->group(function () {
-        Route::post('users', [HR\UserController::class, 'store']);
-        Route::post('users/{user}/appraisals', [HR\AppraisalController::class, 'store']);
-        Route::put('users/{user}/appraisals/{appraisal}', [HR\AppraisalController::class, 'update']);
+
+    Route::middleware([DepartmentMiddleware::class.':HRA,PAYROLL'])->group(function () {
+        Route::post('hr/users', [HR\UserController::class, 'store']);
+        Route::post('hr/users/{user}/appraisals', [HR\AppraisalController::class, 'store']);
+        Route::put('hr/users/{user}/appraisals/{appraisal}', [HR\AppraisalController::class, 'update']);
+        Route::get('hr/appraisal-records', [HR\AppraisalRecordController::class, 'index']);
     });
 
     Route::get('appraisals/{appraisal}', [AppraisalController::class, 'show'])
@@ -35,12 +37,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('users/{user}/appraisal-records/{appraisalRecord}', [AppraisalRecordController::class, 'update']);
 
     Route::get('appraisal-records', [AppraisalRecordController::class, 'index']);
-
+    
     Route::post('users/{user}/appraisal-records/{appraisalRecord}/feedbacks', [AppraisalRecordController::class, 'storeFeedback']);
-        
     Route::post('users/{user}/appraisal-records/{appraisalRecord}/submissions', [AppraisalRecordController::class, 'submit']);
 
     Route::get('approvals', [ApprovalController::class, 'index']);
-
     Route::get('approvals/{appraisalRecord}', [ApprovalController::class, 'show']);
+    Route::post('approvals/{appraisalRecord}', [ApprovalController::class, 'approve']);
 });

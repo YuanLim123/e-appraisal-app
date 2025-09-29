@@ -3,10 +3,11 @@
 namespace App\Listeners;
 
 use App\Events\AppraisalRecordSubmitted;
+use App\Events\ApprovalProceeded;
 use App\Mail\AppraisalRecordPendingReviewMail;
 use Illuminate\Support\Facades\Mail;
 
-class SendAppraisalRecordPendingReviewNotification
+class SendApproverNotification
 {
     /**
      * Create the event listener.
@@ -19,9 +20,9 @@ class SendAppraisalRecordPendingReviewNotification
     /**
      * Handle the event.
      */
-    public function handle(AppraisalRecordSubmitted $event): void
+    public function handle(ApprovalProceeded|AppraisalRecordSubmitted $event): void
     {
-        $approver = $event->appraisalRecord->approvers()->with('user')->first()?->user;
+        $approver = $event->appraisalRecord->currentApprover;
 
         if (! $approver || ! $approver->email) {
             return;
