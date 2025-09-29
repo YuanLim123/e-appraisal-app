@@ -78,7 +78,7 @@ class AppraisalRecordStoreTest extends TestCase
         $nonAppraiserUser->departments()->sync([1]);
         // sign in as that user
 
-        $appraisalRecordInput = AppraisalRecord::factory()->make()->toArray();
+        $appraisalRecordInput = $this->createAppraisalRecordInputData();
 
         $response = $this->actingAs($nonAppraiserUser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
         // call create appraisal record api for that appraisee
@@ -114,9 +114,11 @@ class AppraisalRecordStoreTest extends TestCase
         $createResponse->assertStatus(201);
         // login as appraiser
         // call create appraisal record api for that appraisee
-        $appraisalRecordInput = AppraisalRecord::factory()->make([
-            'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW,
-        ])->toArray();
+        $appraisalRecordInput = $this->createAppraisalRecordInputData();
+        $appraisalRecordInput['purpose'] = AppraisalRecordPurposeType::ANNUAL_REVIEW->value;
+        // $appraisalRecordInput = AppraisalRecord::factory()->make([
+        //     'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW,
+        // ])->toArray();
         $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
         // assert 201
         $response->assertStatus(201);
@@ -158,9 +160,11 @@ class AppraisalRecordStoreTest extends TestCase
         $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
 
         // login as appraiser and submit
-        $appraisalRecordInput = AppraisalRecord::factory()->make([
-            'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW,
-        ])->toArray();
+        $appraisalRecordInput = $this->createAppraisalRecordInputData();
+        $appraisalRecordInput['purpose'] = AppraisalRecordPurposeType::ANNUAL_REVIEW->value;
+        // $appraisalRecordInput = AppraisalRecord::factory()->make([
+        //     'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW,
+        // ])->toArray();
         $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
 
         // try to submit again to same appraisee in same season
@@ -179,9 +183,11 @@ class AppraisalRecordStoreTest extends TestCase
         $appraisee->position_id = 2;
         $appraisee->save();
 
-        $appraisalRecordInput = AppraisalRecord::factory()->make([
-            'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW,
-        ])->toArray();
+        // $appraisalRecordInput = AppraisalRecord::factory()->make([
+        //     'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW,
+        // ])->toArray();
+        $appraisalRecordInput = $this->createAppraisalRecordInputData();
+        $appraisalRecordInput['purpose'] = AppraisalRecordPurposeType::ANNUAL_REVIEW->value;
 
         $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
 
@@ -216,11 +222,16 @@ class AppraisalRecordStoreTest extends TestCase
 
         // login as appraiser
         // call create appraisal record api for that appraisee with invalid data
-        $appraisalRecordInput = AppraisalRecord::factory()->make([
-            'review_to' => null,
-            'purpose' => 'dummy',
-            'review_from' => null,
-        ])->toArray();
+        // $appraisalRecordInput = AppraisalRecord::factory()->make([
+        //     'review_to' => null,
+        //     'purpose' => 'dummy',
+        //     'review_from' => null,
+        // ])->toArray();
+        $appraisalRecordInput = $this->createAppraisalRecordInputData();
+        $appraisalRecordInput['review_to'] = null;
+        $appraisalRecordInput['purpose'] = 'dummy';
+        $appraisalRecordInput['review_from'] = null;
+
         $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
         // assert 422
         $response->assertStatus(422);
@@ -254,9 +265,11 @@ class AppraisalRecordStoreTest extends TestCase
         $createResponse->assertStatus(201);
         // login as appraiser
         // call create appraisal record api for that appraisee
-        $appraisalRecordInput = AppraisalRecord::factory()->supervision()->make([
-            'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW,
-        ])->toArray();
+        // $appraisalRecordInput = AppraisalRecord::factory()->supervision()->make([
+        //     'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW,
+        // ])->toArray();
+        $isSupervisionAppraisal = true;
+        $appraisalRecordInput = $this->createAppraisalRecordInputData($isSupervisionAppraisal);
 
         $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
         // assert 201
@@ -303,9 +316,12 @@ class AppraisalRecordStoreTest extends TestCase
 
         $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
 
-        $appraisalRecordInput = AppraisalRecord::factory()->make([
-            'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW,
-        ])->toArray();
+        // $appraisalRecordInput = AppraisalRecord::factory()->make([
+        //     'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW,
+        // ])->toArray();
+
+        $appraisalRecordInput = $this->createAppraisalRecordInputData();
+        $appraisalRecordInput['purpose'] = AppraisalRecordPurposeType::ANNUAL_REVIEW->value;
 
         $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
         // assert 422
@@ -340,20 +356,35 @@ class AppraisalRecordStoreTest extends TestCase
         $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
 
         // create appraisal record with invalid performance rating sum which exceeds 100
-        $appraisalRecordInput = AppraisalRecord::factory()->make([
-            'performance' => [
-                [
-                    'goal' => 'goal 1',
-                    'result' => 'result 1',
-                    'rating' => 100,
-                ],
-                [
-                    'goal' => 'goal 2',
-                    'result' => 'result 2',
-                    'rating' => 20,
-                ],
+        // $appraisalRecordInput = AppraisalRecord::factory()->make([
+        //     'performance' => [
+        //         [
+        //             'goal' => 'goal 1',
+        //             'result' => 'result 1',
+        //             'rating' => 100,
+        //         ],
+        //         [
+        //             'goal' => 'goal 2',
+        //             'result' => 'result 2',
+        //             'rating' => 20,
+        //         ],
+        //     ],
+        // ])->toArray();
+
+        $isSupervisionAppraisal = true;
+        $appraisalRecordInput = $this->createAppraisalRecordInputData($isSupervisionAppraisal);
+        $appraisalRecordInput['performance'] = [
+            [
+                'goal' => 'goal 1',
+                'result' => 'result 1',
+                'rating' => 100,
             ],
-        ])->toArray();
+            [
+                'goal' => 'goal 2',
+                'result' => 'result 2',
+                'rating' => 20,
+            ],
+        ];
 
         $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
 

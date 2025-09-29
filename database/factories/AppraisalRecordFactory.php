@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\AppraisalRecordPurposeType;
+use App\Enums\AppraisalRecordStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -25,8 +26,8 @@ class AppraisalRecordFactory extends Factory
             'review_to' => $end->format('Y-m-d'),
             'purpose' => fake()->randomElement(AppraisalRecordPurposeType::cases()),
             'total' => fake()->numberBetween(50, 100),
-            'performance' => null,
-            'section_percentage' => null,
+            //'performance' => null,
+            //'section_percentage' => null,
         ];
     }
 
