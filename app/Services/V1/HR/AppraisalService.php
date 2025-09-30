@@ -9,6 +9,7 @@ class AppraisalService
 {
     public function store(User $user, array $attributes): Appraisal
     {
+        /** @var Appraisal $appraisal */
         $appraisal = $user->appraisalAsAppraisee()
             ->create([
                 'appraiser_id' => $attributes['appraiser_id'],

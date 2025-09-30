@@ -57,7 +57,16 @@ class AppraisalRecord extends Model
 
     public function isSubmitted(): bool
     {
-        return $this->status == AppraisalRecordStatus::SUBMITTED;
+        return $this->status->value == AppraisalRecordStatus::SUBMITTED->value;
+    }
+
+    public function getApprover(int $step): ?RecordApprover
+    {
+        return $this->approvers()
+            ->where('sequence', $step)
+            ->whereNull('approved_at')
+            ->whereNull('rejected_at')
+            ->first();
     }
 
     public function appraiser(): BelongsTo

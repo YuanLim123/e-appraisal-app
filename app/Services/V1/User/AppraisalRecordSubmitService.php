@@ -10,6 +10,7 @@ use App\Exceptions\RecordAlreadySubmitException;
 use App\Exceptions\UserHasNoAppraisalCreatedException;
 use App\Models\AppraisalRecord;
 use App\Models\User;
+use App\Models\Appraisal;
 use Illuminate\Support\Facades\DB;
 
 class AppraisalRecordSubmitService
@@ -18,6 +19,10 @@ class AppraisalRecordSubmitService
     {
         if (! $appraisalRecord->employee_agreed_at || ! $appraisalRecord->supervisor_agreed_at) {
             throw new AgreementRequiredException;
+        }
+
+        if ($appraisalRecord->isSubmitted()) {
+            throw new RecordAlreadySubmitException();
         }
 
         $appraisal = $user->appraisalAsAppraisee;
@@ -31,10 +36,6 @@ class AppraisalRecordSubmitService
         if (! $currentApprovers) {
             throw new AppraisalHasNoApproverException;
         }
-
-        // if ($appraisalRecord->isSubmitted()) {
-        //     throw new RecordAlreadySubmitException();
-        // }
 
         DB::transaction(function () use ($appraisalRecord, $currentApprovers) {
             $appraisalRecord->approvers()->delete();

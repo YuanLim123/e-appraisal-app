@@ -33,13 +33,9 @@ class ApprovalService
         $currentStep = $appraisalRecord->current_step;
         $nextStep = $currentStep + 1;
 
+        $nextApprover = $appraisalRecord->getApprover($nextStep);
+        
         // check if there is next approver
-        $nextApprover = $appraisalRecord->approvers()
-            ->where('sequence', $nextStep)
-            ->whereNull('approved_at')
-            ->whereNull('rejected_at')
-            ->first();
-
         // if yes, update the current_approver_id to next approver and step
         if ($nextApprover) {
             $appraisalRecord->update([

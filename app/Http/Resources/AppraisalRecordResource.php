@@ -2,11 +2,18 @@
 
 namespace App\Http\Resources;
 
+use App\Enums\AppraisalRecordStatus;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Carbon;
 
 /**
  * @mixin \App\Models\AppraisalRecord
+ * @property AppraisalRecordStatus $status
+ * @property Carbon|null $review_from
+ * @property Carbon|null $review_to
+ * @property Carbon|null $employee_agreed_at
+ * @property Carbon|null $supervisor_agreed_at
  */
 class AppraisalRecordResource extends JsonResource
 {

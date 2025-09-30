@@ -10,6 +10,9 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
+/**
+* @property string $full_name
+*/
 class AppraisalRecordPendingReviewMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
@@ -36,15 +39,15 @@ class AppraisalRecordPendingReviewMail extends Mailable implements ShouldQueue
      */
     public function content(): Content
     {
-        $deparments = $this->appraisalRecord?->appraisee?->departments->pluck('name');
+        $depts = $this->appraisalRecord->appraisee->departments->pluck('name');
         $url = 'URL'; // need to wait for creating endpoint for review
-        $currentApproverName = $this->appraisalRecord?->currentApprover?->full_name;
+        $currentApproverName = $this->appraisalRecord->currentApprover->full_name;
 
         return new Content(
             markdown: 'mail.appraisal.review_pending',
             with: [
                 'appraisee' => $this->appraisalRecord->appraisee,
-                'departments' => $deparments,
+                'departments' => $depts,
                 'currentApprover' => $currentApproverName,
                 'season' => $this->appraisalRecord->season->name,
             ]

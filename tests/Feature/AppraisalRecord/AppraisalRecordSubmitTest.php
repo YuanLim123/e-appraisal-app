@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\AppraisalRecord;
 
+use App\Exceptions\RecordAlreadySubmitException;
 use Database\Seeders\DepartmentSeeder;
 use Database\Seeders\PositionSeeder;
 use Database\Seeders\RoleSeeder;
@@ -36,5 +37,18 @@ class AppraisalRecordSubmitTest extends TestCase
         $response = $this->postJson("api/v1/users/{$appraisalRecord->appraisee_id}/appraisal-records/{$appraisalRecord->id}/submissions");
 
         $response->assertStatus(401);
+    }
+
+    public function test_submit_a_submitted_status_appraisal_record_return_error(): void
+    {
+        $appraisalRecord = $this->createSubmittedAppraisalRecord();
+
+        $response = $this->actingAs($appraisalRecord->appraiser)->postJson("api/v1/users/{$appraisalRecord->appraisee_id}/appraisal-records/{$appraisalRecord->id}/submissions");
+
+        $response->assertStatus(422);
+        $response->assertJson([
+            'message' => (new RecordAlreadySubmitException())->getMessage(),
+        ]);
+
     }
 }

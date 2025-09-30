@@ -21,7 +21,7 @@ class NotifyAppraisalRecordSubmitted
      */
     public function handle(AppraisalRecordSubmitted $event): void
     {
-        $appraisee = $event->appraisalRecord?->appraisee;
+        $appraisee = $event->appraisalRecord->appraisee;
 
         if (! $appraisee) {
             return;

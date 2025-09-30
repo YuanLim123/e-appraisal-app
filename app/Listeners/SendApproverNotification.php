@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Models\User;
 use App\Events\AppraisalRecordSubmitted;
 use App\Events\ApprovalProceeded;
 use App\Mail\AppraisalRecordPendingReviewMail;
