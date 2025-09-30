@@ -4,7 +4,7 @@
 Hello {{ $currentApprover ?? 'Approver' }},
 
 The appraisal record for **{{ $appraisee->full_name }}** is pending for your review. 
-Please click the button below to review it.
+Please <a href="{{ $url }}">Click Here</a> to review it.
  
 <x-mail::panel>
 <div>{{ $appraisee->fullname }} - {{ '#'.$appraisee->employee_no }}</div>

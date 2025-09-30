@@ -40,7 +40,7 @@ class AppraisalRecordPendingReviewMail extends Mailable implements ShouldQueue
     public function content(): Content
     {
         $depts = $this->appraisalRecord->appraisee->departments->pluck('name');
-        $url = 'URL'; // need to wait for creating endpoint for review
+        $url = env('APP_URL') . 'api/v1/approvals/' . $this->appraisalRecord->id;
         $currentApproverName = $this->appraisalRecord->currentApprover->full_name;
 
         return new Content(
@@ -50,6 +50,7 @@ class AppraisalRecordPendingReviewMail extends Mailable implements ShouldQueue
                 'departments' => $depts,
                 'currentApprover' => $currentApproverName,
                 'season' => $this->appraisalRecord->season->name,
+                'url' => $url,
             ]
         );
     }
