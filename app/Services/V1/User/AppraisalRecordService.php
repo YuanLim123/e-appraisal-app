@@ -21,7 +21,6 @@ class AppraisalRecordService
     public function store(User $user, array $attributes): AppraisalRecord
     {
         $isHigherRole = $user->isHigherRole();
-
         $appraisal = $user->appraisalAsAppraisee;
 
         // check if the selected appraisal season exist

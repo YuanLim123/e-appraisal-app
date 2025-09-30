@@ -31,9 +31,9 @@ class AppraisalRecordSubmitTest extends TestCase
         ]);
     }
 
-    public function test_public_user_cannot_access_submitting_appraisal_record(): void
+    public function test_public_user_cannot_access_submitting_normal_appraisal_record(): void
     {
-        // create submitted appraisal record
+        // create submitted normal appraisal record
         $appraisalRecord = $this->createSubmittedAppraisalRecord();
 
         // attempt to submit the appraisal record without authentication

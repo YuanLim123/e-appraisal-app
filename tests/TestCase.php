@@ -98,4 +98,28 @@ abstract class TestCase extends BaseTestCase
         }
         return $appraisalRecordData;
     }
+
+    protected function createAppraisal(bool $isApraiseeHighPosition = false): Appraisal
+    {
+        $appraisee = User::factory()->create();
+        $appraisee->position_id = $isApraiseeHighPosition ? 7 : 2;
+        $appraisee->save();
+
+        $appraiser = User::factory()->create();
+
+        $approver1 = User::factory()->create();
+        $approver2 = User::factory()->create();
+
+        $appraisal = Appraisal::create([
+            'appraisee_id' => $appraisee->id,
+            'appraiser_id' => $appraiser->id,
+        ]);
+
+        $appraisal->approvers()->createMany([
+            ['sequence' => 1, 'user_id' => $approver1->id],
+            ['sequence' => 2, 'user_id' => $approver2->id],
+        ]);
+
+        return $appraisal;
+    }
 }

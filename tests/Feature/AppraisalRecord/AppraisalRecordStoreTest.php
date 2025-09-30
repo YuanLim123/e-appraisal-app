@@ -48,40 +48,19 @@ class AppraisalRecordStoreTest extends TestCase
 
     public function test_non_appraiser_cannot_access_adding_appraisal_record(): void
     {
-        // create appraisee, approser, approver
-        // create appraisal for that appraisee
-        // login as hr to create appraisal
-        $payrollUser = User::factory()->create();
-        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
+        // create a appraisal first
+        $appraisal = $this->createAppraisal();
+        $appraisee = $appraisal->appraisee;
+        $appraiser = $appraisal->appraiser;
 
-        $appraisee = User::factory()->create();
-        $appraisee->position_id = 2;
-        $appraisee->save();
-        $appraiser = User::factory()->create();
-        $approver1 = User::factory()->create();
-        $approver2 = User::factory()->create();
-
-        $appraisalInput = [
-            'appraiser_id' => $appraiser->id,
-            'approvers' => [
-                ['user_id' => $approver1->id, 'sequence' => 1],
-                ['user_id' => $approver2->id, 'sequence' => 2],
-            ],
-        ];
-
-        // Create appraisal first
-        $createResponse = $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
-        $createResponse->assertStatus(201);
-
-        // create one more user
+        // create a non appraiser user
         $nonAppraiserUser = User::factory()->create();
         $nonAppraiserUser->departments()->sync([1]);
-        // sign in as that user
 
         $appraisalRecordInput = $this->createAppraisalRecordInputData();
 
+        // sign in as that non appraiser user and try to create appraisal record for the appraisee
         $response = $this->actingAs($nonAppraiserUser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
-        // call create appraisal record api for that appraisee
 
         // assert 403
         $response->assertStatus(403);
@@ -89,47 +68,22 @@ class AppraisalRecordStoreTest extends TestCase
 
     public function test_appraiser_can_create_normal_type_appraisal_record(): void
     {
-        // create appraisee, approser, approver
-        // create appraisal for that appraisee
-        // login as hr to create appraisal
-        $payrollUser = User::factory()->create();
-        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
-
-        $appraisee = User::factory()->create();
-        $appraisee->position_id = 2;
-        $appraisee->save();
-        $appraiser = User::factory()->create();
-        $approver1 = User::factory()->create();
-        $approver2 = User::factory()->create();
-
-        $appraisalInput = [
-            'appraiser_id' => $appraiser->id,
-            'approvers' => [
-                ['user_id' => $approver1->id, 'sequence' => 1],
-                ['user_id' => $approver2->id, 'sequence' => 2],
-            ],
-        ];
-
-        $createResponse = $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
-        $createResponse->assertStatus(201);
-        // login as appraiser
-        // call create appraisal record api for that appraisee
+        // create a appraisal first
+        $appraisal = $this->createAppraisal();
+        $appraisee = $appraisal->appraisee;
+        $appraiser = $appraisal->appraiser;
         $appraisalRecordInput = $this->createAppraisalRecordInputData();
-        $appraisalRecordInput['purpose'] = AppraisalRecordPurposeType::ANNUAL_REVIEW->value;
-        // $appraisalRecordInput = AppraisalRecord::factory()->make([
-        //     'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW,
-        // ])->toArray();
+
+        // login as appraiser and call create appraisal record api for that appraisee
         $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
-        // assert 201
+
         $response->assertStatus(201);
-        // assert json
         $response->assertJsonFragment([
             'status' => AppraisalRecordStatus::CREATED->label(),
             'total' => $appraisalRecordInput['total'],
         ]);
         $response->assertJsonPath('data.appraiser.id', $appraiser->id);
         $response->assertJsonPath('data.appraisee.id', $appraisee->id);
-        // assert database has that record
 
         $this->assertDatabaseHas('appraisal_records', [
             'appraiser_id' => $appraiser->id,
@@ -137,37 +91,20 @@ class AppraisalRecordStoreTest extends TestCase
         ]);
     }
 
-    public function test_appraiser_cannot_create_appraisal_record_twice_for_appraisee_in_same_annual_or_special_season(): void
+    public function test_appraiser_cannot_create_normal_type_appraisal_record_twice_for_appraisee_in_same_annual_or_special_season(): void
     {
-        $payrollUser = User::factory()->create();
-        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
+        $appraisal = $this->createAppraisal();
+        $appraisee = $appraisal->appraisee;
+        $appraiser = $appraisal->appraiser;
 
-        $appraisee = User::factory()->create();
-        $appraisee->position_id = 2;
-        $appraisee->save();
-        $appraiser = User::factory()->create();
-        $approver1 = User::factory()->create();
-        $approver2 = User::factory()->create();
-
-        $appraisalInput = [
-            'appraiser_id' => $appraiser->id,
-            'approvers' => [
-                ['user_id' => $approver1->id, 'sequence' => 1],
-                ['user_id' => $approver2->id, 'sequence' => 2],
-            ],
-        ];
-
-        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
-
-        // login as appraiser and submit
+        // create normal appraisal record input data with annual review season
         $appraisalRecordInput = $this->createAppraisalRecordInputData();
         $appraisalRecordInput['purpose'] = AppraisalRecordPurposeType::ANNUAL_REVIEW->value;
-        // $appraisalRecordInput = AppraisalRecord::factory()->make([
-        //     'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW,
-        // ])->toArray();
+
+        // login as appraiser and submit
         $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
 
-        // try to submit again to same appraisee in same season
+        // try to submit again to same appraisee in same annual review season
         $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
 
         $response->assertStatus(422);
@@ -176,112 +113,63 @@ class AppraisalRecordStoreTest extends TestCase
         ]);
     }
 
-    public function test_appraisal_records_cannot_create_for_user_without_appraisal(): void
+    public function test_normal_type_appraisal_records_cannot_create_for_user_without_appraisal(): void
     {
+        // here we do not create appraisal for the appraisee
         $appraiser = User::factory()->create();
         $appraisee = User::factory()->create();
         $appraisee->position_id = 2;
         $appraisee->save();
 
-        // $appraisalRecordInput = AppraisalRecord::factory()->make([
-        //     'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW,
-        // ])->toArray();
         $appraisalRecordInput = $this->createAppraisalRecordInputData();
-        $appraisalRecordInput['purpose'] = AppraisalRecordPurposeType::ANNUAL_REVIEW->value;
 
         $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
 
         $response->assertStatus(422);
-
         $response->assertJson([
             'message' => (new UserHasNoAppraisalCreatedException)->getMessage(),
         ]);
     }
 
-    public function test_appraiser_cannot_create_appraisal_record_with_invalid_data(): void
+    public function test_appraiser_cannot_create_normal_type_appraisal_record_with_invalid_data(): void
     {
-        $payrollUser = User::factory()->create();
-        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
+        $appraisal = $this->createAppraisal();
+        $appraisee = $appraisal->appraisee;
+        $appraiser = $appraisal->appraiser;
 
-        $appraisee = User::factory()->create();
-        $appraisee->position_id = 2;
-        $appraisee->save();
-        $appraiser = User::factory()->create();
-        $approver1 = User::factory()->create();
-        $approver2 = User::factory()->create();
-
-        $appraisalInput = [
-            'appraiser_id' => $appraiser->id,
-            'approvers' => [
-                ['user_id' => $approver1->id, 'sequence' => 1],
-                ['user_id' => $approver2->id, 'sequence' => 2],
-            ],
-        ];
-
-        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
-
-        // login as appraiser
-        // call create appraisal record api for that appraisee with invalid data
-        // $appraisalRecordInput = AppraisalRecord::factory()->make([
-        //     'review_to' => null,
-        //     'purpose' => 'dummy',
-        //     'review_from' => null,
-        // ])->toArray();
+        // create normal appraisal record input data with invalid data
         $appraisalRecordInput = $this->createAppraisalRecordInputData();
         $appraisalRecordInput['review_to'] = null;
         $appraisalRecordInput['purpose'] = 'dummy';
         $appraisalRecordInput['review_from'] = null;
 
+        // login as appraiser and call create appraisal record api for that appraisee with invalid data
         $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
-        // assert 422
+
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['review_from', 'purpose', 'review_to']);
     }
 
     public function test_appraiser_can_create_supervision_type_appraisal_record(): void
     {
-        // create appraisee, approser, approver
-        // create appraisal for that appraisee
-        // login as hr to create appraisal
-        $payrollUser = User::factory()->create();
-        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
+        $isAppraiseeHighPosition = true;
+        $appraisal = $this->createAppraisal($isAppraiseeHighPosition);
+        $appraisee = $appraisal->appraisee;
+        $appraiser = $appraisal->appraiser;
 
-        $appraisee = User::factory()->create();
-        $appraisee->position_id = 6;
-        $appraisee->save();
-        $appraiser = User::factory()->create();
-        $approver1 = User::factory()->create();
-        $approver2 = User::factory()->create();
-
-        $appraisalInput = [
-            'appraiser_id' => $appraiser->id,
-            'approvers' => [
-                ['user_id' => $approver1->id, 'sequence' => 1],
-                ['user_id' => $approver2->id, 'sequence' => 2],
-            ],
-        ];
-
-        $createResponse = $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
-        $createResponse->assertStatus(201);
-        // login as appraiser
-        // call create appraisal record api for that appraisee
-        // $appraisalRecordInput = AppraisalRecord::factory()->supervision()->make([
-        //     'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW,
-        // ])->toArray();
+        // create supervision appraisal record input data
         $isSupervisionAppraisal = true;
         $appraisalRecordInput = $this->createAppraisalRecordInputData($isSupervisionAppraisal);
 
         $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
-        // assert 201
+
         $response->assertStatus(201);
-        // assert json
         $response->assertJsonFragment([
             'status' => AppraisalRecordStatus::CREATED->label(),
             'answer' => $appraisalRecordInput['performance'],
         ]);
         $response->assertJsonPath('data.appraiser.id', $appraiser->id);
         $response->assertJsonPath('data.appraisee.id', $appraisee->id);
-        // assert database has that record
 
         $this->assertDatabaseHas('appraisal_records', [
             'appraiser_id' => $appraiser->id,
@@ -289,88 +177,37 @@ class AppraisalRecordStoreTest extends TestCase
         ]);
     }
 
-    public function test_appraiser_cannot_create_appraisal_record_with_invalid_season_data(): void
+    public function test_appraiser_cannot_create_supervision_type_appraisal_record_with_invalid_season_data(): void
     {
-        $payrollUser = User::factory()->create();
-        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
-
-        $appraisee = User::factory()->create();
-        $appraisee->position_id = 2;
-        $appraisee->save();
-        $appraiser = User::factory()->create();
-        $approver1 = User::factory()->create();
-        $approver2 = User::factory()->create();
-
-        $appraisalInput = [
-            'appraiser_id' => $appraiser->id,
-            'approvers' => [
-                ['user_id' => $approver1->id, 'sequence' => 1],
-                ['user_id' => $approver2->id, 'sequence' => 2],
-            ],
-        ];
+        $appraisal = $this->createAppraisal();
+        $appraisee = $appraisal->appraisee;
+        $appraiser = $appraisal->appraiser;
 
         // end the annual review season so we can validate the invalid season error
         $annualReviewSeason = Season::where('purpose', 'annual_review')->first();
         $annualReviewSeason->end_at = now();
         $annualReviewSeason->save();
 
-        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
-
-        // $appraisalRecordInput = AppraisalRecord::factory()->make([
-        //     'purpose' => AppraisalRecordPurposeType::ANNUAL_REVIEW,
-        // ])->toArray();
-
+        //create supervision appraisal record for that appraisee with invalid expired season data
         $appraisalRecordInput = $this->createAppraisalRecordInputData();
         $appraisalRecordInput['purpose'] = AppraisalRecordPurposeType::ANNUAL_REVIEW->value;
 
         $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
-        // assert 422
+
         $response->assertStatus(422);
         $response->assertJson([
             'message' => (new InvalidAppraisalSeasonException)->getMessage(),
         ]);
     }
 
-    public function test_appraiser_cannot_create_appraisal_record_with_invalid_rating_sum(): void
+    public function test_appraiser_cannot_create_supervision_type_appraisal_record_with_invalid_rating_sum(): void
     {
-        $payrollUser = User::factory()->create();
-        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
+        $isAppraiseeHighPosition = true;
+        $appraisal = $this->createAppraisal($isAppraiseeHighPosition);
+        $appraisee = $appraisal->appraisee;
+        $appraiser = $appraisal->appraiser;
 
-        $appraisee = User::factory()->create();
-
-        // we need to set the position to higher level to allow supervision type appraisal record
-        $appraisee->position_id = 6;
-        $appraisee->save();
-        $appraiser = User::factory()->create();
-        $approver1 = User::factory()->create();
-        $approver2 = User::factory()->create();
-
-        $appraisalInput = [
-            'appraiser_id' => $appraiser->id,
-            'approvers' => [
-                ['user_id' => $approver1->id, 'sequence' => 1],
-                ['user_id' => $approver2->id, 'sequence' => 2],
-            ],
-        ];
-
-        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
-
-        // create appraisal record with invalid performance rating sum which exceeds 100
-        // $appraisalRecordInput = AppraisalRecord::factory()->make([
-        //     'performance' => [
-        //         [
-        //             'goal' => 'goal 1',
-        //             'result' => 'result 1',
-        //             'rating' => 100,
-        //         ],
-        //         [
-        //             'goal' => 'goal 2',
-        //             'result' => 'result 2',
-        //             'rating' => 20,
-        //         ],
-        //     ],
-        // ])->toArray();
-
+        // create supervision appraisal record with invalid performance rating sum which exceeds 100
         $isSupervisionAppraisal = true;
         $appraisalRecordInput = $this->createAppraisalRecordInputData($isSupervisionAppraisal);
         $appraisalRecordInput['performance'] = [

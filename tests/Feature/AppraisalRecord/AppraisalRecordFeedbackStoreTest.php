@@ -48,28 +48,11 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
 
     public function test_non_appraiser_cannot_access_adding_appraisal_record(): void
     {
-        $payrollUser = User::factory()->create();
-        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
+        $appraisal = $this->createAppraisal();
+        $appraisee = $appraisal->appraisee;
+        $appraiser = $appraisal->appraiser;
 
-        $appraisee = User::factory()->create();
-        $appraisee->position_id = 2;
-        $appraisee->save();
-        $appraiser = User::factory()->create();
-        $approver1 = User::factory()->create();
-        $approver2 = User::factory()->create();
-
-        $appraisalInput = [
-            'appraiser_id' => $appraiser->id,
-            'approvers' => [
-                ['user_id' => $approver1->id, 'sequence' => 1],
-                ['user_id' => $approver2->id, 'sequence' => 2],
-            ],
-        ];
-
-        // Create appraisal
-        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
-
-        // Create appraisal record
+        // Create normal appraisal record
         $appraisalRecordInput = $this->createAppraisalRecordInputData();
 
         $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
@@ -90,36 +73,17 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
         // attempt to store feedback as non appraiser user
         $response = $this->actingAs($nonAppraiserUser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}/feedbacks", $feedbackInput);
 
-        // assert 403
         $response->assertStatus(403);
     }
 
     public function test_appraiser_can_store_feedback_for_normal_type_appraisal_record_with_valid_data(): void
     {
-        $payrollUser = User::factory()->create();
-        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
+        $appraisal = $this->createAppraisal();
+        $appraisee = $appraisal->appraisee;
+        $appraiser = $appraisal->appraiser;
 
-        $appraisee = User::factory()->create();
-        $appraisee->position_id = 2;
-        $appraisee->save();
-        $appraiser = User::factory()->create();
-        $approver1 = User::factory()->create();
-        $approver2 = User::factory()->create();
-
-        $appraisalInput = [
-            'appraiser_id' => $appraiser->id,
-            'approvers' => [
-                ['user_id' => $approver1->id, 'sequence' => 1],
-                ['user_id' => $approver2->id, 'sequence' => 2],
-            ],
-        ];
-
-        // Create appraisal
-        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
-
-        // Create appraisal record
+        // Create normal appraisal record
         $appraisalRecordInput = $this->createAppraisalRecordInputData();
-
         $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
 
         // Get the created appraisal record
@@ -131,10 +95,9 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
             'new_salary' => 6000,
         ];
 
-        // attempt to store feedback for the appraisal record as non appraiser user
+        // update the appraisal record with new feedback
         $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}/feedbacks", $feedbackInput);
 
-        // assert 200
         $response->assertStatus(200);
         $response->assertJsonFragment([
             'current_salary' => $feedbackInput['current_salary'],
@@ -144,32 +107,14 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
 
     public function test_appraiser_can_store_feedback_for_supervision_type_appraisal_record_with_valid_data(): void
     {
-        $payrollUser = User::factory()->create();
-        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
+        $isAppraiseeHighPosition = true;
+        $appraisal = $this->createAppraisal($isAppraiseeHighPosition);
+        $appraisee = $appraisal->appraisee;
+        $appraiser = $appraisal->appraiser;
 
-        $appraisee = User::factory()->create();
-        $appraisee->position_id = 7; // set to higher role position
-        $appraisee->save();
-        $appraiser = User::factory()->create();
-        $approver1 = User::factory()->create();
-        $approver2 = User::factory()->create();
-
-        $appraisalInput = [
-            'appraiser_id' => $appraiser->id,
-            'approvers' => [
-                ['user_id' => $approver1->id, 'sequence' => 1],
-                ['user_id' => $approver2->id, 'sequence' => 2],
-            ],
-        ];
-
-        // Create appraisal
-        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
-
-        // Create appraisal record
-        //$appraisalRecordInput = AppraisalRecord::factory()->supervision()->make()->toArray();
+        // Create supervision appraisal record
         $isSupervisionType = true;
         $appraisalRecordInput = $this->createAppraisalRecordInputData($isSupervisionType);
-
         $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
 
         // Get the created appraisal record
@@ -179,8 +124,6 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
         $feedbackInput = [
             'current_salary' => 5000,
             'new_salary' => 6000,
-            // for supervision type record feedback, if objective is filled, then specificAction and weightage must be filled too
-            // so we expected the validation error for specificAction and weightage
             'goal_next' => [
                 [
                     'objective' => 'objective 1',
@@ -190,7 +133,6 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
             ],
         ];
 
-        // attempt to store feedback for the appraisal record as non appraiser user
         $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}/feedbacks", $feedbackInput);
 
         $response->assertStatus(200);
@@ -203,28 +145,12 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
 
     public function test_appraiser_can_store_feedback_for_supervision_type_appraisal_record_with_invalid_goal_next_data(): void
     {
-        $payrollUser = User::factory()->create();
-        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
+        $isAppraiseeHighPosition = true;
+        $appraisal = $this->createAppraisal($isAppraiseeHighPosition);
+        $appraisee = $appraisal->appraisee;
+        $appraiser = $appraisal->appraiser;
 
-        $appraisee = User::factory()->create();
-        $appraisee->position_id = 7; // set to higher role position
-        $appraisee->save();
-        $appraiser = User::factory()->create();
-        $approver1 = User::factory()->create();
-        $approver2 = User::factory()->create();
-
-        $appraisalInput = [
-            'appraiser_id' => $appraiser->id,
-            'approvers' => [
-                ['user_id' => $approver1->id, 'sequence' => 1],
-                ['user_id' => $approver2->id, 'sequence' => 2],
-            ],
-        ];
-
-        // Create appraisal
-        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
-
-        // Create appraisal record
+        // Create supervision appraisal record
         $isSupervisionType = true;
         $appraisalRecordInput = $this->createAppraisalRecordInputData($isSupervisionType);
         $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
@@ -245,7 +171,6 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
             ],
         ];
 
-        // attempt to store feedback for the appraisal record as non appraiser user
         $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}/feedbacks", $feedbackInput);
 
         $response->assertStatus(422);
@@ -254,29 +179,12 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
 
     public function test_appraiser_can_store_feedback_for_supervision_type_appraisal_record_with_invalid_weight_age_data(): void
     {
-        $payrollUser = User::factory()->create();
-        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
+        $isAppraiseeHighPosition = true;
+        $appraisal = $this->createAppraisal($isAppraiseeHighPosition);
+        $appraisee = $appraisal->appraisee;
+        $appraiser = $appraisal->appraiser;
 
-        $appraisee = User::factory()->create();
-        $appraisee->position_id = 7; // set to higher role position
-        $appraisee->save();
-        $appraiser = User::factory()->create();
-        $approver1 = User::factory()->create();
-        $approver2 = User::factory()->create();
-
-        $appraisalInput = [
-            'appraiser_id' => $appraiser->id,
-            'approvers' => [
-                ['user_id' => $approver1->id, 'sequence' => 1],
-                ['user_id' => $approver2->id, 'sequence' => 2],
-            ],
-        ];
-
-        // Create appraisal
-        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
-
-        // Create appraisal record
-        //$appraisalRecordInput = AppraisalRecord::factory()->supervision()->make()->toArray();
+        // Create supervision appraisal record
         $isSupervisionType = true;
         $appraisalRecordInput = $this->createAppraisalRecordInputData($isSupervisionType);
         $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
@@ -303,7 +211,6 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
             ],
         ];
 
-        // attempt to store feedback for the appraisal record as non appraiser user
         $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}/feedbacks", $feedbackInput);
 
         $response->assertStatus(422);
@@ -314,29 +221,12 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
 
     public function test_appraisal_review_pending_email_sent_to_first_approver_push_to_queue_after_supervision_type_appraisal_record_feedback_is_saved_and_submitted(): void
     {
-        $payrollUser = User::factory()->create();
-        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
+        $isAppraiseeHighPosition = true;
+        $appraisal = $this->createAppraisal($isAppraiseeHighPosition);
+        $appraisee = $appraisal->appraisee;
+        $appraiser = $appraisal->appraiser;
 
-        $appraisee = User::factory()->create();
-        $appraisee->position_id = 7;
-        $appraisee->save();
-        $appraiser = User::factory()->create();
-        $approver1 = User::factory()->create();
-        $approver2 = User::factory()->create();
-
-        $appraisalInput = [
-            'appraiser_id' => $appraiser->id,
-            'approvers' => [
-                ['user_id' => $approver1->id, 'sequence' => 1],
-                ['user_id' => $approver2->id, 'sequence' => 2],
-            ],
-        ];
-
-        // Create appraisal
-        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
-
-        // Create appraisal record
-        //$appraisalRecordInput = AppraisalRecord::factory()->supervision()->make()->toArray();
+        // Create supervision appraisal record
         $isSupervisionType = true;
         $appraisalRecordInput = $this->createAppraisalRecordInputData($isSupervisionType);
 
@@ -358,6 +248,7 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
             'isEmployeeAgreed' => true,
             'isSupervisorAgreed' => true,
         ];
+
         Mail::fake();
 
         // attempt to store feedback and submit the appraisal record
@@ -367,30 +258,14 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
         Mail::assertQueued(AppraisalRecordPendingReviewMail::class);
     }
 
-    public function test_appraisal_review_pending_email_not_push_to_queue_if_feedback_is_only_saved(): void
+    public function test_supervision_type_appraisal_review_pending_email_not_push_to_queue_if_feedback_is_only_saved(): void
     {
-        $payrollUser = User::factory()->create();
-        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
+        $isAppraiseeHighPosition = true;
+        $appraisal = $this->createAppraisal($isAppraiseeHighPosition);
+        $appraisee = $appraisal->appraisee;
+        $appraiser = $appraisal->appraiser;
 
-        $appraisee = User::factory()->create();
-        $appraisee->position_id = 7;
-        $appraisee->save();
-        $appraiser = User::factory()->create();
-        $approver1 = User::factory()->create();
-        $approver2 = User::factory()->create();
-
-        $appraisalInput = [
-            'appraiser_id' => $appraiser->id,
-            'approvers' => [
-                ['user_id' => $approver1->id, 'sequence' => 1],
-                ['user_id' => $approver2->id, 'sequence' => 2],
-            ],
-        ];
-
-        // Create appraisal
-        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
-
-        // Create appraisal record
+        // Create supervision appraisal record
         $isSupervisionType = true;
         $appraisalRecordInput = $this->createAppraisalRecordInputData($isSupervisionType);
         $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
@@ -418,33 +293,16 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
         Mail::assertNotQueued(AppraisalRecordPendingReviewMail::class);
     }
 
-    public function test_appraisal_record_feedback_store_and_submit_return_error_if_employee_or_supervisor_did_not_agree(): void
+    public function test_superversion_type_appraisal_record_feedback_store_and_submit_return_error_if_employee_or_supervisor_did_not_agree(): void
     {
-        $payrollUser = User::factory()->create();
-        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
+        $isAppraiseeHighPosition = true;
+        $appraisal = $this->createAppraisal($isAppraiseeHighPosition);
+        $appraisee = $appraisal->appraisee;
+        $appraiser = $appraisal->appraiser;
 
-        $appraisee = User::factory()->create();
-        $appraisee->position_id = 7;
-        $appraisee->save();
-        $appraiser = User::factory()->create();
-        $approver1 = User::factory()->create();
-        $approver2 = User::factory()->create();
-
-        $appraisalInput = [
-            'appraiser_id' => $appraiser->id,
-            'approvers' => [
-                ['user_id' => $approver1->id, 'sequence' => 1],
-                ['user_id' => $approver2->id, 'sequence' => 2],
-            ],
-        ];
-
-        // Create appraisal
-        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
-
-        // Create appraisal record
+        // Create supervision appraisal record
         $isSupervisionType = true;
         $appraisalRecordInput = $this->createAppraisalRecordInputData($isSupervisionType);
-
         $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
 
         // Get the created appraisal record
@@ -465,8 +323,8 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
             'isEmployeeAgreed' => false,
         ];
 
-        // attempt to store feedback and submit the appraisal record
         $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}/feedbacks?isSubmit=true", $feedbackInput);
+        
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['isEmployeeAgreed']);
     }

@@ -45,32 +45,16 @@ class AppraisalRecordUpdateTest extends TestCase
 
     public function test_non_appraiser_cannot_access_adding_appraisal_record(): void
     {
-        $payrollUser = User::factory()->create();
-        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
-
-        $appraisee = User::factory()->create();
-        $appraisee->position_id = 2;
-        $appraisee->save();
-        $appraiser = User::factory()->create();
-        $approver1 = User::factory()->create();
-        $approver2 = User::factory()->create();
-
-        $appraisalInput = [
-            'appraiser_id' => $appraiser->id,
-            'approvers' => [
-                ['user_id' => $approver1->id, 'sequence' => 1],
-                ['user_id' => $approver2->id, 'sequence' => 2],
-            ],
-        ];
-
         // Create appraisal
-        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
+        $appraisal = $this->createAppraisal();
+        $appraisee = $appraisal->appraisee;
+        $appraiser = $appraisal->appraiser;
 
-        // Create appraisal record
-        $appraisalRecordInput = AppraisalRecord::factory()->make()->toArray();
+        // Create normal appraisal record
+        $appraisalRecordInput = $this->createAppraisalRecordInputData();
         $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
 
-        // create one more user
+        // create a random non appraiser user
         $nonAppraiserUser = User::factory()->create();
         $nonAppraiserUser->departments()->sync([1]);
 
@@ -79,36 +63,17 @@ class AppraisalRecordUpdateTest extends TestCase
         // attempt to update appraisal record as non appraiser user
         $response = $this->actingAs($nonAppraiserUser)->putJson("/api/v1/users/{$appraisee->id}/appraisal-records/1", $appraisalRecordInput);
 
-        // assert 403
         $response->assertStatus(403);
     }
 
     public function test_appraisee_id_not_match_with_appraisal_record_appraisee_id_in_the_request_url_return_error(): void
     {
-        $payrollUser = User::factory()->create();
-        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
+        $appraisal = $this->createAppraisal();
+        $appraisee = $appraisal->appraisee;
+        $appraiser = $appraisal->appraiser;
 
-        $appraisee = User::factory()->create();
-        $appraisee->position_id = 2;
-        $appraisee->save();
-        $appraiser = User::factory()->create();
-        $approver1 = User::factory()->create();
-        $approver2 = User::factory()->create();
-
-        $appraisalInput = [
-            'appraiser_id' => $appraiser->id,
-            'approvers' => [
-                ['user_id' => $approver1->id, 'sequence' => 1],
-                ['user_id' => $approver2->id, 'sequence' => 2],
-            ],
-        ];
-
-        // Create appraisal
-        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
-
-        // Create appraisal record
+        // Create normal appraisal record
         $appraisalRecordInput = $this->createAppraisalRecordInputData();
-
         $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
 
         // create another appraisee with same position
@@ -119,6 +84,7 @@ class AppraisalRecordUpdateTest extends TestCase
         $createdAppraisalRecordId = AppraisalRecord::latest()->first()->id;
 
         $appraisalRecordInput['review_from'] = '2023-01-01';
+        // attempt to update appraisal record as appraiser but with different appraisee id in the url
         $response = $this->actingAs($appraiser)->putJson("/api/v1/users/{$anotherAppraisee->id}/appraisal-records/{$createdAppraisalRecordId}", $appraisalRecordInput);
 
         $response->assertStatus(403);
@@ -126,28 +92,11 @@ class AppraisalRecordUpdateTest extends TestCase
 
     public function test_appraiser_can_update_normal_type_appraisal_record_with_valid_data(): void
     {
-        $payrollUser = User::factory()->create();
-        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
+        $appraisal = $this->createAppraisal();
+        $appraisee = $appraisal->appraisee;
+        $appraiser = $appraisal->appraiser;
 
-        $appraisee = User::factory()->create();
-        $appraisee->position_id = 2;
-        $appraisee->save();
-        $appraiser = User::factory()->create();
-        $approver1 = User::factory()->create();
-        $approver2 = User::factory()->create();
-
-        $appraisalInput = [
-            'appraiser_id' => $appraiser->id,
-            'approvers' => [
-                ['user_id' => $approver1->id, 'sequence' => 1],
-                ['user_id' => $approver2->id, 'sequence' => 2],
-            ],
-        ];
-
-        // Create appraisal
-        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
-
-        // Create appraisal record
+        // Create normal appraisal record
         $appraisalRecordInput = $this->createAppraisalRecordInputData();
         $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
 
@@ -163,28 +112,11 @@ class AppraisalRecordUpdateTest extends TestCase
 
     public function test_appraiser_cannot_update_normal_type_appraisal_record_with_invalid_data(): void
     {
-        $payrollUser = User::factory()->create();
-        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
+        $appraisal = $this->createAppraisal();
+        $appraisee = $appraisal->appraisee;
+        $appraiser = $appraisal->appraiser;
 
-        $appraisee = User::factory()->create();
-        $appraisee->position_id = 2;
-        $appraisee->save();
-        $appraiser = User::factory()->create();
-        $approver1 = User::factory()->create();
-        $approver2 = User::factory()->create();
-
-        $appraisalInput = [
-            'appraiser_id' => $appraiser->id,
-            'approvers' => [
-                ['user_id' => $approver1->id, 'sequence' => 1],
-                ['user_id' => $approver2->id, 'sequence' => 2],
-            ],
-        ];
-
-        // Create appraisal
-        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
-
-        // Create appraisal record
+        // Create normal appraisal record
         $appraisalRecordInput = $this->createAppraisalRecordInputData();
         $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
 
@@ -197,34 +129,18 @@ class AppraisalRecordUpdateTest extends TestCase
         $appraisalRecordInput['purpose'] = 'invalid-purpose';
 
         $response = $this->actingAs($appraiser)->putJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}", $appraisalRecordInput);
+        
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['review_from', 'review_to', 'purpose']);
     }
 
     public function test_appraiser_cannot_update_normal_type_appraisal_record_with_invalid_season_data(): void
     {
-        $payrollUser = User::factory()->create();
-        $payrollUser->departments()->sync([$this->payrollDeparmentId]);
+        $appraisal = $this->createAppraisal();
+        $appraisee = $appraisal->appraisee;
+        $appraiser = $appraisal->appraiser;
 
-        $appraisee = User::factory()->create();
-        $appraisee->position_id = 2;
-        $appraisee->save();
-        $appraiser = User::factory()->create();
-        $approver1 = User::factory()->create();
-        $approver2 = User::factory()->create();
-
-        $appraisalInput = [
-            'appraiser_id' => $appraiser->id,
-            'approvers' => [
-                ['user_id' => $approver1->id, 'sequence' => 1],
-                ['user_id' => $approver2->id, 'sequence' => 2],
-            ],
-        ];
-
-        // Create appraisal
-        $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
-
-        // Create appraisal record
+        // Create normal appraisal record
         $appraisalRecordInput = $this->createAppraisalRecordInputData();
         $appraisalRecordInput['purpose'] = AppraisalRecordPurposeType::ANNUAL_REVIEW->value;
 
@@ -238,10 +154,10 @@ class AppraisalRecordUpdateTest extends TestCase
         // Get the created appraisal record
         $appraisalRecordId = AppraisalRecord::latest()->first()->id;
 
-        // Update the appraisal record data with invalid purpose
+        // Update the appraisal record input with invalid purpose
         $appraisalRecordInput['purpose'] = AppraisalRecordPurposeType::ANNUAL_REVIEW->value;
 
-        // Update the appraisal record
+        // Update the appraisal record with invalid season purpose
         $response = $this->actingAs($appraiser)->putJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}", $appraisalRecordInput);
 
         $response->assertStatus(422);
