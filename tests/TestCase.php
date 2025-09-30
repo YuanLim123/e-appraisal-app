@@ -3,18 +3,18 @@
 namespace Tests;
 
 use App\Enums\AppraisalRecordGrade;
-use App\Enums\AppraisalRecordStatus;
 use App\Enums\AppraisalRecordPurposeType;
+use App\Enums\AppraisalRecordStatus;
 use App\Models\Appraisal;
-use App\Models\User;
 use App\Models\AppraisalRecord;
+use App\Models\User;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
     protected function createSubmittedAppraisalRecord(bool $isSupervisionAppraisal = false): AppraisalRecord
     {
-        //create approvers
+        // create approvers
         $approver1 = User::factory()->create();
         $approver2 = User::factory()->create();
 
@@ -89,13 +89,14 @@ abstract class TestCase extends BaseTestCase
                     'goal' => fake()->sentence(10),
                     'result' => fake()->sentence(15),
                     'rating' => fake()->numberBetween(10, 90),
-                ]
+                ],
             ];
             $appraisalRecordData['section_percentage'] = [
                 fake()->numberBetween(10, 70),
                 fake()->numberBetween(10, 70),
             ];
         }
+
         return $appraisalRecordData;
     }
 

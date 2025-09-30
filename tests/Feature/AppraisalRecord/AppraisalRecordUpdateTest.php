@@ -129,7 +129,7 @@ class AppraisalRecordUpdateTest extends TestCase
         $appraisalRecordInput['purpose'] = 'invalid-purpose';
 
         $response = $this->actingAs($appraiser)->putJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}", $appraisalRecordInput);
-        
+
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['review_from', 'review_to', 'purpose']);
     }

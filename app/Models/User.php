@@ -111,5 +111,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(AppraisalRecord::class, 'appraiser_id');
     }
-
 }

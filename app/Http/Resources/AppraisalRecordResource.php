@@ -34,7 +34,7 @@ class AppraisalRecordResource extends JsonResource
             'completed_at' => $this->completed_at ?? null,
             'rejected_at' => $this->rejected_at ?? null,
             'employee_agreed_at' => $this->employee_agreed_at?->format('d-m-Y') ?? null,
-            'supervisor_agreed_at' => $this->supervisor_agreed_at?->format('d-m-Y') ?? null
+            'supervisor_agreed_at' => $this->supervisor_agreed_at?->format('d-m-Y') ?? null,
         ];
     }
 }

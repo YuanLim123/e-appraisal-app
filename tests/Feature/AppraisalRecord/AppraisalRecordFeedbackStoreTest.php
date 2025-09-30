@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\AppraisalRecord;
 
-use App\Enums\AppraisalRecordStatus;
 use App\Exceptions\InvalidWeightAgeException;
 use App\Mail\AppraisalPendingReviewMail;
 use App\Mail\AppraisalRecordPendingReviewMail;
@@ -324,7 +323,7 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
         ];
 
         $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}/feedbacks?isSubmit=true", $feedbackInput);
-        
+
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['isEmployeeAgreed']);
     }

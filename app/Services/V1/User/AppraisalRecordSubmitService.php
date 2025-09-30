@@ -6,8 +6,8 @@ use App\Enums\AppraisalRecordStatus;
 use App\Events\AppraisalRecordSubmitted;
 use App\Exceptions\AgreementRequiredException;
 use App\Exceptions\AppraisalHasNoApproverException;
-use App\Exceptions\UserHasNoAppraisalCreatedException;
 use App\Exceptions\RecordAlreadySubmitException;
+use App\Exceptions\UserHasNoAppraisalCreatedException;
 use App\Models\AppraisalRecord;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +16,7 @@ class AppraisalRecordSubmitService
 {
     public function submit(User $user, AppraisalRecord $appraisalRecord): void
     {
-        if (! $appraisalRecord->employee_agreed_at ||! $appraisalRecord->supervisor_agreed_at) {
+        if (! $appraisalRecord->employee_agreed_at || ! $appraisalRecord->supervisor_agreed_at) {
             throw new AgreementRequiredException;
         }
 

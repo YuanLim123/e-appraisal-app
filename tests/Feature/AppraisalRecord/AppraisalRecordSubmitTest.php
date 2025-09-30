@@ -2,22 +2,18 @@
 
 namespace Tests\Feature\AppraisalRecord;
 
-use App\Models\User;
-use App\Models\AppraisalRecord;
 use Database\Seeders\DepartmentSeeder;
 use Database\Seeders\PositionSeeder;
 use Database\Seeders\RoleSeeder;
 use Database\Seeders\SeasonSeeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use Illuminate\Support\Facades\Auth;
 
 class AppraisalRecordSubmitTest extends TestCase
 {
     use RefreshDatabase;
-    
+
     protected function setUp(): void
     {
         parent::setUp();

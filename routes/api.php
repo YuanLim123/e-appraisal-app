@@ -1,10 +1,10 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Auth\LoginController;
+use App\Http\Controllers\Api\V1\Auth\RegisteredUserController;
 use App\Http\Controllers\Api\V1\HR;
 use App\Http\Controllers\Api\V1\User\AppraisalController;
 use App\Http\Controllers\Api\V1\User\AppraisalRecordController;
-use App\Http\Controllers\Api\V1\Auth\LoginController;
-use App\Http\Controllers\Api\V1\Auth\RegisteredUserController;
 use App\Http\Controllers\api\V1\User\ApprovalController;
 use App\Http\Controllers\Api\V1\User\UserController;
 use App\Http\Middleware\DepartmentMiddleware;
@@ -37,7 +37,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('users/{user}/appraisal-records/{appraisalRecord}', [AppraisalRecordController::class, 'update']);
 
     Route::get('appraisal-records', [AppraisalRecordController::class, 'index']);
-    
+
     Route::post('users/{user}/appraisal-records/{appraisalRecord}/feedbacks', [AppraisalRecordController::class, 'storeFeedback']);
     Route::post('users/{user}/appraisal-records/{appraisalRecord}/submissions', [AppraisalRecordController::class, 'submit']);
 

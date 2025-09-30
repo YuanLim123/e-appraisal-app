@@ -19,8 +19,8 @@ class ApprovalService
             ->whereNull('rejected_at')
             ->first();
 
-        if (!$approver) {
-            throw new ApproverNotFoundException();
+        if (! $approver) {
+            throw new ApproverNotFoundException;
         }
 
         // update the comment, date  for that approver
@@ -61,7 +61,7 @@ class ApprovalService
         if ($nextApprover) {
             ApprovalProceeded::dispatch($appraisalRecord);
         } else {
-        // send notification to hr
+            // send notification to hr
         }
 
     }

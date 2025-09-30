@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Api\V1\HR;
 
-use App\Models\AppraisalRecord;
-use App\Http\Resources\AppraisalRecordResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Resources\AppraisalRecordResource;
+use App\Models\AppraisalRecord;
 
 class AppraisalRecordController extends Controller
 {

@@ -7,7 +7,6 @@ use App\Enums\AppraisalRecordStatus;
 use App\Exceptions\InvalidAppraisalSeasonException;
 use App\Exceptions\InvalidRatingSumException;
 use App\Exceptions\UserHasNoAppraisalCreatedException;
-use App\Models\AppraisalRecord;
 use App\Models\Season;
 use App\Models\User;
 use Database\Seeders\DepartmentSeeder;
@@ -188,7 +187,7 @@ class AppraisalRecordStoreTest extends TestCase
         $annualReviewSeason->end_at = now();
         $annualReviewSeason->save();
 
-        //create supervision appraisal record for that appraisee with invalid expired season data
+        // create supervision appraisal record for that appraisee with invalid expired season data
         $appraisalRecordInput = $this->createAppraisalRecordInputData();
         $appraisalRecordInput['purpose'] = AppraisalRecordPurposeType::ANNUAL_REVIEW->value;
 
