@@ -5,6 +5,7 @@ namespace Tests;
 use App\Enums\AppraisalRecordGrade;
 use App\Enums\AppraisalRecordStatus;
 use App\Enums\AppraisalRecordPurposeType;
+use App\Models\Appraisal;
 use App\Models\User;
 use App\Models\AppraisalRecord;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;

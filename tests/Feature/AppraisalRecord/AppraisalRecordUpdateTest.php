@@ -107,7 +107,8 @@ class AppraisalRecordUpdateTest extends TestCase
         $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
 
         // Create appraisal record
-        $appraisalRecordInput = AppraisalRecord::factory()->make()->toArray();
+        $appraisalRecordInput = $this->createAppraisalRecordInputData();
+
         $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
 
         // create another appraisee with same position
@@ -147,7 +148,7 @@ class AppraisalRecordUpdateTest extends TestCase
         $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
 
         // Create appraisal record
-        $appraisalRecordInput = AppraisalRecord::factory()->make()->toArray();
+        $appraisalRecordInput = $this->createAppraisalRecordInputData();
         $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
 
         // Get the created appraisal record
@@ -184,7 +185,7 @@ class AppraisalRecordUpdateTest extends TestCase
         $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
 
         // Create appraisal record
-        $appraisalRecordInput = AppraisalRecord::factory()->make()->toArray();
+        $appraisalRecordInput = $this->createAppraisalRecordInputData();
         $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
 
         // Get the created appraisal record
@@ -224,7 +225,9 @@ class AppraisalRecordUpdateTest extends TestCase
         $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
 
         // Create appraisal record
-        $appraisalRecordInput = AppraisalRecord::factory()->make()->toArray();
+        $appraisalRecordInput = $this->createAppraisalRecordInputData();
+        $appraisalRecordInput['purpose'] = AppraisalRecordPurposeType::ANNUAL_REVIEW->value;
+
         $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
 
         // end the annual review season so we can validate the invalid season error
