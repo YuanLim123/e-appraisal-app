@@ -52,24 +52,21 @@ abstract class TestCase extends BaseTestCase
         return $appraisalRecord;
     }
 
-    protected function createUnsubmittedAppraisalRecord(bool $isSupervisionAppraisal = false): AppraisalRecord
+    protected function createUnsubmittedAppraisalRecord(?Appraisal $appraisal = null): AppraisalRecord
     {
-        $appraisee = User::factory()->create([
-            'position_id' => $isSupervisionAppraisal ? 7 : 2,
-        ]);
-
-        $appraiser = User::factory()->create();
+        $appraisee = $appraisal?->appraisee ?? User::factory()->create();
+        $appraiser = $appraisal->appraiser ?? User::factory()->create();
 
         $appraisalRecord = AppraisalRecord::factory()
             ->create([
                 'season_id' => 1,
-                'grade' => null,
-                'grade_description' => null,
+                'grade' => AppraisalRecordGrade::SATISFACTORY->value,
+                'grade_description' => AppraisalRecordGrade::SATISFACTORY->description(),
                 'purpose' => AppraisalRecordPurposeType::CONFIRMATION_OR_PROMOTION->value,
                 'status' => AppraisalRecordStatus::CREATED->value,
                 'employee_agreed_at' => null,
                 'supervisor_agreed_at' => null,
-                'total' => null,
+                'total' => fake()->numberBetween(50, 100),
                 'position_id' => $appraisee->position_id,
                 'role_id' => $appraisee->role_id,
                 'appraisee_id' => $appraisee->id,
