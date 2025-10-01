@@ -41,7 +41,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('users/{user}/appraisal-records/{appraisalRecord}/feedbacks', [AppraisalRecordController::class, 'storeFeedback']);
     Route::post('users/{user}/appraisal-records/{appraisalRecord}/submissions', [AppraisalRecordController::class, 'submit']);
 
-    Route::get('approvals', [ApprovalController::class, 'index']);
-    Route::get('approvals/{appraisalRecord}', [ApprovalController::class, 'show']);
-    Route::post('approvals/{appraisalRecord}', [ApprovalController::class, 'approve']);
+    Route::get('appraisal-records/approvals', [ApprovalController::class, 'index']);
+    Route::get('appraisal-records/{appraisalRecord}/approvals', [ApprovalController::class, 'show']);
+    Route::post('appraisal-records/{appraisalRecord}/approvals', [ApprovalController::class, 'approve']);
 });
