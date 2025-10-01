@@ -97,10 +97,10 @@ abstract class TestCase extends BaseTestCase
         return $appraisalRecordData;
     }
 
-    protected function createAppraisal(bool $isApraiseeHighPosition = false): Appraisal
+    protected function createAppraisal(bool $isAppraiseeHighPosition = false): Appraisal
     {
         $appraisee = User::factory()->create();
-        $appraisee->position_id = $isApraiseeHighPosition ? 7 : 2;
+        $appraisee->position_id = $isAppraiseeHighPosition ? 7 : 2;
         $appraisee->save();
 
         $appraiser = User::factory()->create();
