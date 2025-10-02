@@ -38,8 +38,8 @@ class AppraisalRecordSubmitTest extends TestCase
 
     public function test_public_user_cannot_access_submitting_normal_appraisal_record(): void
     {
-        // create submitted normal appraisal record
-        $appraisalRecord = $this->createSubmittedAppraisalRecord();
+        // create unsubmitted normal appraisal record
+        $appraisalRecord = $this->createUnsubmittedAppraisalRecord();
 
         // attempt to submit the appraisal record without authentication
         $response = $this->postJson("api/v1/users/{$appraisalRecord->appraisee_id}/appraisal-records/{$appraisalRecord->id}/submissions");
@@ -151,7 +151,7 @@ class AppraisalRecordSubmitTest extends TestCase
         ]);
     }
 
-    public function test_submit_a_submitted_status_appraisal_record_return_error(): void
+    public function test_resubmit_a_submitted_status_appraisal_record_return_error(): void
     {
         $appraisalRecord = $this->createSubmittedAppraisalRecord();
 

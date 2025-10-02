@@ -6,7 +6,7 @@ use App\Events\AppraisalRecordSubmitted;
 use App\Notifications\AppraisalRecordSubmitted as AppraisalRecordSubmittedNotification;
 use Illuminate\Support\Facades\Notification;
 
-class NotifyAppraisalRecordSubmitted
+class SendAppraiseeNotification
 {
     /**
      * Create the event listener.

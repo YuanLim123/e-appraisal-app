@@ -23,25 +23,25 @@ Route::get('users', [UserController::class, 'index']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
-    Route::middleware([DepartmentMiddleware::class.':HRA,PAYROLL'])->group(function () {
+    Route::middleware([DepartmentMiddleware::class . ':HRA,PAYROLL'])->group(function () {
         Route::post('hr/users', [HR\UserController::class, 'store']);
+
+        // users/user prefix can be removed, we put the user into the requset body
         Route::post('hr/users/{user}/appraisals', [HR\AppraisalController::class, 'store']);
         Route::put('hr/users/{user}/appraisals/{appraisal}', [HR\AppraisalController::class, 'update']);
         Route::get('hr/appraisal-records', [HR\AppraisalRecordController::class, 'index']);
     });
 
-    Route::get('appraisals/{appraisal}', [AppraisalController::class, 'show'])
-        ->middleware('can:view,appraisal');
-
-    Route::post('users/{user}/appraisal-records', [AppraisalRecordController::class, 'store']);
-    Route::put('users/{user}/appraisal-records/{appraisalRecord}', [AppraisalRecordController::class, 'update']);
+    Route::get('appraisals/{appraisal}', [AppraisalController::class, 'show'])->middleware('can:view,appraisal');
 
     Route::get('appraisal-records', [AppraisalRecordController::class, 'index']);
-
+    Route::post('users/{user}/appraisal-records', [AppraisalRecordController::class, 'store']);
+    Route::put('users/{user}/appraisal-records/{appraisalRecord}', [AppraisalRecordController::class, 'update']);
     Route::post('users/{user}/appraisal-records/{appraisalRecord}/feedbacks', [AppraisalRecordController::class, 'storeFeedback']);
     Route::post('users/{user}/appraisal-records/{appraisalRecord}/submissions', [AppraisalRecordController::class, 'submit']);
 
     Route::get('appraisal-records/approvals', [ApprovalController::class, 'index']);
     Route::get('appraisal-records/{appraisalRecord}/approvals', [ApprovalController::class, 'show']);
     Route::post('appraisal-records/{appraisalRecord}/approvals', [ApprovalController::class, 'approve']);
+    Route::post('appraisal-records/{appraisalRecord}/rejects', [ApprovalController::class, 'reject']);
 });
