@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             DepartmentSeeder::class,
             UserSeeder::class,
-            AppraisalSeeder::class,
+            //AppraisalSeeder::class,
             SeasonSeeder::class,
         ]);
     }

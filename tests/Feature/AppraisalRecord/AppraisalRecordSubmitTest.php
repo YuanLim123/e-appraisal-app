@@ -4,10 +4,10 @@ namespace Tests\Feature\AppraisalRecord;
 
 use App\Mail\AppraisalRecordPendingReviewMail;
 use App\Enums\AppraisalRecordStatus;
-use App\Notifications\AppraisalRecordSubmitted;
 use App\Exceptions\AgreementRequiredException;
 use App\Exceptions\RecordAlreadySubmitException;
 use App\Models\User;
+use App\Notifications\AppraisalRecordSubmitted;
 use Database\Seeders\DepartmentSeeder;
 use Database\Seeders\PositionSeeder;
 use Database\Seeders\RoleSeeder;
@@ -163,7 +163,7 @@ class AppraisalRecordSubmitTest extends TestCase
         ]);
     }
 
-    public function test_review_pending_email_sent_to_queue_after_submitting_appraisal_record(): void
+    public function test_review_pending_email_and_email_sent_after_submitting_appraisal_record(): void
     {
         Mail::fake();
         $appraisal = $this->createAppraisal();
@@ -178,19 +178,18 @@ class AppraisalRecordSubmitTest extends TestCase
         Mail::assertQueued(AppraisalRecordPendingReviewMail::class);
     }
 
-    // public function test_database_notification_sent_to_queue_after_submitting_appraisal_record(): void
-    // {
-    //     Queue::fake();
+    public function test_database_notification_sent_after_submitting_appraisal_record(): void
+    {
+        Notification::fake();
+        $appraisal = $this->createAppraisal();
+        $appraisalRecord = $this->createUnsubmittedAppraisalRecord($appraisal);
+        $appraisalRecord->update([
+            'employee_agreed_at' => now(),
+            'supervisor_agreed_at' => now(),
+        ]);
 
-    //     $appraisal = $this->createAppraisal();
-    //     $appraisalRecord = $this->createUnsubmittedAppraisalRecord($appraisal);
-    //     $appraisalRecord->update([
-    //         'employee_agreed_at' => now(),
-    //         'supervisor_agreed_at' => now(),
-    //     ]);
+        $this->actingAs($appraisalRecord->appraiser)->postJson("api/v1/users/{$appraisalRecord->appraisee_id}/appraisal-records/{$appraisalRecord->id}/submissions");
 
-    //     $this->actingAs($appraisalRecord->appraiser)->postJson("api/v1/users/{$appraisalRecord->appraisee_id}/appraisal-records/{$appraisalRecord->id}/submissions");
-
-    //     Queue::assertPushed(AppraisalRecordSubmitted::class);
-    // }
+        Notification::assertSentTo($appraisalRecord->appraisee, AppraisalRecordSubmitted::class);
+    }
 }
