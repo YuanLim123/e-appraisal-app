@@ -42,6 +42,7 @@ class ApprovalService
                 'current_approver_id' => $nextApprover->user_id,
                 'current_step' => $nextStep,
             ]);
+            ApprovalProceeded::dispatch($appraisalRecord);
         } else {
             // if no, update the status to completed
             $appraisalRecord->update([
@@ -49,16 +50,5 @@ class ApprovalService
                 'completed_at' => now(),
             ]);
         }
-
-        // send notification to next approver
-
-        // if no, update the status to completed
-
-        if ($nextApprover) {
-            ApprovalProceeded::dispatch($appraisalRecord);
-        } else {
-            // send notification to hr
-        }
-
     }
 }

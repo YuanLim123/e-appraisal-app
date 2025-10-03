@@ -55,7 +55,7 @@ abstract class TestCase extends BaseTestCase
     protected function createUnsubmittedAppraisalRecord(?Appraisal $appraisal = null): AppraisalRecord
     {
         $appraisee = $appraisal?->appraisee ?? User::factory()->create();
-        $appraiser = $appraisal->appraiser ?? User::factory()->create();
+        $appraiser = $appraisal?->appraiser ?? User::factory()->create();
 
         $appraisalRecord = AppraisalRecord::factory()
             ->create([

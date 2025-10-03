@@ -90,11 +90,29 @@ class ApprovalTest extends TestCase
 
         $firstApprover = User::find($appraisalRecord->current_approver_id);
 
-        $response = $this->actingAs($firstApprover)->getJson("api/v1/appraisal-records/{$appraisalRecord->id}approvals");
+        $response = $this->actingAs($firstApprover)->getJson("api/v1/appraisal-records/{$appraisalRecord->id}/approvals");
 
         $response->assertStatus(200);
         $response->assertJsonFragment([
             'id' => $appraisalRecord->id,
+        ]);
+    }
+
+    public function test_approver_can_approve_appraisal_record(): void
+    {
+        $appraisalRecord = $this->createSubmittedAppraisalRecord();
+
+        $firstApprover = User::find($appraisalRecord->current_approver_id);
+        $comment = [
+            'comment' => 'test',
+            'date' => now(),
+        ];
+
+        $response = $this->actingAs($firstApprover)->postJson("api/v1/appraisal-records/{$appraisalRecord->id}/approvals", $comment);
+
+        $response->assertStatus(200);
+        $response->assertJsonFragment([
+            'message' => 'Approved successfully',
         ]);
     }
 }
