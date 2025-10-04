@@ -3,10 +3,7 @@
 use App\Http\Controllers\Api\V1\Auth\LoginController;
 use App\Http\Controllers\Api\V1\Auth\RegisteredUserController;
 use App\Http\Controllers\Api\V1\HR;
-use App\Http\Controllers\Api\V1\User\AppraisalController;
-use App\Http\Controllers\Api\V1\User\AppraisalRecordController;
-use App\Http\Controllers\api\V1\User\ApprovalController;
-use App\Http\Controllers\Api\V1\User\UserController;
+use App\Http\Controllers\Api\V1\User;
 use App\Http\Middleware\DepartmentMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -18,8 +15,8 @@ Route::get('/user', function (Request $request) {
 Route::post('login', LoginController::class);
 
 Route::post('register', RegisteredUserController::class);
-Route::get('appraisals', [AppraisalController::class, 'index']);
-Route::get('users', [UserController::class, 'index']);
+Route::get('appraisals', [User\AppraisalController::class, 'index']);
+Route::get('users', [User\UserController::class, 'index']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
@@ -27,21 +24,22 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('hr/users', [HR\UserController::class, 'store']);
 
         // users/user prefix can be removed, we put the user into the requset body
-        Route::post('hr/users/{user}/appraisals', [HR\AppraisalController::class, 'store']);
-        Route::put('hr/users/{user}/appraisals/{appraisal}', [HR\AppraisalController::class, 'update']);
+        //Route::post('hr/users/{user}/appraisals', [HR\AppraisalController::class, 'store']);
+        Route::post('hr/appraisals', [HR\AppraisalController::class, 'store']);
+        Route::put('hr/appraisals/{appraisal}', [HR\AppraisalController::class, 'update']);
         Route::get('hr/appraisal-records', [HR\AppraisalRecordController::class, 'index']);
     });
 
-    Route::get('appraisals/{appraisal}', [AppraisalController::class, 'show'])->middleware('can:view,appraisal');
+    Route::get('appraisals/{appraisal}', [User\AppraisalController::class, 'show'])->middleware('can:view,appraisal');
 
-    Route::get('appraisal-records', [AppraisalRecordController::class, 'index']);
-    Route::post('users/{user}/appraisal-records', [AppraisalRecordController::class, 'store']);
-    Route::put('users/{user}/appraisal-records/{appraisalRecord}', [AppraisalRecordController::class, 'update']);
-    Route::post('users/{user}/appraisal-records/{appraisalRecord}/feedbacks', [AppraisalRecordController::class, 'storeFeedback']);
-    Route::post('users/{user}/appraisal-records/{appraisalRecord}/submissions', [AppraisalRecordController::class, 'submit']);
+    Route::get('appraisal-records', [User\AppraisalRecordController::class, 'index']);
+    Route::post('users/{user}/appraisal-records', [User\AppraisalRecordController::class, 'store']);
+    Route::put('users/{user}/appraisal-records/{appraisalRecord}', [User\AppraisalRecordController::class, 'update']);
+    Route::post('users/{user}/appraisal-records/{appraisalRecord}/feedbacks', [User\AppraisalRecordController::class, 'storeFeedback']);
+    Route::post('users/{user}/appraisal-records/{appraisalRecord}/submissions', [User\AppraisalRecordController::class, 'submit']);
 
-    Route::get('appraisal-records/approvals', [ApprovalController::class, 'index']);
-    Route::get('appraisal-records/{appraisalRecord}/approvals', [ApprovalController::class, 'show']);
-    Route::post('appraisal-records/{appraisalRecord}/approvals', [ApprovalController::class, 'approve']);
-    Route::post('appraisal-records/{appraisalRecord}/rejects', [ApprovalController::class, 'reject']);
+    Route::get('appraisal-records/approvals', [User\ApprovalController::class, 'index']);
+    Route::get('appraisal-records/{appraisalRecord}/approvals', [User\ApprovalController::class, 'show']);
+    Route::post('appraisal-records/{appraisalRecord}/approvals', [User\ApprovalController::class, 'approve']);
+    Route::post('appraisal-records/{appraisalRecord}/rejects', [User\ApprovalController::class, 'reject']);
 });

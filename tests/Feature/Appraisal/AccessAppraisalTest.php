@@ -66,6 +66,7 @@ class AccessAppraisalTest extends TestCase
         $approver2 = User::factory()->create();
 
         $appraisalInput = [
+            'appraisee_id' => $appraisee->id,
             'appraiser_id' => $appraiser->id,
             'approvers' => [
                 ['user_id' => $approver1->id, 'sequence' => 1],
@@ -74,7 +75,7 @@ class AccessAppraisalTest extends TestCase
         ];
 
         // Create appraisal first
-        $createResponse = $this->actingAs($payrollUser)->postJson("/api/v1/hr/users/{$appraisee->id}/appraisals", $appraisalInput);
+        $createResponse = $this->actingAs($payrollUser)->postJson("/api/v1/hr/appraisals", $appraisalInput);
         $createResponse->assertStatus(201);
 
         // Access appraisal as appraiser

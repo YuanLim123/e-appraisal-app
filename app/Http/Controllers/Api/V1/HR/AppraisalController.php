@@ -12,23 +12,22 @@ use App\Services\V1\HR\AppraisalService;
 
 class AppraisalController extends Controller
 {
-    public function store(User $user, StoreAppraisalRequest $request, AppraisalService $appraisalService)
+    public function store(StoreAppraisalRequest $request, AppraisalService $appraisalService)
     {
-        if (Appraisal::where('appraisee_id', $user->id)->exists()) {
+        if (Appraisal::where('appraisee_id', $request->validated()['appraisee_id'])->exists()) {
             return response()->json([
                 'message' => 'The selected user has already been registered as an appraisee.',
             ], 422);
         }
 
-        $appraisal = $appraisalService->store($user, $request->validated());
+        $appraisal = $appraisalService->store($request->validated());
 
         return new AppraisalResource($appraisal);
     }
 
-    public function update(User $user, Appraisal $appraisal, UpdateAppraisalRequest $request, AppraisalService $appraisalService)
+    public function update(Appraisal $appraisal, UpdateAppraisalRequest $request, AppraisalService $appraisalService)
     {
-
-        $appraisal = $appraisalService->update($user, $appraisal, $request->validated());
+        $appraisal = $appraisalService->update($appraisal, $request->validated());
 
         return new AppraisalResource($appraisal);
     }
