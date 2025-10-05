@@ -53,8 +53,9 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
 
         // Create normal appraisal record
         $appraisalRecordInput = $this->createAppraisalRecordInputData();
+        $appraisalRecordInput['appraisee_id'] = $appraisee->id;
 
-        $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
+        $this->actingAs($appraiser)->postJson("/api/v1/appraisal-records", $appraisalRecordInput);
 
         // create one more user
         $nonAppraiserUser = User::factory()->create();
@@ -83,7 +84,9 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
 
         // Create normal appraisal record
         $appraisalRecordInput = $this->createAppraisalRecordInputData();
-        $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
+        $appraisalRecordInput['appraisee_id'] = $appraisee->id;
+
+        $this->actingAs($appraiser)->postJson("/api/v1/appraisal-records", $appraisalRecordInput);
 
         // Get the created appraisal record
         $appraisalRecordId = AppraisalRecord::latest()->first()->id;
@@ -114,7 +117,9 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
         // Create supervision appraisal record
         $isSupervisionType = true;
         $appraisalRecordInput = $this->createAppraisalRecordInputData($isSupervisionType);
-        $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
+        $appraisalRecordInput['appraisee_id'] = $appraisee->id;
+
+        $this->actingAs($appraiser)->postJson("/api/v1/appraisal-records", $appraisalRecordInput);
 
         // Get the created appraisal record
         $appraisalRecordId = AppraisalRecord::latest()->first()->id;
@@ -142,7 +147,7 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
         ]);
     }
 
-    public function test_appraiser_can_store_feedback_for_supervision_type_appraisal_record_with_invalid_goal_next_data(): void
+    public function test_appraiser_cannot_store_feedback_for_supervision_type_appraisal_record_with_invalid_goal_next_data(): void
     {
         $isAppraiseeHighPosition = true;
         $appraisal = $this->createAppraisal($isAppraiseeHighPosition);
@@ -152,7 +157,9 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
         // Create supervision appraisal record
         $isSupervisionType = true;
         $appraisalRecordInput = $this->createAppraisalRecordInputData($isSupervisionType);
-        $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
+        $appraisalRecordInput['appraisee_id'] = $appraisee->id;
+
+        $this->actingAs($appraiser)->postJson("/api/v1/appraisal-records", $appraisalRecordInput);
 
         // Get the created appraisal record
         $appraisalRecordId = AppraisalRecord::latest()->first()->id;
@@ -186,7 +193,9 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
         // Create supervision appraisal record
         $isSupervisionType = true;
         $appraisalRecordInput = $this->createAppraisalRecordInputData($isSupervisionType);
-        $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
+        $appraisalRecordInput['appraisee_id'] = $appraisee->id;
+
+        $this->actingAs($appraiser)->postJson("/api/v1/appraisal-records", $appraisalRecordInput);
 
         // Get the created appraisal record
         $appraisalRecordId = AppraisalRecord::latest()->first()->id;
@@ -228,8 +237,9 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
         // Create supervision appraisal record
         $isSupervisionType = true;
         $appraisalRecordInput = $this->createAppraisalRecordInputData($isSupervisionType);
+        $appraisalRecordInput['appraisee_id'] = $appraisee->id;
 
-        $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
+        $this->actingAs($appraiser)->postJson("/api/v1/appraisal-records", $appraisalRecordInput);
 
         // Get the created appraisal record
         $appraisalRecordId = AppraisalRecord::latest()->first()->id;
@@ -267,7 +277,9 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
         // Create supervision appraisal record
         $isSupervisionType = true;
         $appraisalRecordInput = $this->createAppraisalRecordInputData($isSupervisionType);
-        $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
+        $appraisalRecordInput['appraisee_id'] = $appraisee->id;
+
+        $this->actingAs($appraiser)->postJson("/api/v1/appraisal-records", $appraisalRecordInput);
 
         // Get the created appraisal record
         $appraisalRecordId = AppraisalRecord::latest()->first()->id;
@@ -302,7 +314,9 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
         // Create supervision appraisal record
         $isSupervisionType = true;
         $appraisalRecordInput = $this->createAppraisalRecordInputData($isSupervisionType);
-        $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
+        $appraisalRecordInput['appraisee_id'] = $appraisee->id;
+
+        $this->actingAs($appraiser)->postJson("/api/v1/appraisal-records", $appraisalRecordInput);
 
         // Get the created appraisal record
         $appraisalRecordId = AppraisalRecord::latest()->first()->id;

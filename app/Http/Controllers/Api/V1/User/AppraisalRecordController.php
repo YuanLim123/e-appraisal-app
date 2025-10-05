@@ -27,10 +27,12 @@ class AppraisalRecordController extends Controller
         return AppraisalRecordResource::collection($appraisalRecords);
     }
 
-    public function store(User $user, StoreAppraisalRecordRequest $request, AppraisalRecordService $service)
+    public function store(StoreAppraisalRecordRequest $request, AppraisalRecordService $service)
     {
-        Gate::authorize('create', [AppraisalRecord::class, $user->appraisalAsAppraisee]);
+        $user = User::findOrFail($request->input('appraisee_id'));
 
+        Gate::authorize('create', [AppraisalRecord::class, $user->appraisalAsAppraisee]);
+        
         $appraisalRecord = $service->store($user, $request->validated());
 
         return new AppraisalRecordResource($appraisalRecord);

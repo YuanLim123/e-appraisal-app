@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use App\Enums\AppraisalRecordPurposeType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -23,7 +24,8 @@ class StoreAppraisalRecordRequest extends FormRequest
      */
     public function rules(): array
     {
-        $user = $this->route('user');
+        $userId = $this->input('appraisee_id');
+        $user = User::findOrFail($userId);
 
         $rules = [
             'review_from' => ['required', 'date', Rule::date()->format('Y-m-d')],

@@ -22,9 +22,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::middleware([DepartmentMiddleware::class . ':HRA,PAYROLL'])->group(function () {
         Route::post('hr/users', [HR\UserController::class, 'store']);
-
-        // users/user prefix can be removed, we put the user into the requset body
-        //Route::post('hr/users/{user}/appraisals', [HR\AppraisalController::class, 'store']);
         Route::post('hr/appraisals', [HR\AppraisalController::class, 'store']);
         Route::put('hr/appraisals/{appraisal}', [HR\AppraisalController::class, 'update']);
         Route::get('hr/appraisal-records', [HR\AppraisalRecordController::class, 'index']);
@@ -33,7 +30,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('appraisals/{appraisal}', [User\AppraisalController::class, 'show'])->middleware('can:view,appraisal');
 
     Route::get('appraisal-records', [User\AppraisalRecordController::class, 'index']);
-    Route::post('users/{user}/appraisal-records', [User\AppraisalRecordController::class, 'store']);
+    Route::post('appraisal-records', [User\AppraisalRecordController::class, 'store']);
     Route::put('users/{user}/appraisal-records/{appraisalRecord}', [User\AppraisalRecordController::class, 'update']);
     Route::post('users/{user}/appraisal-records/{appraisalRecord}/feedbacks', [User\AppraisalRecordController::class, 'storeFeedback']);
     Route::post('users/{user}/appraisal-records/{appraisalRecord}/submissions', [User\AppraisalRecordController::class, 'submit']);

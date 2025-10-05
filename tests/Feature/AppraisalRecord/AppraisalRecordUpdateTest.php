@@ -52,7 +52,9 @@ class AppraisalRecordUpdateTest extends TestCase
 
         // Create normal appraisal record
         $appraisalRecordInput = $this->createAppraisalRecordInputData();
-        $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
+        $appraisalRecordInput['appraisee_id'] = $appraisee->id;
+
+        $this->actingAs($appraiser)->postJson("/api/v1/appraisal-records", $appraisalRecordInput);
 
         // create a random non appraiser user
         $nonAppraiserUser = User::factory()->create();
@@ -74,7 +76,9 @@ class AppraisalRecordUpdateTest extends TestCase
 
         // Create normal appraisal record
         $appraisalRecordInput = $this->createAppraisalRecordInputData();
-        $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
+        $appraisalRecordInput['appraisee_id'] = $appraisee->id;
+
+        $this->actingAs($appraiser)->postJson("/api/v1/appraisal-records", $appraisalRecordInput);
 
         // create another appraisee with same position
         $anotherAppraisee = User::factory()->create();
@@ -98,7 +102,9 @@ class AppraisalRecordUpdateTest extends TestCase
 
         // Create normal appraisal record
         $appraisalRecordInput = $this->createAppraisalRecordInputData();
-        $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
+        $appraisalRecordInput['appraisee_id'] = $appraisee->id;
+
+        $this->actingAs($appraiser)->postJson("/api/v1/appraisal-records", $appraisalRecordInput);
 
         // Get the created appraisal record
         $appraisalRecordId = AppraisalRecord::latest()->first()->id;
@@ -118,7 +124,9 @@ class AppraisalRecordUpdateTest extends TestCase
 
         // Create normal appraisal record
         $appraisalRecordInput = $this->createAppraisalRecordInputData();
-        $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
+        $appraisalRecordInput['appraisee_id'] = $appraisee->id;
+
+        $this->actingAs($appraiser)->postJson("/api/v1/appraisal-records", $appraisalRecordInput);
 
         // Get the created appraisal record
         $appraisalRecordId = AppraisalRecord::latest()->first()->id;
@@ -143,8 +151,9 @@ class AppraisalRecordUpdateTest extends TestCase
         // Create normal appraisal record
         $appraisalRecordInput = $this->createAppraisalRecordInputData();
         $appraisalRecordInput['purpose'] = AppraisalRecordPurposeType::ANNUAL_REVIEW->value;
+        $appraisalRecordInput['appraisee_id'] = $appraisee->id;
 
-        $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records", $appraisalRecordInput);
+        $this->actingAs($appraiser)->postJson("/api/v1/appraisal-records", $appraisalRecordInput);
 
         // end the annual review season so we can validate the invalid season error
         $annualReviewSeason = Season::where('purpose', 'annual_review')->first();
