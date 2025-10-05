@@ -38,8 +38,10 @@ class AppraisalRecordController extends Controller
         return new AppraisalRecordResource($appraisalRecord);
     }
 
-    public function update(User $user, AppraisalRecord $appraisalRecord, StoreAppraisalRecordRequest $request, AppraisalRecordService $service)
+    public function update(AppraisalRecord $appraisalRecord, StoreAppraisalRecordRequest $request, AppraisalRecordService $service)
     {
+        $user = User::findOrFail($request->input('appraisee_id'));
+        
         Gate::authorize('update', [AppraisalRecord::class, $appraisalRecord, $user]);
 
         $appraisalRecord = $service->update($user, $appraisalRecord, $request->validated());

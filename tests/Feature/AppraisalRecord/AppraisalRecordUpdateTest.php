@@ -38,7 +38,7 @@ class AppraisalRecordUpdateTest extends TestCase
 
     public function test_public_user_cannot_access_updating_appraisal_record(): void
     {
-        $response = $this->putJson('/api/v1/users/1/appraisal-records/1', []);
+        $response = $this->putJson('/api/v1/appraisal-records/1', []);
 
         $response->assertStatus(401);
     }
@@ -63,17 +63,16 @@ class AppraisalRecordUpdateTest extends TestCase
         // assume nonappraiseruser like to change the appraisal record date
         $appraisalRecordInput['review_from'] = '2023-01-01';
         // attempt to update appraisal record as non appraiser user
-        $response = $this->actingAs($nonAppraiserUser)->putJson("/api/v1/users/{$appraisee->id}/appraisal-records/1", $appraisalRecordInput);
+        $response = $this->actingAs($nonAppraiserUser)->putJson("/api/v1/appraisal-records/1", $appraisalRecordInput);
 
         $response->assertStatus(403);
     }
 
-    public function test_appraisee_id_not_match_with_appraisal_record_appraisee_id_in_the_request_url_return_error(): void
+    public function test_appraisee_id_not_match_with_appraisal_record_appraisee_id_in_the_request_body_return_error(): void
     {
         $appraisal = $this->createAppraisal();
         $appraisee = $appraisal->appraisee;
         $appraiser = $appraisal->appraiser;
-
         // Create normal appraisal record
         $appraisalRecordInput = $this->createAppraisalRecordInputData();
         $appraisalRecordInput['appraisee_id'] = $appraisee->id;
@@ -84,12 +83,13 @@ class AppraisalRecordUpdateTest extends TestCase
         $anotherAppraisee = User::factory()->create();
         $anotherAppraisee->position_id = 2;
         $anotherAppraisee->save();
+        $appraisalRecordInput['review_from'] = '2023-01-01';
+        $appraisalRecordInput['appraisee_id'] = $anotherAppraisee->id;
 
         $createdAppraisalRecordId = AppraisalRecord::latest()->first()->id;
 
-        $appraisalRecordInput['review_from'] = '2023-01-01';
-        // attempt to update appraisal record as appraiser but with different appraisee id in the url
-        $response = $this->actingAs($appraiser)->putJson("/api/v1/users/{$anotherAppraisee->id}/appraisal-records/{$createdAppraisalRecordId}", $appraisalRecordInput);
+        // attempt to update appraisal record as appraiser but with different appraisee id in the body
+        $response = $this->actingAs($appraiser)->putJson("/api/v1/appraisal-records/{$createdAppraisalRecordId}", $appraisalRecordInput);
 
         $response->assertStatus(403);
     }
@@ -112,7 +112,7 @@ class AppraisalRecordUpdateTest extends TestCase
         $appraisalRecordInput['review_from'] = '2022-02-02';
         $appraisalRecordInput['review_to'] = '2023-02-02';
 
-        $response = $this->actingAs($appraiser)->putJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}", $appraisalRecordInput);
+        $response = $this->actingAs($appraiser)->putJson("/api/v1/appraisal-records/{$appraisalRecordId}", $appraisalRecordInput);
         $response->assertStatus(200);
     }
 
@@ -136,7 +136,7 @@ class AppraisalRecordUpdateTest extends TestCase
         $appraisalRecordInput['review_to'] = null;
         $appraisalRecordInput['purpose'] = 'invalid-purpose';
 
-        $response = $this->actingAs($appraiser)->putJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}", $appraisalRecordInput);
+        $response = $this->actingAs($appraiser)->putJson("/api/v1/appraisal-records/{$appraisalRecordId}", $appraisalRecordInput);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['review_from', 'review_to', 'purpose']);
@@ -167,7 +167,7 @@ class AppraisalRecordUpdateTest extends TestCase
         $appraisalRecordInput['purpose'] = AppraisalRecordPurposeType::ANNUAL_REVIEW->value;
 
         // Update the appraisal record with invalid season purpose
-        $response = $this->actingAs($appraiser)->putJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}", $appraisalRecordInput);
+        $response = $this->actingAs($appraiser)->putJson("/api/v1/appraisal-records/{$appraisalRecordId}", $appraisalRecordInput);
 
         $response->assertStatus(422);
         $response->assertJson([
