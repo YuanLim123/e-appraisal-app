@@ -40,7 +40,7 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
 
     public function test_public_user_cannot_access_storing_appraisal_record_feedback(): void
     {
-        $response = $this->postJson('/api/v1/users/1/appraisal-records/1/feedbacks', []);
+        $response = $this->postJson('/api/v1/appraisal-records/1/feedbacks', []);
 
         $response->assertStatus(401);
     }
@@ -66,12 +66,13 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
 
         // assume nonappraiseruser like to add feedback for the appraisal record
         $feedbackInput = [
+            'appraisee_id' => $appraisee->id,
             'current_salary' => 5000,
             'expected_salary' => 6000,
         ];
 
         // attempt to store feedback as non appraiser user
-        $response = $this->actingAs($nonAppraiserUser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}/feedbacks", $feedbackInput);
+        $response = $this->actingAs($nonAppraiserUser)->postJson("/api/v1/appraisal-records/{$appraisalRecordId}/feedbacks", $feedbackInput);
 
         $response->assertStatus(403);
     }
@@ -93,12 +94,13 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
 
         // assume appraiser like to add feedback for the appraisal record
         $feedbackInput = [
+            'appraisee_id' => $appraisee->id,
             'current_salary' => 5000,
             'new_salary' => 6000,
         ];
 
         // update the appraisal record with new feedback
-        $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}/feedbacks", $feedbackInput);
+        $response = $this->actingAs($appraiser)->postJson("/api/v1/appraisal-records/{$appraisalRecordId}/feedbacks", $feedbackInput);
 
         $response->assertStatus(200);
         $response->assertJsonFragment([
@@ -126,6 +128,7 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
 
         // assume appraiser like to add feedback for the appraisal record
         $feedbackInput = [
+            'appraisee_id' => $appraisee->id,
             'current_salary' => 5000,
             'new_salary' => 6000,
             'goal_next' => [
@@ -137,7 +140,7 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
             ],
         ];
 
-        $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}/feedbacks", $feedbackInput);
+        $response = $this->actingAs($appraiser)->postJson("/api/v1/appraisal-records/{$appraisalRecordId}/feedbacks", $feedbackInput);
 
         $response->assertStatus(200);
         $response->assertJsonFragment([
@@ -166,6 +169,7 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
 
         // assume appraiser like to add feedback for the appraisal record
         $feedbackInput = [
+            'appraisee_id' => $appraisee->id,
             'current_salary' => 5000,
             'new_salary' => 6000,
             // for supervision type record feedback, if objective is filled, then specificAction and weightage must be filled too
@@ -177,13 +181,13 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
             ],
         ];
 
-        $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}/feedbacks", $feedbackInput);
+        $response = $this->actingAs($appraiser)->postJson("/api/v1/appraisal-records/{$appraisalRecordId}/feedbacks", $feedbackInput);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['goal_next.0.specificAction', 'goal_next.0.weightage']);
     }
 
-    public function test_appraiser_can_store_feedback_for_supervision_type_appraisal_record_with_invalid_weight_age_data(): void
+    public function test_appraiser_cannot_store_feedback_for_supervision_type_appraisal_record_with_invalid_weight_age_data(): void
     {
         $isAppraiseeHighPosition = true;
         $appraisal = $this->createAppraisal($isAppraiseeHighPosition);
@@ -203,6 +207,7 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
         // assume appraiser like to add feedback for the appraisal record
         // sum of weightage for all goals exceed 100 so we expected invalid weightage error message
         $feedbackInput = [
+            'appraisee_id' => $appraisee->id,
             'current_salary' => 5000,
             'new_salary' => 6000,
             'goal_next' => [
@@ -219,7 +224,7 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
             ],
         ];
 
-        $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}/feedbacks", $feedbackInput);
+        $response = $this->actingAs($appraiser)->postJson("/api/v1/appraisal-records/{$appraisalRecordId}/feedbacks", $feedbackInput);
 
         $response->assertStatus(422);
         $response->assertJson([
@@ -245,6 +250,7 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
         $appraisalRecordId = AppraisalRecord::latest()->first()->id;
 
         $feedbackInput = [
+            'appraisee_id' => $appraisee->id,
             'current_salary' => 5000,
             'new_salary' => 6000,
             'goal_next' => [
@@ -261,7 +267,7 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
         Mail::fake();
 
         // attempt to store feedback and submit the appraisal record
-        $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}/feedbacks?isSubmit=true", $feedbackInput);
+        $this->actingAs($appraiser)->postJson("/api/v1/appraisal-records/{$appraisalRecordId}/feedbacks?isSubmit=true", $feedbackInput);
 
         // assert that AppraisalPendingReviewMail mailable push to queue
         Mail::assertQueued(AppraisalRecordPendingReviewMail::class);
@@ -285,6 +291,7 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
         $appraisalRecordId = AppraisalRecord::latest()->first()->id;
 
         $feedbackInput = [
+            'appraisee_id' => $appraisee->id,
             'current_salary' => 5000,
             'new_salary' => 6000,
             'goal_next' => [
@@ -298,7 +305,7 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
         Mail::fake();
 
         // attempt to store feedback and submit the appraisal record
-        $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}/feedbacks", $feedbackInput);
+        $this->actingAs($appraiser)->postJson("/api/v1/appraisal-records/{$appraisalRecordId}/feedbacks", $feedbackInput);
 
         // assert that AppraisalPendingReviewMail mailable was sent
         Mail::assertNotQueued(AppraisalRecordPendingReviewMail::class);
@@ -322,6 +329,7 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
         $appraisalRecordId = AppraisalRecord::latest()->first()->id;
 
         $feedbackInput = [
+            'appraisee_id' => $appraisee->id,
             'current_salary' => 5000,
             'new_salary' => 6000,
             'goal_next' => [
@@ -336,7 +344,7 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
             'isEmployeeAgreed' => false,
         ];
 
-        $response = $this->actingAs($appraiser)->postJson("/api/v1/users/{$appraisee->id}/appraisal-records/{$appraisalRecordId}/feedbacks?isSubmit=true", $feedbackInput);
+        $response = $this->actingAs($appraiser)->postJson("/api/v1/appraisal-records/{$appraisalRecordId}/feedbacks?isSubmit=true", $feedbackInput);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['isEmployeeAgreed']);

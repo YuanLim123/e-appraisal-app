@@ -49,8 +49,10 @@ class AppraisalRecordController extends Controller
         return new AppraisalRecordResource($appraisalRecord);
     }
 
-    public function storeFeedback(User $user, AppraisalRecord $appraisalRecord, AppraisalRecordFeedbackRequest $request, AppraisalRecordFeedbackService $service)
+    public function storeFeedback(AppraisalRecord $appraisalRecord, AppraisalRecordFeedbackRequest $request, AppraisalRecordFeedbackService $service)
     {
+        $user = User::findOrFail($request->input('appraisee_id'));
+
         Gate::authorize('update', [AppraisalRecord::class, $appraisalRecord, $user]);
 
         // get isSubmit query param, default to false

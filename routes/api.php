@@ -32,7 +32,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('appraisal-records', [User\AppraisalRecordController::class, 'index']);
     Route::post('appraisal-records', [User\AppraisalRecordController::class, 'store']);
     Route::put('appraisal-records/{appraisalRecord}', [User\AppraisalRecordController::class, 'update']);
-    Route::post('users/{user}/appraisal-records/{appraisalRecord}/feedbacks', [User\AppraisalRecordController::class, 'storeFeedback']);
+    Route::post('appraisal-records/{appraisalRecord}/feedbacks', [User\AppraisalRecordController::class, 'storeFeedback']);
     Route::post('users/{user}/appraisal-records/{appraisalRecord}/submissions', [User\AppraisalRecordController::class, 'submit']);
 
     Route::get('appraisal-records/approvals', [User\ApprovalController::class, 'index']);

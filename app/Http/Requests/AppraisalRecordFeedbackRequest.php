@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class AppraisalRecordFeedbackRequest extends FormRequest
@@ -21,7 +22,8 @@ class AppraisalRecordFeedbackRequest extends FormRequest
      */
     public function rules(): array
     {
-        $user = $this->route('user');
+        $userId = $this->input('appraisee_id');
+        $user = User::findOrFail($userId);
         $isSubmit = $this->query('isSubmit', false);
 
         $rules = [
