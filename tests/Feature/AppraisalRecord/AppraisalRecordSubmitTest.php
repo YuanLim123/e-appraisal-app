@@ -41,8 +41,12 @@ class AppraisalRecordSubmitTest extends TestCase
         // create unsubmitted normal appraisal record
         $appraisalRecord = $this->createUnsubmittedAppraisalRecord();
 
+        $submitInput = [
+            'appraisee_id' => $appraisalRecord->appraisee_id,
+        ];
+
         // attempt to submit the appraisal record without authentication
-        $response = $this->postJson("api/v1/users/{$appraisalRecord->appraisee_id}/appraisal-records/{$appraisalRecord->id}/submissions");
+        $response = $this->postJson("api/v1/appraisal-records/{$appraisalRecord->id}/submissions", $submitInput);
 
         $response->assertStatus(401);
     }
@@ -51,9 +55,13 @@ class AppraisalRecordSubmitTest extends TestCase
     {
         $appraisalRecord = $this->createUnsubmittedAppraisalRecord();
 
+        $submitInput = [
+            'appraisee_id' => $appraisalRecord->appraisee_id,
+        ];
+
         $nonAppraiser = User::factory()->create();
 
-        $response = $this->actingAs($nonAppraiser)->postJson("api/v1/users/{$appraisalRecord->appraisee_id}/appraisal-records/{$appraisalRecord->id}/submissions");
+        $response = $this->actingAs($nonAppraiser)->postJson("api/v1/appraisal-records/{$appraisalRecord->id}/submissions", $submitInput);
 
         $response->assertStatus(403);
     }
@@ -68,7 +76,11 @@ class AppraisalRecordSubmitTest extends TestCase
             'supervisor_agreed_at' => now(),
         ]);
 
-        $response = $this->actingAs($appraisalRecord->appraiser)->postJson("api/v1/users/{$appraisalRecord->appraisee_id}/appraisal-records/{$appraisalRecord->id}/submissions");
+        $submitInput = [
+            'appraisee_id' => $appraisalRecord->appraisee_id,
+        ];
+
+        $response = $this->actingAs($appraisalRecord->appraiser)->postJson("api/v1/appraisal-records/{$appraisalRecord->id}/submissions", $submitInput);
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -84,7 +96,11 @@ class AppraisalRecordSubmitTest extends TestCase
             'supervisor_agreed_at' => now(),
         ]);
 
-        $response = $this->actingAs($appraisalRecord->appraiser)->postJson("api/v1/users/{$appraisalRecord->appraisee_id}/appraisal-records/{$appraisalRecord->id}/submissions");
+        $submitInput = [
+            'appraisee_id' => $appraisalRecord->appraisee_id,
+        ];
+
+        $response = $this->actingAs($appraisalRecord->appraiser)->postJson("api/v1/appraisal-records/{$appraisalRecord->id}/submissions", $submitInput);
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -101,7 +117,11 @@ class AppraisalRecordSubmitTest extends TestCase
             'supervisor_agreed_at' => now(),
         ]);
 
-        $this->actingAs($appraisalRecord->appraiser)->postJson("api/v1/users/{$appraisalRecord->appraisee_id}/appraisal-records/{$appraisalRecord->id}/submissions");
+        $submitInput = [
+            'appraisee_id' => $appraisalRecord->appraisee_id,
+        ];
+
+        $this->actingAs($appraisalRecord->appraiser)->postJson("api/v1/appraisal-records/{$appraisalRecord->id}/submissions", $submitInput);
 
         $this->assertDatabaseHas('appraisal_records', [
             'id' => $appraisalRecord->id,
@@ -115,9 +135,12 @@ class AppraisalRecordSubmitTest extends TestCase
     {
         $appraisal = $this->createAppraisal();
         $appraisalRecord = $this->createUnsubmittedAppraisalRecord($appraisal);
+        $submitInput = [
+            'appraisee_id' => $appraisalRecord->appraisee_id,
+        ];
 
         // case 1: both employee_agreed_at and supervisor_agreed_at are null
-        $response = $this->actingAs($appraisalRecord->appraiser)->postJson("api/v1/users/{$appraisalRecord->appraisee_id}/appraisal-records/{$appraisalRecord->id}/submissions");
+        $response = $this->actingAs($appraisalRecord->appraiser)->postJson("api/v1/appraisal-records/{$appraisalRecord->id}/submissions", $submitInput);
 
         $response->assertStatus(422);
         $response->assertJson([
@@ -130,7 +153,7 @@ class AppraisalRecordSubmitTest extends TestCase
             'supervisor_agreed_at' => null,
         ]);
 
-        $response = $this->actingAs($appraisalRecord->appraiser)->postJson("api/v1/users/{$appraisalRecord->appraisee_id}/appraisal-records/{$appraisalRecord->id}/submissions");
+        $response = $this->actingAs($appraisalRecord->appraiser)->postJson("api/v1/appraisal-records/{$appraisalRecord->id}/submissions", $submitInput);
 
         $response->assertStatus(422);
         $response->assertJson([
@@ -143,7 +166,7 @@ class AppraisalRecordSubmitTest extends TestCase
             'supervisor_agreed_at' => now(),
         ]);
 
-        $response = $this->actingAs($appraisalRecord->appraiser)->postJson("api/v1/users/{$appraisalRecord->appraisee_id}/appraisal-records/{$appraisalRecord->id}/submissions");
+        $response = $this->actingAs($appraisalRecord->appraiser)->postJson("api/v1/appraisal-records/{$appraisalRecord->id}/submissions", $submitInput);
 
         $response->assertStatus(422);
         $response->assertJson([
@@ -155,7 +178,11 @@ class AppraisalRecordSubmitTest extends TestCase
     {
         $appraisalRecord = $this->createSubmittedAppraisalRecord();
 
-        $response = $this->actingAs($appraisalRecord->appraiser)->postJson("api/v1/users/{$appraisalRecord->appraisee_id}/appraisal-records/{$appraisalRecord->id}/submissions");
+        $submitInput = [
+            'appraisee_id' => $appraisalRecord->appraisee_id,
+        ];
+
+        $response = $this->actingAs($appraisalRecord->appraiser)->postJson("api/v1/appraisal-records/{$appraisalRecord->id}/submissions", $submitInput);
 
         $response->assertStatus(422);
         $response->assertJson([
@@ -172,8 +199,11 @@ class AppraisalRecordSubmitTest extends TestCase
             'employee_agreed_at' => now(),
             'supervisor_agreed_at' => now(),
         ]);
+        $submitInput = [
+            'appraisee_id' => $appraisalRecord->appraisee_id,
+        ];
 
-        $this->actingAs($appraisalRecord->appraiser)->postJson("api/v1/users/{$appraisalRecord->appraisee_id}/appraisal-records/{$appraisalRecord->id}/submissions");
+        $this->actingAs($appraisalRecord->appraiser)->postJson("api/v1/appraisal-records/{$appraisalRecord->id}/submissions", $submitInput);
 
         Mail::assertQueued(AppraisalRecordPendingReviewMail::class);
     }
@@ -187,8 +217,11 @@ class AppraisalRecordSubmitTest extends TestCase
             'employee_agreed_at' => now(),
             'supervisor_agreed_at' => now(),
         ]);
+        $submitInput = [
+            'appraisee_id' => $appraisalRecord->appraisee_id,
+        ];
 
-        $this->actingAs($appraisalRecord->appraiser)->postJson("api/v1/users/{$appraisalRecord->appraisee_id}/appraisal-records/{$appraisalRecord->id}/submissions");
+        $this->actingAs($appraisalRecord->appraiser)->postJson("api/v1/appraisal-records/{$appraisalRecord->id}/submissions", $submitInput);
 
         Notification::assertSentTo($appraisalRecord->appraisee, AppraisalRecordSubmitted::class);
     }

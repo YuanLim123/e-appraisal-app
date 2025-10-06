@@ -13,6 +13,7 @@ use App\Services\V1\User\AppraisalRecordService;
 use App\Services\V1\User\AppraisalRecordSubmitService;
 use App\Traits\APIResponsesTrait;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Http\Request;
 
 class AppraisalRecordController extends Controller
 {
@@ -63,8 +64,10 @@ class AppraisalRecordController extends Controller
         return new AppraisalRecordResource($appraisalRecord);
     }
 
-    public function submit(User $user, AppraisalRecord $appraisalRecord, AppraisalRecordSubmitService $service)
+    public function submit(AppraisalRecord $appraisalRecord, Request $request, AppraisalRecordSubmitService $service)
     {
+        $user = User::findOrFail($request->input('appraisee_id'));
+
         Gate::authorize('update', [AppraisalRecord::class, $appraisalRecord, $user]);
 
         $service->submit($user, $appraisalRecord);
