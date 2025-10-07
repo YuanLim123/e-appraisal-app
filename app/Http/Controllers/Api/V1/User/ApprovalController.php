@@ -47,7 +47,7 @@ class ApprovalController extends Controller
     {
         Gate::authorize('approveAppraisalRecord', [AppraisalRecord::class, $appraisalRecord]);
 
-        $service->approve($appraisalRecord, $request->validated());
+        $service->reject($appraisalRecord, $request->validated());
 
         return response()->json(['message' => 'Rejected successfully'], 200);
     }

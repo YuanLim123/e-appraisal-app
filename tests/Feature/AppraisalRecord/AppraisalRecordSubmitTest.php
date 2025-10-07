@@ -190,7 +190,7 @@ class AppraisalRecordSubmitTest extends TestCase
         ]);
     }
 
-    public function test_review_pending_email_and_email_sent_after_submitting_appraisal_record(): void
+    public function test_review_pending_email_sent_after_submitting_appraisal_record(): void
     {
         Mail::fake();
         $appraisal = $this->createAppraisal();

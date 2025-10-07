@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Approval;
 
+use App\Mail\AppraisalRecordPendingReviewMail;
 use App\Models\User;
 use Database\Seeders\DepartmentSeeder;
 use Database\Seeders\PositionSeeder;
@@ -10,6 +11,7 @@ use Database\Seeders\SeasonSeeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class ApprovalTest extends TestCase
@@ -114,5 +116,72 @@ class ApprovalTest extends TestCase
         $response->assertJsonFragment([
             'message' => 'Approved successfully',
         ]);
+    }
+
+    public function test_approver_cannot_approve_same_appraisal_record_twice(): void
+    {
+        $appraisalRecord = $this->createSubmittedAppraisalRecord();
+
+        $firstApprover = User::find($appraisalRecord->current_approver_id);
+        $comment = [
+            'comment' => 'test',
+            'date' => now(),
+        ];
+
+        $this->actingAs($firstApprover)->postJson("api/v1/appraisal-records/{$appraisalRecord->id}/approvals", $comment);
+        $response = $this->actingAs($firstApprover)->postJson("api/v1/appraisal-records/{$appraisalRecord->id}/approvals", $comment);
+
+        $response->assertStatus(403);
+    }
+
+    public function test_not_current_approver_cannot_approve_appraisal_record(): void
+    {
+        $appraisalRecord = $this->createSubmittedAppraisalRecord();
+        $secondApprover = User::find($appraisalRecord->approvers[1]->user_id);
+        $comment = [
+            'comment' => 'test',
+            'date' => now(),
+        ];
+
+        $response = $this->actingAs($secondApprover)->postJson("api/v1/appraisal-records/{$appraisalRecord->id}/approvals", $comment);
+
+        $response->assertStatus(403);
+    }
+
+    public function test_approver_can_reject_appraisal_record(): void
+    {
+        $appraisalRecord = $this->createSubmittedAppraisalRecord();
+
+        $firstApprover = User::find($appraisalRecord->current_approver_id);
+        $comment = [
+            'comment' => 'not good',
+            'date' => now(),
+        ];
+
+        $response = $this->actingAs($firstApprover)->postJson("api/v1/appraisal-records/{$appraisalRecord->id}/rejects", $comment);
+
+        $response->assertStatus(200);
+
+        $this->assertDatabaseHas('appraisal_records', [
+            'id' => $appraisalRecord->id,
+            'status' => 'rejected',
+        ]);
+    }
+
+    public function test_review_pending_email_sent_after_appraisal_record_is_approved(): void
+    {
+        Mail::fake();
+        
+        $appraisalRecord = $this->createSubmittedAppraisalRecord();
+
+        $firstApprover = User::find($appraisalRecord->current_approver_id);
+        $comment = [
+            'comment' => 'not good',
+            'date' => now(),
+        ];
+
+        $this->actingAs($firstApprover)->postJson("api/v1/appraisal-records/{$appraisalRecord->id}/approve", $comment);
+        
+        Mail::assertQueued(AppraisalRecordPendingReviewMail::class);
     }
 }
