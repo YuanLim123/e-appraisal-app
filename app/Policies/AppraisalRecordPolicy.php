@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\AppraisalRecordStatus;
 use App\Exceptions\UserHasNoAppraisalCreatedException;
 use App\Models\Appraisal;
 use App\Models\AppraisalRecord;
@@ -96,6 +97,6 @@ class AppraisalRecordPolicy
 
     public function approveAppraisalRecord(User $user, AppraisalRecord $appraisalRecord): bool
     {
-        return auth()->id() == $appraisalRecord->current_approver_id;
+        return auth()->id() == $appraisalRecord->current_approver_id && $appraisalRecord->status == AppraisalRecordStatus::SUBMITTED;
     }
 }

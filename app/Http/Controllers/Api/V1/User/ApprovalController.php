@@ -34,7 +34,7 @@ class ApprovalController extends Controller
         return new AppraisalRecordResource($appraisalRecord);
     }
 
-    public function approve(AppraisalRecord $appraisalRecord, ApproveRequest $request, ApprovalService $service)
+    public function store(AppraisalRecord $appraisalRecord, ApproveRequest $request, ApprovalService $service)
     {
         Gate::authorize('approveAppraisalRecord', [AppraisalRecord::class, $appraisalRecord]);
 
@@ -43,7 +43,7 @@ class ApprovalController extends Controller
         return response()->json(['message' => 'Approved successfully'], 200);
     }
 
-    public function reject(AppraisalRecord $appraisalRecord, ApproveRequest $request, ApprovalService $service)
+    public function destroy(AppraisalRecord $appraisalRecord, ApproveRequest $request, ApprovalService $service)
     {
         Gate::authorize('approveAppraisalRecord', [AppraisalRecord::class, $appraisalRecord]);
 

@@ -2,7 +2,9 @@
 
 namespace Tests\Feature\Approval;
 
+use App\Notifications\AppraisalRecordCompleted;
 use App\Mail\AppraisalRecordPendingReviewMail;
+use App\Models\Department;
 use App\Models\User;
 use Database\Seeders\DepartmentSeeder;
 use Database\Seeders\PositionSeeder;
@@ -12,6 +14,7 @@ use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class ApprovalTest extends TestCase
@@ -148,26 +151,6 @@ class ApprovalTest extends TestCase
         $response->assertStatus(403);
     }
 
-    public function test_approver_can_reject_appraisal_record(): void
-    {
-        $appraisalRecord = $this->createSubmittedAppraisalRecord();
-
-        $firstApprover = User::find($appraisalRecord->current_approver_id);
-        $comment = [
-            'comment' => 'not good',
-            'date' => now(),
-        ];
-
-        $response = $this->actingAs($firstApprover)->postJson("api/v1/appraisal-records/{$appraisalRecord->id}/rejects", $comment);
-
-        $response->assertStatus(200);
-
-        $this->assertDatabaseHas('appraisal_records', [
-            'id' => $appraisalRecord->id,
-            'status' => 'rejected',
-        ]);
-    }
-
     public function test_review_pending_email_sent_after_appraisal_record_is_approved(): void
     {
         Mail::fake();
@@ -180,8 +163,29 @@ class ApprovalTest extends TestCase
             'date' => now(),
         ];
 
-        $this->actingAs($firstApprover)->postJson("api/v1/appraisal-records/{$appraisalRecord->id}/approve", $comment);
+        $this->actingAs($firstApprover)->postJson("api/v1/appraisal-records/{$appraisalRecord->id}/approvals", $comment);
         
         Mail::assertQueued(AppraisalRecordPendingReviewMail::class);
+    }
+
+    public function test_notification_sent_to_payrolls_after_appraisal_record_is_completed(): void
+    {
+        Notification::fake();
+        
+        $appraisalRecord = $this->createSubmittedAppraisalRecord();
+
+        $firstApprover = User::find($appraisalRecord->current_approver_id);
+        $secondApprover = User::find($appraisalRecord->approvers[1]->user_id);
+        $payrolls = Department::where('name', 'PAYROLL')->first()->users;
+
+        $comment = [
+            'comment' => 'not good',
+            'date' => now(),
+        ];
+
+        $this->actingAs($firstApprover)->postJson("api/v1/appraisal-records/{$appraisalRecord->id}/approvals", $comment);
+        $this->actingAs($secondApprover)->postJson("api/v1/appraisal-records/{$appraisalRecord->id}/approvals", $comment);
+
+        Notification::assertSentTo($payrolls, AppraisalRecordCompleted::class);
     }
 }

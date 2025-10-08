@@ -5,6 +5,7 @@ namespace App\Services\V1\User;
 use App\Enums\AppraisalRecordStatus;
 use App\Events\AppraisalRecordApproved;
 use App\Events\AppraisalRecordCompleted;
+use App\Events\AppraisalRecordRejected;
 use App\Events\ApprovalProceeded;
 use App\Exceptions\ApproverNotFoundException;
 use App\Models\AppraisalRecord;
@@ -78,5 +79,7 @@ class ApprovalService
         $appraisalRecord->update([
             'status' => AppraisalRecordStatus::REJECTED,
         ]);
+
+        AppraisalRecordRejected::dispatch($appraisalRecord);
     }
 }
