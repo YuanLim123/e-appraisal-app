@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\api\V1\User;
+namespace App\Http\Controllers\Api\V1\User;
 
 use App\Enums\AppraisalRecordStatus;
 use App\Http\Controllers\Controller;

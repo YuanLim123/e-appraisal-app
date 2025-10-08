@@ -32,7 +32,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('appraisal-records', [User\AppraisalRecordController::class, 'index']);
     Route::post('appraisal-records', [User\AppraisalRecordController::class, 'store']);
     Route::put('appraisal-records/{appraisalRecord}', [User\AppraisalRecordController::class, 'update']);
-    
+
     Route::post('appraisal-records/{appraisalRecord}/feedbacks', User\AppraisalRecordFeedbackController::class);
     Route::post('appraisal-records/{appraisalRecord}/submissions', User\AppraisalRecordSubmitController::class);
 
@@ -40,4 +40,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('appraisal-records/{appraisalRecord}/approvals', [User\ApprovalController::class, 'show']);
     Route::post('appraisal-records/{appraisalRecord}/approvals', [User\ApprovalController::class, 'store']);
     Route::delete('appraisal-records/{appraisalRecord}/rejects', [User\ApprovalController::class, 'destroy']);
+
+    Route::post('appraisal-records/{appraisalRecord}/attachments', [User\AppraisalRecordAttachmentController::class, 'store']);
 });
