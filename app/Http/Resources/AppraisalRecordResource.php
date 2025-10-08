@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\RecordApproverResource;
 use App\Enums\AppraisalRecordStatus;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -42,6 +43,7 @@ class AppraisalRecordResource extends JsonResource
             'rejected_at' => $this->rejected_at ?? null,
             'employee_agreed_at' => $this->employee_agreed_at?->format('d-m-Y') ?? null,
             'supervisor_agreed_at' => $this->supervisor_agreed_at?->format('d-m-Y') ?? null,
+            'approvers_comment' => RecordApproverResource::collection($this->whenLoaded('approvers')),
         ];
     }
 }

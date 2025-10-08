@@ -50,29 +50,29 @@ class AppraisalRecordController extends Controller
         return new AppraisalRecordResource($appraisalRecord);
     }
 
-    public function storeFeedback(AppraisalRecord $appraisalRecord, AppraisalRecordFeedbackRequest $request, AppraisalRecordFeedbackService $service)
-    {
-        $user = User::findOrFail($request->input('appraisee_id'));
+    // public function storeFeedback(AppraisalRecord $appraisalRecord, AppraisalRecordFeedbackRequest $request, AppraisalRecordFeedbackService $service)
+    // {
+    //     $user = User::findOrFail($request->input('appraisee_id'));
 
-        Gate::authorize('update', [AppraisalRecord::class, $appraisalRecord, $user]);
+    //     Gate::authorize('update', [AppraisalRecord::class, $appraisalRecord, $user]);
 
-        // get isSubmit query param, default to false
-        $isSubmit = $request->query('isSubmit', false);
+    //     // get isSubmit query param, default to false
+    //     $isSubmit = $request->query('isSubmit', false);
 
-        $appraisalRecord = $service->store($user, $appraisalRecord, $request->validated(), $isSubmit);
+    //     $appraisalRecord = $service->store($user, $appraisalRecord, $request->validated(), $isSubmit);
 
-        return new AppraisalRecordResource($appraisalRecord);
-    }
+    //     return new AppraisalRecordResource($appraisalRecord);
+    // }
 
-    public function submit(AppraisalRecord $appraisalRecord, Request $request, AppraisalRecordSubmitService $service)
-    {
-        $user = User::findOrFail($request->input('appraisee_id'));
+    // public function submit(AppraisalRecord $appraisalRecord, Request $request, AppraisalRecordSubmitService $service)
+    // {
+    //     $user = User::findOrFail($request->input('appraisee_id'));
 
-        Gate::authorize('update', [AppraisalRecord::class, $appraisalRecord, $user]);
+    //     Gate::authorize('update', [AppraisalRecord::class, $appraisalRecord, $user]);
 
-        $service->submit($user, $appraisalRecord);
+    //     $service->submit($user, $appraisalRecord);
 
-        return $this->successResponse(message: 'Appraisal record submitted successfully');
+    //     return $this->successResponse(message: 'Appraisal record submitted successfully');
 
-    }
+    // }
 }

@@ -19,7 +19,7 @@ class ApprovalController extends Controller
         $appraisalRecords = AppraisalRecord::query()
             ->where('current_approver_id', auth()->id())
             ->where('status', AppraisalRecordStatus::SUBMITTED)
-            ->with(['appraiser', 'appraisee'])
+            ->with(['appraiser', 'appraisee', 'approvers.user'])
             ->get();
 
         return AppraisalRecordResource::collection($appraisalRecords);
