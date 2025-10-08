@@ -29,4 +29,11 @@ class AppraisalRecordAttachmentController extends Controller
             'attachment' => $attachment->getFullUrl(),
         ];
     }
+
+    public function destroy(AppraisalRecord $appraisalRecord)
+    {
+        $appraisalRecord->clearMediaCollection('attachments');
+
+        return response()->noContent();
+    }
 }

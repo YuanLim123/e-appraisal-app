@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -14,6 +15,7 @@ Route::get('/mailable', function () {
 
 Route::get('file', function () {
     $appraisalRecord = \App\Models\AppraisalRecord::find(1);
-    $url = $appraisalRecord->getLastMediaUrl('attachments');
-    return response()->download($url);
+    $file = $appraisalRecord->getLastMedia('attachments');
+    // https://spatie.be/docs/laravel-medialibrary/v11/downloading-media/downloading-a-single-file
+    return response()->download($file->getPath(), $file->file_name);
 });

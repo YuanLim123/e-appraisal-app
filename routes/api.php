@@ -42,4 +42,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('appraisal-records/{appraisalRecord}/rejects', [User\ApprovalController::class, 'destroy']);
 
     Route::post('appraisal-records/{appraisalRecord}/attachments', [User\AppraisalRecordAttachmentController::class, 'store']);
+    Route::delete('appraisal-records/{appraisalRecord}/attachments', [User\AppraisalRecordAttachmentController::class, 'destroy']);
 });
