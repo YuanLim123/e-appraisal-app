@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AppraisalRecordAttachmentRequest;
 use App\Http\Requests\AppraisalRecordFeedbackRequest;
 use App\Http\Requests\StoreAppraisalRecordRequest;
 use App\Http\Resources\AppraisalRecordResource;
@@ -17,23 +18,23 @@ use Illuminate\Http\Request;
 
 class AppraisalRecordAttachmentController extends Controller
 {
-    public function store(AppraisalRecord $appraisalRecord, Request $request)
+    public function store(AppraisalRecord $appraisalRecord, AppraisalRecordAttachmentRequest $request)
     {
-        $request->validate([
-            'file' => ['required', 'file', 'max:1000']
-        ]);
-
-        $attachment = $appraisalRecord->addMediaFromRequest('file')->toMediaCollection('attachments');
-
-        return [
-            'attachment' => $attachment->getFullUrl(),
-        ];
+        Gate::authorize('addAttachment', $appraisalRecord);
+        
+        $appraisalRecord
+            ->addMultipleMediaFromRequest(['file'])
+            ->each(function ($fileAdder) {
+                $fileAdder->toMediaCollection('attachment');
+            });
+        
+        return response()->noContent(200);
     }
 
     public function destroy(AppraisalRecord $appraisalRecord)
     {
-        $appraisalRecord->clearMediaCollection('attachments');
+        $appraisalRecord->clearMediaCollection('attachment');
 
-        return response()->noContent();
+        return response()->noContent(200);
     }
 }
