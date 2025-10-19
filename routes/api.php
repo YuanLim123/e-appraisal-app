@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\Auth\LoginController;
 use App\Http\Controllers\Api\V1\Auth\RegisteredUserController;
+use App\Http\Controllers\Api\V1\Auth\LogoutController;
 use App\Http\Controllers\Api\V1\HR;
 use App\Http\Controllers\Api\V1\User;
 use App\Http\Middleware\DepartmentMiddleware;
@@ -19,6 +20,8 @@ Route::get('appraisals', [User\AppraisalController::class, 'index']);
 Route::get('users', [User\UserController::class, 'index']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
+
+    Route::post('logout', LogoutController::class);
 
     Route::middleware([DepartmentMiddleware::class . ':HRA,PAYROLL'])->group(function () {
         Route::post('hr/users', [HR\UserController::class, 'store']);
