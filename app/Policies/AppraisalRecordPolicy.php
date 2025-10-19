@@ -99,4 +99,13 @@ class AppraisalRecordPolicy
     {
         return auth()->id() == $appraisalRecord->current_approver_id && $appraisalRecord->status == AppraisalRecordStatus::SUBMITTED;
     }
+
+    public function addAttachment(User $user, AppraisalRecord $appraisalRecord): bool
+    {
+        if (auth()->id() !== $appraisalRecord->appraiser_id) {
+            return false;
+        }
+
+        return true;
+    }
 }
