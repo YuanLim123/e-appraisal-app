@@ -28,6 +28,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('hr/appraisals', [HR\AppraisalController::class, 'store']);
         Route::put('hr/appraisals/{appraisal}', [HR\AppraisalController::class, 'update']);
         Route::get('hr/appraisal-records', [HR\AppraisalRecordController::class, 'index']);
+
+        Route::get('hr/departments', [HR\DepartmentController::class, 'index']);
+        
     });
 
     Route::get('appraisals/{appraisal}', [User\AppraisalController::class, 'show'])->middleware('can:view,appraisal');
