@@ -13,6 +13,6 @@ class DepartmentController extends Controller
     {
         $departments = Department::query()->get();
 
-        return new DepartmentResource($departments);
+        return DepartmentResource::collection($departments);
     }
 }

@@ -30,7 +30,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('hr/appraisal-records', [HR\AppraisalRecordController::class, 'index']);
 
         Route::get('hr/departments', [HR\DepartmentController::class, 'index']);
-        
+        Route::get('hr/roles', [HR\RoleController::class, 'index']);
+
     });
 
     Route::get('appraisals/{appraisal}', [User\AppraisalController::class, 'show'])->middleware('can:view,appraisal');
