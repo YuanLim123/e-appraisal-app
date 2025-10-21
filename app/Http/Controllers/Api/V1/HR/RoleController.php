@@ -11,10 +11,8 @@ class RoleController extends Controller
 {
     public function index(Request $request)
     {
-        $roles = Role::query()
-            ->with('position')
-            ->get();
-
+        $roles = Role::all();
+        
         return RoleResource::collection($roles);
     }
 }

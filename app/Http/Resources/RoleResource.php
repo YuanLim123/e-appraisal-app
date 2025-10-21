@@ -21,7 +21,6 @@ class RoleResource extends JsonResource
             'id' => $this->id,
             'order' => $this->order,
             'name' => $this->name,
-            'position' => new PositionResource($this->whenLoaded('position')),
         ];
     }
 }

@@ -28,9 +28,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('hr/appraisals', [HR\AppraisalController::class, 'store']);
         Route::put('hr/appraisals/{appraisal}', [HR\AppraisalController::class, 'update']);
         Route::get('hr/appraisal-records', [HR\AppraisalRecordController::class, 'index']);
-
         Route::get('hr/departments', [HR\DepartmentController::class, 'index']);
         Route::get('hr/roles', [HR\RoleController::class, 'index']);
+        Route::get('hr/positions', [HR\PositionController::class, 'index']);
 
     });
 
@@ -39,7 +39,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('appraisal-records', [User\AppraisalRecordController::class, 'index']);
     Route::post('appraisal-records', [User\AppraisalRecordController::class, 'store']);
     Route::put('appraisal-records/{appraisalRecord}', [User\AppraisalRecordController::class, 'update']);
-
+    
     Route::post('appraisal-records/{appraisalRecord}/feedbacks', User\AppraisalRecordFeedbackController::class);
     Route::post('appraisal-records/{appraisalRecord}/submissions', User\AppraisalRecordSubmitController::class);
 

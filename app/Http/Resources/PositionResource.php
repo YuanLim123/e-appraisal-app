@@ -20,6 +20,7 @@ class PositionResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'roles' => RoleResource::collection($this->whenLoaded('roles')),
         ];
     }
 }
