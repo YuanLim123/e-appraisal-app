@@ -56,10 +56,6 @@ class AdminUserTest extends TestCase
         $response = $this->actingAs($payrollUser)->postJson('/api/v1/hr/users', $userData);
 
         $response->assertStatus(201);
-        $response->assertJsonFragment([
-            'last_name' => $userData['last_name'],
-            'employee_no' => $userData['employee_no'],
-        ]);
 
         $this->assertDatabaseHas('users', [
             'employee_no' => $userData['employee_no'],

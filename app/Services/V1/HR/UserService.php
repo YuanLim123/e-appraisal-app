@@ -10,7 +10,7 @@ class UserService
     public function store(array $attributes): User
     {
         $attributes['password'] = Hash::make($attributes['password']);
-        $attributes['username'] = 'Asj#'.$attributes['employee_no'];
+        //$attributes['username'] = 'Asj#'.$attributes['employee_no'];
 
         $user = User::create($attributes);
 
