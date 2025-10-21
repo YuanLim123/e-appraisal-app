@@ -35,7 +35,7 @@ class UserFactory extends Factory
             'employee_no' => $this->faker->unique()->numerify('######'),
             'password' => static::$password ??= Hash::make('password'),
             'join_at' => fake()->date(),
-            'is_enabled' => true,
+            'is_login_enabled' => true,
             'is_appraiser' => true,
             'remember_token' => Str::random(10),
         ];

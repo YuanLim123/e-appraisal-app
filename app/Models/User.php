@@ -11,8 +11,25 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $email
+ * @property string $phone
+ * @property string|null $office_phone
+ * @property string $employee_no
+ * @property int $position_id
+ * @property int $role_id
+ * @property bool $is_login_enabled
+ * @property bool $is_appraiser
+ * @property Carbon $join_at
+ * @property Carbon|null $resign_at
+ * @property string $username
+ * @property string $password
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -32,7 +49,7 @@ class User extends Authenticatable
         'employee_no',
         'position_id',
         'role_id',
-        'is_enabled',
+        'is_login_enabled',
         'is_appraiser',
         'join_at',
         'resign_at',

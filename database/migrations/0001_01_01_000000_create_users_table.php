@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('username')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->boolean('is_enabled')->default(false);
+            $table->boolean('is_login_enabled')->default(false);
             $table->boolean('is_appraiser')->default(false);
             $table->date('join_at');
             $table->date('resign_at')->nullable();
