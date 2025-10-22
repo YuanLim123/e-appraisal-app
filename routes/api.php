@@ -17,10 +17,12 @@ Route::post('login', LoginController::class);
 
 Route::post('register', RegisteredUserController::class);
 Route::get('appraisals', [User\AppraisalController::class, 'index']);
-Route::get('users', [User\UserController::class, 'index']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
+    Route::get('users', [User\UserController::class, 'index']);
+    Route::get('users/{user}', [User\UserController::class, 'show']);
+    
     Route::post('logout', LogoutController::class);
 
     Route::middleware([DepartmentMiddleware::class . ':HRA,PAYROLL'])->group(function () {

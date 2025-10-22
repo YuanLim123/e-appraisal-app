@@ -28,4 +28,11 @@ class UserController extends Controller
 
         return UserResource::collection($users);
     }
+
+    public function show(User $user)
+    {
+        $user->load(['departments', 'role', 'role.position']);
+        return new UserResource($user);
+    }
+
 }
