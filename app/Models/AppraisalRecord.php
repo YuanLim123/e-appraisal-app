@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\AppraisalRecordGrade;
+use App\Enums\AppraisalRecordPurposeType;
 use App\Enums\AppraisalRecordStatus;
 use App\Enums\AppraisalRecordType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -48,6 +49,7 @@ class AppraisalRecord extends Model implements HasMedia
             'answer' => 'array',
             'feedback' => 'array',
             'status' => AppraisalRecordStatus::class,
+            'purpose' => AppraisalRecordPurposeType::class,
             'review_from' => 'date:Y-m-d',
             'review_to' => 'date:Y-m-d',
             'completed_at' => 'datetime',

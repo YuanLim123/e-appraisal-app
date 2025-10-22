@@ -27,8 +27,9 @@ class UsersListTest extends TestCase
     public function test_users_list_return_pagination(): void
     {
         User::factory(11)->create();
+        $user = User::first();
 
-        $response = $this->getJson('/api/v1/users');
+        $response = $this->actingAs($user)->getJson('/api/v1/users');
 
         $response->assertStatus(200);
 
@@ -40,7 +41,7 @@ class UsersListTest extends TestCase
         $resignedUser = User::factory()->create(['resign_at' => now()]);
         $activeUser = User::factory()->create();
 
-        $response = $this->getJson('/api/v1/users');
+        $response = $this->actingAs($activeUser)->getJson('/api/v1/users');
 
         $response->assertStatus(200);
         $response->assertJsonCount(1, 'data');
