@@ -23,10 +23,15 @@ class UsersListRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'joinAfter' => ['date'],
-            'joinBefore' => ['date'],
             'sortBy' => Rule::in(['last_name', 'first_name', 'join_at', 'email']),
             'sortOrder' => Rule::in(['asc', 'desc']),
+            'employee_no' => ['nullable', 'string'],
+            'name' => ['nullable', 'string'],
+            'department_id' => ['nullable', 'string', 'exists:departments,id'],
+            'position_id' => ['nullable', 'string', 'exists:positions,id'],
+            'role_id' => ['nullable', 'string', 'exists:roles,id'],
+            'join_after' => ['nullable', 'date'],
+            'join_before' => ['nullable', 'date'],
         ];
     }
 

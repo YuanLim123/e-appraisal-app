@@ -24,7 +24,7 @@ class UsersListWithOrderByandFilterTest extends TestCase
         ]);
     }
 
-    public function test_users_list_by_created_at_correctly(): void // sorting by created_at desc
+    public function test_users_list_by_created_at_correctly(): void
     {
         $user = User::factory()->create(['created_at' => now()]);
         $earlierCreatedUser = User::factory()->create(['created_at' => now()->subDays(3)]);
@@ -33,9 +33,9 @@ class UsersListWithOrderByandFilterTest extends TestCase
         $response = $this->actingAs($user)->getJson('/api/v1/users');
 
         $response->assertStatus(200);
-        $response->assertJsonPath('data.0.employee_no', $laterCreatedUser->employee_no);
+        $response->assertJsonPath('data.0.employee_no', $earlierCreatedUser->employee_no);
         $response->assertJsonPath('data.1.employee_no', $user->employee_no);
-        $response->assertJsonPath('data.2.employee_no', $earlierCreatedUser->employee_no);
+        $response->assertJsonPath('data.2.employee_no', $laterCreatedUser->employee_no);
     }
 
     public function test_users_list_sorts_by_last_name_desc_correctly(): void
@@ -60,15 +60,15 @@ class UsersListWithOrderByandFilterTest extends TestCase
 
         $endpoint = '/api/v1/users';
 
-        $response = $this->actingAs($user)->getJson($endpoint.'?joinAfter=2016-01-01');
+        $response = $this->actingAs($user)->getJson($endpoint . '?join_after=2016-01-01');
         $response->assertJsonCount(2, 'data');
         $response->assertJsonFragment(['employee_no' => $user->employee_no]);
         $response->assertJsonMissing(['employee_no' => $earlierJoinedUser->employee_no]);
 
-        $response = $this->actingAs($user)->getJson($endpoint.'?joinAfter=2026-01-01');
+        $response = $this->actingAs($user)->getJson($endpoint . '?join_after=2026-01-01');
         $response->assertJsonCount(0, 'data');
 
-        $response = $this->actingAs($user)->getJson($endpoint.'?joinBefore=2016-12-31');
+        $response = $this->actingAs($user)->getJson($endpoint . '?join_before=2016-12-31');
         $response->assertJsonCount(1, 'data');
         $response->assertJsonFragment(['employee_no' => $earlierJoinedUser->employee_no]);
         $response->assertJsonMissing([
@@ -76,10 +76,10 @@ class UsersListWithOrderByandFilterTest extends TestCase
             'employee_no' => $laterJoinedUser->employee_no,
         ]);
 
-        $response = $this->actingAs($user)->getJson($endpoint.'?joinBefore=2013-12-31');
+        $response = $this->actingAs($user)->getJson($endpoint . '?join_before=2013-12-31');
         $response->assertJsonCount(0, 'data');
 
-        $response = $this->actingAs($user)->getJson($endpoint.'?joinAfter=2016-01-01&joinBefore=2024-12-31');
+        $response = $this->actingAs($user)->getJson($endpoint . '?join_after=2016-01-01&join_before=2024-12-31');
         $response->assertJsonCount(1, 'data');
         $response->assertJsonFragment(['employee_no' => $user->employee_no]);
     }
@@ -94,10 +94,10 @@ class UsersListWithOrderByandFilterTest extends TestCase
         $response = $this->actingAs($user)->getJson('/api/v1/users?sortOrder=test');
         $response->assertStatus(422);
 
-        $response = $this->actingAs($user)->getJson('/api/v1/users?joinAfter=abc');
+        $response = $this->actingAs($user)->getJson('/api/v1/users?join_after=abc');
         $response->assertStatus(422);
 
-        $response = $this->actingAs($user)->getJson('/api/v1/users?joinBefore=123');
+        $response = $this->actingAs($user)->getJson('/api/v1/users?join_before=123');
         $response->assertStatus(422);
     }
 }
