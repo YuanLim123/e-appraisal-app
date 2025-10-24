@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
-    public function store(array $attributes): User
+    public function store(array $attributes): void
     {
         $attributes['password'] = Hash::make($attributes['password']);
         //$attributes['username'] = 'Asj#'.$attributes['employee_no'];
@@ -19,7 +19,14 @@ class UserService
                 $user->departments()->attach($departmentId);
             }
         }
+    }
 
-        return $user;
+    public function update(array $attributes, User $user): void
+    {
+        $user->update($attributes);
+
+        if (! empty($attributes['department_ids'])) {
+            $user->departments()->sync($attributes['department_ids']);
+        }
     }
 }
