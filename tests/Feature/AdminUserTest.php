@@ -52,7 +52,7 @@ class AdminUserTest extends TestCase
         $payrollUser->departments()->sync([21]); // id 21 is payroll department
         $userData = User::factory()->make()->toArray();
         $userData['password'] = 'Password123'; // since passsword is hidden in model, we need to add it manually
-        $userData['departments'] = [1, 2];
+        $userData['department_ids'] = [1, 2];
         $userData['role_id'] = 1;
         $userData['position_id'] = 1;
 

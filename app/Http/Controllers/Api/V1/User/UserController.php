@@ -12,7 +12,7 @@ class UserController extends Controller
     public function index(UsersListRequest $request)
     {
         $users = User::query()
-            ->with(['departments', 'role', 'role.position'])
+            ->with(['departments', 'role'])
             ->when($request->employee_no, function ($query) use ($request) {
                 $query->where('employee_no', 'like', '%' . $request->employee_no . '%');
             })
