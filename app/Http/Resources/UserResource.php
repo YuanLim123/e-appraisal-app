@@ -27,6 +27,7 @@ class UserResource extends JsonResource
             'employee_no' => $this->employee_no,
             'join_at' => $this->join_at->format('d-m-Y'),
             'role' => new RoleResource($this->whenLoaded('role')),
+            'position' => new PositionResource($this->whenLoaded('position')),
             'department' => DepartmentResource::collection($this->whenLoaded('departments')),
             'appraisal_records' => AppraisalRecordShortResource::collection($this->whenLoaded('appraisalRecordsAsAppraisee')),
         ];

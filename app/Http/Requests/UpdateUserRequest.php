@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
-class UserRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,27 +26,15 @@ class UserRequest extends FormRequest
         return [
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'username' => ['required', 'string', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', Password::defaults()],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->route('user')->id)],
             'phone' => ['required', 'string', 'max:20'],
             'office_phone' => ['nullable', 'string', 'max:20'],
-            'employee_no' => ['required', 'string', 'max:50', 'unique:users'],
+            'employee_no' => ['required', 'string', 'max:50', Rule::unique('users', 'employee_no')->ignore($this->route('user')->id)],
             'join_at' => ['required', 'date'],
-            'is_login_enabled' => ['required', 'boolean'],
             'position_id' => ['required', Rule::exists('positions', 'id')],
             'role_id' => ['required', Rule::exists('roles', 'id')],
             'department_ids' => ['required', 'array'],
             'department_ids.*' => [Rule::exists('departments', 'id')],
-        ];
-    }
-
-    public function messages(): array
-    {
-        return [
-            'employee_no.unique' => 'The employee number has already been taken.',
-            'role_id.required' => 'The role field is required.',
-            'position_id.required' => 'The position field is required.',
         ];
     }
 }

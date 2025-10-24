@@ -14,8 +14,8 @@ class UserService
 
         $user = User::create($attributes);
 
-        if (! empty($attributes['departments'])) {
-            foreach ($attributes['departments'] as $departmentId) {
+        if (! empty($attributes['department_ids'])) {
+            foreach ($attributes['department_ids'] as $departmentId) {
                 $user->departments()->attach($departmentId);
             }
         }

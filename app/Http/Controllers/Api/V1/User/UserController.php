@@ -54,7 +54,7 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-        $user->load(['departments', 'role', 'role.position', 'appraisalRecordsAsAppraisee', 'appraisalRecordsAsAppraisee.appraiser', 'appraisalRecordsAsAppraisee.currentApprover']);
+        $user->load(['departments', 'role', 'position', 'appraisalRecordsAsAppraisee', 'appraisalRecordsAsAppraisee.appraiser', 'appraisalRecordsAsAppraisee.currentApprover']);
         return new UserResource($user);
     }
 }
