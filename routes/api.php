@@ -28,6 +28,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware([DepartmentMiddleware::class . ':HRA,PAYROLL'])->group(function () {
         Route::post('hr/users', [HR\UserController::class, 'store']);
         Route::put('hr/users/{user}', [HR\UserController::class, 'update']);
+        Route::get('hr/appraisals', [HR\AppraisalController::class, 'index']);
         Route::post('hr/appraisals', [HR\AppraisalController::class, 'store']);
         Route::put('hr/appraisals/{appraisal}', [HR\AppraisalController::class, 'update']);
         Route::get('hr/appraisal-records', [HR\AppraisalRecordController::class, 'index']);
