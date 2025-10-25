@@ -21,6 +21,13 @@ class AppraisalController extends Controller
         return AppraisalResource::collection($appraisals);
     }
 
+    public function show(Appraisal $appraisal)
+    {
+        $appraisal->load(['appraiser', 'appraisee.departments', 'approvers', 'approvers.user']);
+
+        return new AppraisalResource($appraisal);
+    }
+
     public function store(StoreAppraisalRequest $request, AppraisalService $appraisalService)
     {
         if (Appraisal::where('appraisee_id', $request->validated()['appraisee_id'])->exists()) {
