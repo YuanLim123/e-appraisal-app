@@ -15,12 +15,12 @@ class AppraisalController extends Controller
     public function index()
     {
         $appraisals = Appraisal::query()
-            ->with(['appraiser', 'appraisee', 'approvers', 'approvers.user'])
+            ->with(['appraiser', 'appraisee.departments', 'approvers', 'approvers.user'])
             ->paginate(10);
 
         return AppraisalResource::collection($appraisals);
     }
-    
+
     public function store(StoreAppraisalRequest $request, AppraisalService $appraisalService)
     {
         if (Appraisal::where('appraisee_id', $request->validated()['appraisee_id'])->exists()) {
