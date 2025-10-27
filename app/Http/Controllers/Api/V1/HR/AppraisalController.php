@@ -36,9 +36,11 @@ class AppraisalController extends Controller
             ], 422);
         }
 
-        $appraisal = $appraisalService->store($request->validated());
+        $appraisalService->store($request->validated());
 
-        return new AppraisalResource($appraisal);
+        return response()->json([
+            'message' => 'Appraisal created successfully.',
+        ], 201);
     }
 
     public function update(Appraisal $appraisal, UpdateAppraisalRequest $request, AppraisalService $appraisalService)
