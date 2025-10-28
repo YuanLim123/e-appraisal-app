@@ -23,8 +23,8 @@ class UpdateAppraisalRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'appraiser_id' => ['nullable', Rule::exists('users', 'id')],
-            'approvers' => ['nullable', 'array'],
+            'appraiser_id' => ['required', Rule::exists('users', 'id')],
+            'approvers' => ['required', 'array'],
             'approvers.*.user_id' => ['required', Rule::exists('users', 'id')],
             'approvers.*.sequence' => ['required', 'integer', 'min:1'],
         ];
@@ -33,6 +33,8 @@ class UpdateAppraisalRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'appraiser_id.required' => 'Appraiser is required.',
+            'approvers.required' => 'At least one approver is required.',
             'appraiser_id.exists' => 'The selected appraiser is invalid.',
             'approvers.*.user_id.exists' => 'One of the selected approvers is invalid.',
             'approvers.*.sequence.min' => 'Each approver sequence must be at least 1.',

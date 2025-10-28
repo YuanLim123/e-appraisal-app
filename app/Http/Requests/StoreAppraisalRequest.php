@@ -34,6 +34,9 @@ class StoreAppraisalRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'appraisee_id.required' => 'Appraisee is required.',
+            'appraiser_id.required' => 'Appraiser is required.',
+            'approvers.required' => 'At least one approver is required.',
             'appraisee_id.exists' => 'The selected appraisee is invalid.',
             'appraiser_id.exists' => 'The selected appraiser is invalid.',
             'approvers.*.user_id.exists' => 'One of the selected approvers is invalid.',
