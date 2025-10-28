@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class AppraisalService
 {
-    public function store(array $attributes): Appraisal
+    public function store(array $attributes): void
     {
         /** @var Appraisal $appraisal */
         $appraisal = Appraisal::create([
@@ -17,13 +17,9 @@ class AppraisalService
         ]);
 
         $appraisal->approvers()->createMany($attributes['approvers']);
-
-        $appraisal->load(['appraiser', 'appraisee', 'approvers', 'approvers.user']);
-
-        return $appraisal;
     }
 
-    public function update(Appraisal $appraisal, array $attributes): Appraisal
+    public function update(Appraisal $appraisal, array $attributes): void
     {
         if (! empty($attributes['appraiser_id'])) {
             $appraisal->update([
@@ -37,9 +33,5 @@ class AppraisalService
                 $appraisal->approvers()->createMany($attributes['approvers']);
             }
         });
-        
-        $appraisal->load(['appraiser', 'appraisee', 'approvers', 'approvers.user']);
-
-        return $appraisal;
     }
 }

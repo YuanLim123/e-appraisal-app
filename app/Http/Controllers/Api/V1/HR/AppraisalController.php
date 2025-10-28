@@ -45,8 +45,10 @@ class AppraisalController extends Controller
 
     public function update(Appraisal $appraisal, UpdateAppraisalRequest $request, AppraisalService $appraisalService)
     {
-        $appraisal = $appraisalService->update($appraisal, $request->validated());
+        $appraisalService->update($appraisal, $request->validated());
 
-        return new AppraisalResource($appraisal);
+        return response()->json([
+            'message' => 'Appraisal updated successfully.',
+        ], 201);
     }
 }

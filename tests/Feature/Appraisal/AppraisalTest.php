@@ -192,12 +192,11 @@ class AppraisalTest extends TestCase
 
         // Update appraisal
         $updateResponse = $this->actingAs($payrollUser)->putJson("/api/v1/hr/appraisals/{$appraisal->id}", $updatedAppraisalInput);
-        $updateResponse->assertStatus(200);
-        $updateResponse->assertJsonCount(2, 'data.approvers');
-        $updateResponse->assertJsonPath('data.appraisee.id', $appraisee->id);
-        $updateResponse->assertJsonPath('data.appraiser.id', $newAppraiser->id);
-        $updateResponse->assertJsonPath('data.approvers.0.user.id', $newApprover1->id);
-        $updateResponse->assertJsonPath('data.approvers.1.user.id', $newApprover2->id);
+        $updateResponse->assertStatus(201);
+        $updateResponse->assertJson([
+            'message' => 'Appraisal updated successfully.',
+        ]);
+ 
     }
 
     public function test_updates_appraisal_return_errors_with_invalid_data(): void
