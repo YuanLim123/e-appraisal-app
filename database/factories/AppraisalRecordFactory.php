@@ -25,7 +25,7 @@ class AppraisalRecordFactory extends Factory
             'review_to' => $end->format('Y-m-d'),
             'purpose' => fake()->randomElement(AppraisalRecordPurposeType::cases()),
             'total' => fake()->numberBetween(50, 100),
-            // 'performance' => null,
+            // 'section_one' => null,
             // 'section_percentage' => null,
         ];
     }
@@ -37,7 +37,7 @@ class AppraisalRecordFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'performance' => [
+                'section_one' => [
                     [
                         'goal' => fake()->sentence(10),
                         'result' => fake()->sentence(15),

@@ -81,7 +81,7 @@ abstract class TestCase extends BaseTestCase
     {
         $appraisalRecordData = AppraisalRecord::factory()->make()->toArray();
         if ($isSupervisionAppraisal) {
-            $appraisalRecordData['performance'] = [
+            $appraisalRecordData['section_one'] = [
                 [
                     'goal' => fake()->sentence(10),
                     'result' => fake()->sentence(15),

@@ -34,10 +34,10 @@ class StoreAppraisalRecordRequest extends FormRequest
         ];
 
         if ($user->isHigherRole()) {
-            $rules['performance'] = ['required', 'array'];
-            $rules['performance.*.goal'] = ['required'];
-            $rules['performance.*.result'] = ['required'];
-            $rules['performance.*.rating'] = ['required', 'numeric'];
+            $rules['section_one'] = ['required', 'array'];
+            $rules['section_one.*.goal'] = ['required'];
+            $rules['section_one.*.result'] = ['required'];
+            $rules['section_one.*.rating'] = ['required', 'numeric'];
             $rules['section_percentage'] = ['nullable', 'array'];
         } else {
             $rules['total'] = ['required', 'numeric'];
@@ -54,9 +54,9 @@ class StoreAppraisalRecordRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'performance.*.goal.required' => 'All the fields in section 1 must be filled.',
-            'performance.*.result.required' => 'All the fields in section 1 must be filled.',
-            'performance.*.rating.required' => 'All the fields in section 1 must be filled.',
+            'section_one.*.goal.required' => 'All the fields in section I must be filled.',
+            'section_one.*.result.required' => 'All the fields in section I must be filled.',
+            'section_one.*.rating.required' => 'All the fields in section I must be filled.',
         ];
     }
 }

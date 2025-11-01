@@ -171,7 +171,7 @@ class AppraisalRecordStoreTest extends TestCase
         $response->assertStatus(201);
         $response->assertJsonFragment([
             'status' => AppraisalRecordStatus::CREATED->label(),
-            'answer' => $appraisalRecordInput['performance'],
+            'answer' => $appraisalRecordInput['section_one'],
         ]);
         $response->assertJsonPath('data.appraiser.id', $appraiser->id);
         $response->assertJsonPath('data.appraisee.id', $appraisee->id);
@@ -213,11 +213,11 @@ class AppraisalRecordStoreTest extends TestCase
         $appraisee = $appraisal->appraisee;
         $appraiser = $appraisal->appraiser;
 
-        // create supervision appraisal record with invalid performance rating sum which exceeds 100
+        // create supervision appraisal record with invalid section one rating sum which exceeds 100
         $isSupervisionAppraisal = true;
         $appraisalRecordInput = $this->createAppraisalRecordInputData($isSupervisionAppraisal);
         $appraisalRecordInput['appraisee_id'] = $appraisee->id;
-        $appraisalRecordInput['performance'] = [
+        $appraisalRecordInput['section_one'] = [
             [
                 'goal' => 'goal 1',
                 'result' => 'result 1',

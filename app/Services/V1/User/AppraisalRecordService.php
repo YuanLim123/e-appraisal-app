@@ -16,7 +16,7 @@ use App\Models\User;
 class AppraisalRecordService
 {
     /**
-     * @param  array{purpose: string, review_from: string, review_to: string, total?: float, performance?: array, section_percentage?: array}  $attributes
+     * @param  array{purpose: string, review_from: string, review_to: string, total?: float, section_one?: array, section_percentage?: array}  $attributes
      */
     public function store(User $user, array $attributes): AppraisalRecord
     {
@@ -47,8 +47,8 @@ class AppraisalRecordService
             throw new RecordAlreadyExistsInSeasonException;
         }
 
-        // validate that the sum of ratings in performance
-        if ($isHigherRole && ! $this->validateRatingSum($attributes['performance'])) {
+        // validate that the sum of ratings in section one
+        if ($isHigherRole && ! $this->validateRatingSum($attributes['section_one'])) {
             throw new InvalidRatingSumException;
         }
 
@@ -72,7 +72,7 @@ class AppraisalRecordService
             'status' => AppraisalRecordStatus::CREATED->value,
             'role_id' => $user->role_id,
             'position_id' => $user->position_id,
-            'answer' => $attributes['performance'] ?? null,
+            'answer' => $attributes['section_one'] ?? null,
             'review_from' => $attributes['review_from'],
             'review_to' => $attributes['review_to'],
             'appraiser_id' => $appraisal?->appraiser_id,
@@ -86,7 +86,7 @@ class AppraisalRecordService
     }
 
     /**
-     * @param  array{purpose: string, review_from: string, review_to: string, total?: float, performance?: array, section_percentage?: array}  $attributes
+     * @param  array{purpose: string, review_from: string, review_to: string, total?: float, section_one?: array, section_percentage?: array}  $attributes
      */
     public function update(User $user, AppraisalRecord $appraisalRecord, array $attributes): AppraisalRecord
     {
@@ -106,8 +106,8 @@ class AppraisalRecordService
             throw new InvalidAppraisalSeasonException;
         }
 
-        // validate that the sum of ratings in performance
-        if ($isHigherRole && ! $this->validateRatingSum($attributes['performance'])) {
+        // validate that the sum of ratings in section one
+        if ($isHigherRole && ! $this->validateRatingSum($attributes['section_one'])) {
             throw new InvalidRatingSumException;
         }
 
@@ -129,7 +129,7 @@ class AppraisalRecordService
             'total' => $weighted_score,
             'role_id' => $user->role_id,
             'position_id' => $user->position_id,
-            'answer' => $attributes['performance'] ?? null,
+            'answer' => $attributes['section_one'] ?? null,
             'review_from' => $attributes['review_from'],
             'review_to' => $attributes['review_to'],
             'season_id' => $season ? $season->id : null,
@@ -172,11 +172,11 @@ class AppraisalRecordService
         }
     }
 
-    private function validateRatingSum(array $performance): bool
+    private function validateRatingSum(array $section): bool
     {
         $total = 0;
 
-        foreach ($performance as $item) {
+        foreach ($section as $item) {
             $total += (int) $item['rating'];
         }
 
