@@ -80,18 +80,27 @@ abstract class TestCase extends BaseTestCase
     protected function createAppraisalRecordInputData(bool $isSupervisionAppraisal = false): array
     {
         $appraisalRecordData = AppraisalRecord::factory()->make()->toArray();
+        $appraisalRecordData['section_one_answers'] = [
+            [
+                'goal' => fake()->sentence(10),
+                'result' => fake()->sentence(15),
+                'rating' => fake()->numberBetween(10, 90),
+            ],
+        ];
+        
         if ($isSupervisionAppraisal) {
-            $appraisalRecordData['section_one'] = [
+
+            $appraisalRecordData['section_two_answers'] = [
                 [
-                    'goal' => fake()->sentence(10),
-                    'result' => fake()->sentence(15),
-                    'rating' => fake()->numberBetween(10, 90),
+                    'comment' => fake()->sentence(10),
+                    'rating' => fake()->numberBetween(1, 5),
                 ],
             ];
             $appraisalRecordData['section_percentage'] = [
                 fake()->numberBetween(10, 70),
                 fake()->numberBetween(10, 70),
             ];
+            $appraisalRecordData['is_section_three_enabled'] = false;
         }
 
         return $appraisalRecordData;

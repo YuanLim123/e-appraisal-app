@@ -16,7 +16,7 @@ use App\Models\User;
 class AppraisalRecordService
 {
     /**
-     * @param  array{purpose: string, review_from: string, review_to: string, total?: float, section_one?: array, section_percentage?: array}  $attributes
+     * @param  array{purpose: string, review_from: string, review_to: string, total?: float, section_one_answers?: array, section_percentage?: array}  $attributes
      */
     public function store(User $user, array $attributes): AppraisalRecord
     {
@@ -40,6 +40,7 @@ class AppraisalRecordService
 
         // check if the user already has an appraisal record in the selected season
         $existingRecord = $user->appraisalRecordsAsAppraisee()
+            ->where('season_id', '!=', 1)
             ->where('season_id', $season->id)
             ->first();
 
@@ -48,7 +49,7 @@ class AppraisalRecordService
         }
 
         // validate that the sum of ratings in section one
-        if ($isHigherRole && ! $this->validateRatingSum($attributes['section_one'])) {
+        if ($isHigherRole && ! $this->validateRatingSum($attributes['section_one_answers'])) {
             throw new InvalidRatingSumException;
         }
 
@@ -58,7 +59,7 @@ class AppraisalRecordService
         if (! $isHigherRole) {
             $weightedScore = $attributes['total'] ?? 0;
         } else {
-            $weightedScore = $this->calculateWeightedScore($attributes['section_percentage']);
+            $weightedScore = $this->calculateWeightedScore($attributes['section_percentage'], $attributes['is_section_three_enabled']);
         }
 
         $grade = $this->calculateGrade($weightedScore);
@@ -72,7 +73,15 @@ class AppraisalRecordService
             'status' => AppraisalRecordStatus::CREATED->value,
             'role_id' => $user->role_id,
             'position_id' => $user->position_id,
-            'answer' => $attributes['section_one'] ?? null,
+            'answer' => ($isHigherRole) ?
+                [
+                    'section_one' => $attributes['section_one_answers'],
+                    'section_two' => $attributes['section_two_answers'],
+                    'section_three' => $attributes['is_section_three_enabled'] ? $attributes['section_three_answers'] : null,
+                ] :
+                [
+                    'section_one' => $attributes['section_one_answers'],
+                ],
             'review_from' => $attributes['review_from'],
             'review_to' => $attributes['review_to'],
             'appraiser_id' => $appraisal?->appraiser_id,
@@ -86,7 +95,7 @@ class AppraisalRecordService
     }
 
     /**
-     * @param  array{purpose: string, review_from: string, review_to: string, total?: float, section_one?: array, section_percentage?: array}  $attributes
+     * @param  array{purpose: string, review_from: string, review_to: string, total?: float, section_one_answers?: array, section_percentage?: array}  $attributes
      */
     public function update(User $user, AppraisalRecord $appraisalRecord, array $attributes): AppraisalRecord
     {
@@ -107,7 +116,7 @@ class AppraisalRecordService
         }
 
         // validate that the sum of ratings in section one
-        if ($isHigherRole && ! $this->validateRatingSum($attributes['section_one'])) {
+        if ($isHigherRole && ! $this->validateRatingSum($attributes['section_one_answers'])) {
             throw new InvalidRatingSumException;
         }
 
@@ -117,7 +126,10 @@ class AppraisalRecordService
         if (! $isHigherRole) {
             $weighted_score = $attributes['total'] ?? 0;
         } else {
-            $weighted_score = $this->calculateWeightedScore($attributes['section_percentage']);
+            $weighted_score = $this->calculateWeightedScore(
+                $attributes['section_percentage'],
+                $attributes['is_section_three_enabled']
+            );
         }
 
         $grade = $this->calculateGrade($weighted_score);
@@ -129,7 +141,7 @@ class AppraisalRecordService
             'total' => $weighted_score,
             'role_id' => $user->role_id,
             'position_id' => $user->position_id,
-            'answer' => $attributes['section_one'] ?? null,
+            'answer' => $attributes['section_one_answers'] ?? null,
             'review_from' => $attributes['review_from'],
             'review_to' => $attributes['review_to'],
             'season_id' => $season ? $season->id : null,
@@ -140,20 +152,21 @@ class AppraisalRecordService
         return $appraisalRecord;
     }
 
-    private function calculateWeightedScore(array $sectionPercentage): float
+    private function calculateWeightedScore(array $sectionPercentage, bool $isSectionThreeEnabled): float
     {
         $total = 0;
 
         $sectionOneWeightage = 30;
-        $sectionTwoWeightage = 70;
-        $sectionWeighages = [$sectionOneWeightage, $sectionTwoWeightage];
+        $sectionTwoWeightage = $isSectionThreeEnabled ? 45 : 70;
+        $sectionThreeWeightage = $isSectionThreeEnabled ? 25 : 0;
+        $sectionWeighages = [$sectionOneWeightage, $sectionTwoWeightage, $sectionThreeWeightage];
 
         foreach ($sectionPercentage as $index => $value) {
             $sectionTotal = (float) ($value) * ($sectionWeighages[$index] / 100);
             $total += $sectionTotal;
         }
 
-        return $total;
+        return round($total, 2);
     }
 
     private function calculateGrade(float $total): AppraisalRecordGrade

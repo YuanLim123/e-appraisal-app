@@ -31,14 +31,21 @@ class StoreAppraisalRecordRequest extends FormRequest
             'review_from' => ['required', 'date', Rule::date()->format('Y-m-d')],
             'review_to' => ['required', 'date', Rule::date()->format('Y-m-d')],
             'purpose' => ['required', Rule::enum(AppraisalRecordPurposeType::class)],
+            'section_one_answers' => ['required', 'array'],
+            'section_one_answers.*.goal' => ['required'],
+            'section_one_answers.*.result' => ['required'],
+            'section_one_answers.*.rating' => ['required', 'numeric'],
         ];
 
         if ($user->isHigherRole()) {
-            $rules['section_one'] = ['required', 'array'];
-            $rules['section_one.*.goal'] = ['required'];
-            $rules['section_one.*.result'] = ['required'];
-            $rules['section_one.*.rating'] = ['required', 'numeric'];
+            $rules['section_two_answers'] = ['nullable', 'array'];
+            $rules['section_two_answers.*.comment'] = ['nullable'];
+            $rules['section_two_answers.*.rating'] = ['nullable', 'numeric'];
+            $rules['section_three_answers'] = ['nullable', 'array'];
+            $rules['section_three_answers.*.comment'] = ['nullable'];
+            $rules['section_three_answers.*.rating'] = ['nullable', 'numeric'];
             $rules['section_percentage'] = ['nullable', 'array'];
+            $rules['is_section_three_enabled'] = ['nullable', 'boolean'];
         } else {
             $rules['total'] = ['required', 'numeric'];
         }
@@ -54,9 +61,9 @@ class StoreAppraisalRecordRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'section_one.*.goal.required' => 'All the fields in section I must be filled.',
-            'section_one.*.result.required' => 'All the fields in section I must be filled.',
-            'section_one.*.rating.required' => 'All the fields in section I must be filled.',
+            'section_one_answers.*.goal.required' => 'All the fields in section I must be filled.',
+            'section_one_answers.*.result.required' => 'All the fields in section I must be filled.',
+            'section_one_answers.*.rating.required' => 'All the fields in section I must be filled.',
         ];
     }
 }

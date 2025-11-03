@@ -55,7 +55,7 @@ class AppraisalRecordFeedbackStoreTest extends TestCase
         $appraisalRecordInput = $this->createAppraisalRecordInputData();
         $appraisalRecordInput['appraisee_id'] = $appraisee->id;
 
-        $this->actingAs($appraiser)->postJson("/api/v1/appraisal-records", $appraisalRecordInput);
+        $response = $this->actingAs($appraiser)->postJson("/api/v1/appraisal-records", $appraisalRecordInput);
 
         // create one more user
         $nonAppraiserUser = User::factory()->create();
