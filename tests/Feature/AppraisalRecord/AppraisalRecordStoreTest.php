@@ -80,11 +80,8 @@ class AppraisalRecordStoreTest extends TestCase
 
         $response->assertStatus(201);
         $response->assertJsonFragment([
-            'status' => AppraisalRecordStatus::CREATED->label(),
-            'total' => $appraisalRecordInput['total'],
+            'message' => 'Appraisal record created successfully.',
         ]);
-        $response->assertJsonPath('data.appraiser.id', $appraiser->id);
-        $response->assertJsonPath('data.appraisee.id', $appraisee->id);
 
         $this->assertDatabaseHas('appraisal_records', [
             'appraiser_id' => $appraiser->id,
@@ -170,15 +167,8 @@ class AppraisalRecordStoreTest extends TestCase
 
         $response->assertStatus(201);
         $response->assertJsonFragment([
-            'status' => AppraisalRecordStatus::CREATED->label(),
-            'answer' => [
-                'section_one' => $appraisalRecordInput['section_one_answers'],
-                'section_two' => $appraisalRecordInput['section_two_answers'],
-                'section_three' => null,
-            ],
+            'message' => 'Appraisal record created successfully.',
         ]);
-        $response->assertJsonPath('data.appraiser.id', $appraiser->id);
-        $response->assertJsonPath('data.appraisee.id', $appraisee->id);
 
         $this->assertDatabaseHas('appraisal_records', [
             'appraiser_id' => $appraiser->id,

@@ -36,7 +36,10 @@ class AppraisalRecordController extends Controller
         
         $appraisalRecord = $service->store($user, $request->validated());
 
-        return new AppraisalRecordResource($appraisalRecord);
+        // return new AppraisalRecordResource($appraisalRecord);
+        return response()->json([
+            'message' => 'Appraisal record created successfully.',
+        ], 201);
     }
 
     public function update(AppraisalRecord $appraisalRecord, StoreAppraisalRecordRequest $request, AppraisalRecordService $service)
